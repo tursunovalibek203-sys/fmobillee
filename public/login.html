@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kirish - Do'kon Boshqaruvi</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 20%, #1d4ed8 40%, #1e40af 60%, #1e3a8a 80%, #1e3a8a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(96, 165, 250, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(37, 99, 235, 0.2) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      padding: 48px 40px;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(14, 165, 233, 0.2);
+      max-width: 420px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0c4a6e;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    input:focus {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 24px;
+      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.3);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(14, 165, 233, 0.4);
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .error-message {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      display: none;
+      font-weight: 500;
+    }
+
+    .error-message.show {
+      display: block;
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 12px;
+      }
+      
+      .login-container {
+        padding: 32px 24px;
+        border-radius: 20px;
+      }
+      
+      .logo-icon {
+        font-size: 52px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      .subtitle {
+        font-size: 13px;
+      }
+      
+      .form-group label {
+        font-size: 13px;
+      }
+      
+      .form-group input {
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+      
+      .login-btn {
+        padding: 14px;
+        font-size: 15px;
+      }
+      
+      .info-text {
+        font-size: 12px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 24px 20px;
+      }
+      
+      .logo-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+      }
+      
+      h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <span class="logo-icon">🏪</span>
+      <h1>Do'kon Boshqaruvi</h1>
+      <p class="subtitle">Tizimga kirish uchun login va parolni kiriting</p>
+    </div>
+
+    <div id="errorMessage" class="error-message">
+      ❌ Login yoki parol noto'g'ri!
+    </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">👤 Login</label>
+        <input type="text" id="username" placeholder="Login kiriting" required autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label for="password">🔒 Parol</label>
+        <input type="password" id="password" placeholder="Parol kiriting" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="login-btn">
+        🚀 Kirish
+      </button>
+    </form>
+
+    <div class="footer">
+      🔒 Xavfsiz tizim
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Agar allaqachon login qilingan bo'lsa
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      window.location.href = '/index.html';
+    }
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      // Login tekshirish
+      if (username === 'admin' && password === 'admin12345') {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('loginTime', new Date().getTime());
+        window.location.href = '/index.html';
+      } else {
+        errorMessage.classList.add('show');
+        setTimeout(() => {
+          errorMessage.classList.remove('show');
+        }, 3000);
+      }
+    });
+  </script>
+</body>
+</html>
