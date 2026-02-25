@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kassir Panel</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style-professional.css">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="card header-card">
+      <div class="header-content">
+        <div>
+          <h1>👤 Kassir Panel</h1>
+          <p class="subtitle" id="cashierName"></p>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="settings-btn" onclick="viewWarehouse()" style="background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.2);">
+            <span>🏭</span>
+            <span>Ombor</span>
+          </button>
+          <button class="settings-btn" onclick="showCustomersBook()" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.2);">
+            <span>📖</span>
+            <span>Daftar</span>
+          </button>
+          <button class="settings-btn" onclick="logout()">
+            <span>🚪</span>
+            <span>Chiqish</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kassir Balance Card - Professional -->
+    <div class="payment-card" style="margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+        <h2 style="margin: 0;">💰 Kassadagi Balans</h2>
+        <button class="payment-btn" onclick="openHandoverModal()">
+          <span>💵</span>
+          Kirim berish
+        </button>
+      </div>
+      
+      <!-- Kassadagi balans -->
+      <div style="background: rgba(255, 255, 255, 0.15); padding: 16px; border-radius: 12px; backdrop-filter: blur(10px);">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <p style="margin: 0 0 6px 0; font-size: 12px; opacity: 0.9; font-weight: 600;">💵 Kassadagi Dollar</p>
+            <p style="margin: 0; font-size: 24px; font-weight: 900; color: white;" id="cashBalanceUSD">$0.00</p>
+          </div>
+          <div>
+            <p style="margin: 0 0 6px 0; font-size: 12px; opacity: 0.9; font-weight: 600;">💰 So'm (Dollar qiymati)</p>
+            <p style="margin: 0; font-size: 24px; font-weight: 900; color: white;" id="cashBalanceUZSinUSD">$0.00</p>
+            <p style="margin: 4px 0 0 0; font-size: 11px; opacity: 0.8; color: white;" id="cashBalanceUZSAmount">0 so'm</p>
+          </div>
+        </div>
+        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.2); text-align: center;">
+          <p style="margin: 0 0 4px 0; font-size: 12px; opacity: 0.9; font-weight: 600; color: white;">📊 Jami Balans</p>
+          <p style="margin: 0; font-size: 28px; font-weight: 900; color: white;" id="totalCashBalance">$0.00</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-icon">💰</div>
+        <div class="stat-content">
+          <p class="stat-label">Bugungi savdo</p>
+          <p class="stat-value" id="todayTotal">0 so'm</p>
+        </div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <p class="stat-label">Jami savdo</p>
+          <p class="stat-value" id="totalSales">0 so'm</p>
+        </div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+          <p class="stat-label">Berilgan kirim</p>
+          <p class="stat-value" id="totalHandedOver">0 so'm</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-layout">
+      <!-- Customers List -->
+      <div class="left-panel">
+        <div class="customers-section">
+          <div class="section-header">
+            <h2>👥 Mijozlar</h2>
+          </div>
+          
+          <input type="text" class="search-input" placeholder="🔍 Mijoz qidirish..." id="searchInput" oninput="searchCustomers()">
+          
+          <div class="customers-grid" id="customersGrid"></div>
+        </div>
+      </div>
+
+      <!-- Sale Form -->
+      <div class="right-panel">
+        <div class="form-card">
+          <h2 id="formTitle">➕ Yangi savdo</h2>
+          
+          <div style="margin-bottom: 16px;">
+            <input type="text" id="imeiInput" placeholder="🔍 IMEI yoki Barcode" 
+                   style="width: 100%; padding: 14px 16px; border: 2px solid #3b82f6; border-radius: 12px;"
+                   oninput="searchProductByIMEI(this.value)">
+            <div id="imeiSearchResults" style="margin-top: 8px; display: none;"></div>
+          </div>
+          
+          <input type="text" id="productInput" placeholder="Mahsulot nomi">
+          <input type="number" id="priceInput" placeholder="Narxi ($)" step="0.01">
+          
+          <div style="background: #f0f9ff; padding: 16px; border-radius: 12px; margin: 16px 0;">
+            <h3 style="margin: 0 0 12px 0; font-size: 14px; color: #1e40af;">💰 To'lov ma'lumotlari</h3>
+            
+            <div style="display: grid; gap: 12px;">
+              <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #6b7280; font-weight: 600;">
+                  💵 To'lov ($)
+                </label>
+                <input type="number" id="paidUSD" placeholder="0.00" step="0.01" 
+                       style="width: 100%; padding: 12px; border: 2px solid #3b82f6; border-radius: 8px;">
+              </div>
+            </div>
+          </div>
+          
+          <button class="submit-btn" onclick="addSale()">
+            <span>➕</span>
+            Savdo qo'shish
+          </button>
+        </div>
+
+        <!-- Today's Sales -->
+        <div class="sales-list">
+          <div class="section-header">
+            <h2>📋 Bugungi savdolar</h2>
+            <span class="badge" id="todaySalesCount">0</span>
+          </div>
+          <div id="todaySalesList" class="sales-items">
+            <p class="empty">Bugun savdo yo'q</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Handover Modal -->
+  <div id="handoverModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>💰 Kirim berish</h2>
+        <button class="modal-close" onclick="closeHandoverModal()">×</button>
+      </div>
+      
+      <div style="background: #f0fdf4; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+        <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">Kassadagi pul</p>
+        <p style="margin: 0; font-size: 28px; font-weight: 800; color: #059669;" id="modalBalance">0 so'm</p>
+      </div>
+      
+      <div class="form-group">
+        <label>Berilayotgan miqdor (so'm)</label>
+        <input type="number" id="handoverAmount" placeholder="Miqdor" min="0" step="0.01">
+      </div>
+      
+      <div class="form-group">
+        <label>Izoh (ixtiyoriy)</label>
+        <textarea id="handoverNotes" rows="3" placeholder="Izoh..."></textarea>
+      </div>
+      
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeHandoverModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="submitHandover()">
+          <span>✓</span>
+          Kirim berish
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="cashier.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>
+
+  <!-- Customers Book Modal -->
+  <div id="customersBookModal" class="modal">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h2>📖 Mijozlar Daftari</h2>
+        <button class="modal-close" onclick="closeCustomersBookModal()">×</button>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <input type="text" class="search-input" placeholder="🔍 Mijoz qidirish..." id="bookSearchInput" oninput="searchInBook()">
+        
+        <div style="display: flex; gap: 12px; margin-top: 12px;">
+          <button class="filter-btn active" onclick="filterBook('all')">Barchasi</button>
+          <button class="filter-btn" onclick="filterBook('debt')">Qarzli</button>
+          <button class="filter-btn" onclick="filterBook('clear')">Qarzsiz</button>
+        </div>
+      </div>
+      
+      <div id="customersBookContent" style="max-height: 600px; overflow-y: auto;">
+        <p class="empty">Yuklanmoqda...</p>
+      </div>
+      
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeCustomersBookModal()">Yopish</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="cashier.js"></script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tezkor Savdo</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #059669;
+            font-size: 1.6em;
+        }
+        
+        .btn-back {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .form-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-section h3 {
+            color: #059669;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .customer-info {
+            background: #f0fdf4;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #10b981;
+        }
+        
+        .customer-info h4 {
+            color: #059669;
+            margin-bottom: 10px;
+        }
+        
+        .customer-info p {
+            color: #374151;
+            margin: 5px 0;
+        }
+        
+        .price-display {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+        
+        .price-row.total {
+            border-top: 2px solid #e5e7eb;
+            padding-top: 12px;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #059669;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-submit:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .quick-btn {
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .quick-btn:hover {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.3em;
+            }
+            
+            .form-section {
+                padding: 20px;
+            }
+            
+            .quick-amounts {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Tezkor Savdo</h1>
+            <button class="btn-back" onclick="location.href='cashier-simple.html'">← Orqaga</button>
+        </div>
+        
+        <form id="saleForm">
+            <!-- Mijoz -->
+            <div class="form-section">
+                <h3>1️⃣ Mijoz</h3>
+                <div class="form-group">
+                    <label>Mijoz ID *</label>
+                    <input type="number" id="customerId" placeholder="Mijoz ID ni kiriting" required autofocus>
+                </div>
+                <div id="customerInfo" style="display: none;"></div>
+            </div>
+            
+            <!-- Mahsulot -->
+            <div class="form-section">
+                <h3>2️⃣ Mahsulot</h3>
+                <div class="form-group">
+                    <label>Mahsulot *</label>
+                    <input type="text" id="product" placeholder="Mahsulot nomi" required>
+                </div>
+                <div class="form-group">
+                    <label>Narxi (USD) *</label>
+                    <input type="number" id="price" step="0.01" min="0" placeholder="0.00" required>
+                </div>
+            </div>
+            
+            <!-- To'lov -->
+            <div class="form-section">
+                <h3>3️⃣ To'lov</h3>
+                <div class="form-group">
+                    <label>To'lov (USD)</label>
+                    <input type="number" id="paidUSD" step="0.01" min="0" placeholder="0.00" value="0">
+                    <div class="quick-amounts">
+                        <button type="button" class="quick-btn" onclick="setAmount('usd', 10)">$10</button>
+                        <button type="button" class="quick-btn" onclick="setAmount('usd', 50)">$50</button>
+                        <button type="button" class="quick-btn" onclick="setAmount('usd', 100)">$100</button>
+                        <button type="button" class="quick-btn" onclick="setFullAmount()">To'liq</button>
+                    </div>
+                </div>
+                
+                <div class="price-display" id="priceDisplay" style="display: none;">
+                    <div class="price-row">
+                        <span>Narxi:</span>
+                        <span id="displayPrice">$0.00</span>
+                    </div>
+                    <div class="price-row">
+                        <span>To'landi:</span>
+                        <span id="displayPaid">$0.00</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>Qarz:</span>
+                        <span id="displayDebt">$0.00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-submit" id="submitBtn">
+                💾 SAVDONI SAQLASH
+            </button>
+        </form>
+    </div>
+    
+    <script>
+        const cashierData = JSON.parse(localStorage.getItem('cashierData') || '{}');
+        
+        if (!cashierData.cashierId) {
+            window.location.href = '/cashier-login.html';
+        }
+        
+        let currentCustomer = null;
+        
+        // Mijozni qidirish
+        document.getElementById('customerId').addEventListener('blur', async function() {
+            const customerId = this.value.trim();
+            if (!customerId) return;
+            
+            try {
+                const response = await fetch(`/api/customers/search/${customerId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentCustomer = data.customer;
+                    showCustomerInfo(data.customer);
+                } else {
+                    alert('❌ Mijoz topilmadi!');
+                    this.value = '';
+                    currentCustomer = null;
+                }
+            } catch (error) {
+                alert('❌ Xatolik yuz berdi!');
+            }
+        });
+        
+        // Mijoz ma'lumotlarini ko'rsatish
+        function showCustomerInfo(customer) {
+            const infoDiv = document.getElementById('customerInfo');
+            const debtColor = customer.totalDebt > 0 ? '#ef4444' : '#10b981';
+            
+            infoDiv.innerHTML = `
+                <div class="customer-info">
+                    <h4>👤 ${customer.name}</h4>
+                    <p>📱 ${customer.phone || 'Telefon kiritilmagan'}</p>
+                    <p style="color: ${debtColor}; font-weight: 700;">
+                        💰 Qarz: $${customer.totalDebt.toFixed(2)}
+                    </p>
+                </div>
+            `;
+            infoDiv.style.display = 'block';
+        }
+        
+        // Narx o'zgarganda
+        document.getElementById('price').addEventListener('input', calculateTotal);
+        document.getElementById('paidUSD').addEventListener('input', calculateTotal);
+        
+        function calculateTotal() {
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            const paid = parseFloat(document.getElementById('paidUSD').value) || 0;
+            const debt = price - paid;
+            
+            if (price > 0) {
+                document.getElementById('priceDisplay').style.display = 'block';
+                document.getElementById('displayPrice').textContent = '$' + price.toFixed(2);
+                document.getElementById('displayPaid').textContent = '$' + paid.toFixed(2);
+                document.getElementById('displayDebt').textContent = '$' + debt.toFixed(2);
+                document.getElementById('displayDebt').style.color = debt > 0 ? '#ef4444' : '#10b981';
+            }
+        }
+        
+        // Tezkor summa
+        function setAmount(currency, amount) {
+            if (currency === 'usd') {
+                document.getElementById('paidUSD').value = amount;
+            }
+            calculateTotal();
+        }
+        
+        // To'liq to'lov
+        function setFullAmount() {
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            document.getElementById('paidUSD').value = price;
+            calculateTotal();
+        }
+        
+        // Savdo qo'shish
+        document.getElementById('saleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!currentCustomer) {
+                alert('❌ Avval mijozni tanlang!');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saqlanmoqda...';
+            
+            const saleData = {
+                saleId: Math.floor(10000 + Math.random() * 90000),
+                branchId: cashierData.branchId,
+                cashierId: cashierData.cashierId,
+                cashierName: cashierData.name,
+                customerId: currentCustomer.customerId,
+                customerName: currentCustomer.name,
+                product: document.getElementById('product').value,
+                price: parseFloat(document.getElementById('price').value),
+                paidUSD: parseFloat(document.getElementById('paidUSD').value) || 0,
+                paidUZS: 0,
+                totalPaidUSD: parseFloat(document.getElementById('paidUSD').value) || 0,
+                exchangeRate: 12500,
+                date: new Date().toLocaleDateString('uz-UZ'),
+                time: new Date().toLocaleTimeString('uz-UZ')
+            };
+            
+            try {
+                const response = await fetch('/api/cashier-sales', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(saleData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Savdo muvaffaqiyatli saqlandi!');
+                    location.href = 'cashier-simple.html';
+                } else {
+                    alert('❌ Xatolik: ' + data.error);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '💾 SAVDONI SAQLASH';
+                }
+            } catch (error) {
+                alert('❌ Server bilan aloqa yo\'q!');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '💾 SAVDONI SAQLASH';
+            }
+        });
+    </script>
+    <script src="mobile-enhancements.js"></script>
+    <script src="cashier-sidebar-loader.js"></script>
+</body>
+</html>

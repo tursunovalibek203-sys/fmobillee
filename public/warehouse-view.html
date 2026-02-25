@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ombor - Ko'rish</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 20%, #1d4ed8 40%, #1e40af 60%, #1e3a8a 80%, #1e3a8a 100%) !important;
+    }
+    
+    .warehouse-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    
+    .product-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .product-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+    
+    .product-info {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 4px 0;
+    }
+    
+    .product-stock {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 12px;
+    }
+    
+    .stock-ok {
+      color: #059669;
+    }
+    
+    .stock-low {
+      color: #dc2626;
+    }
+    
+    .readonly-badge {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="card header-card">
+      <div class="header-content">
+        <div>
+          <h1>🏭 Ombor - Ko'rish</h1>
+          <p class="subtitle" id="todayDate"></p>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="settings-btn" onclick="goBack()">
+            <span>←</span>
+            <span>Orqaga</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Readonly Notice -->
+    <div class="readonly-badge">
+      👁️ Faqat ko'rish rejimi - Tahrirlash ruxsati yo'q
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-icon">📦</div>
+        <div class="stat-content">
+          <p class="stat-label">Jami mahsulotlar</p>
+          <p class="stat-value" id="totalProducts">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+          <p class="stat-label">Omborda bor</p>
+          <p class="stat-value" id="inStockProducts">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card red">
+        <div class="stat-icon">⚠️</div>
+        <div class="stat-content">
+          <p class="stat-label">Kam qolgan</p>
+          <p class="stat-value" id="lowStockProducts">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-icon">💰</div>
+        <div class="stat-content">
+          <p class="stat-label">Ombor qiymati</p>
+          <p class="stat-value" id="totalValue">0 so'm</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="card">
+      <input type="text" class="search-input" placeholder="🔍 Mahsulot qidirish (nom, barcode, IMEI)..." id="searchInput" oninput="searchProducts()">
+    </div>
+
+    <!-- Products Grid -->
+    <div class="warehouse-grid" id="productsGrid">
+      <p class="empty">Mahsulotlar yuklanmoqda...</p>
+    </div>
+  </div>
+
+  <!-- Product Detail Modal (Read-only) -->
+  <div id="productDetailModal" class="modal">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h2 id="detailProductName">📦 Mahsulot</h2>
+        <button class="modal-close" onclick="closeProductDetailModal()">×</button>
+      </div>
+      
+      <div id="productDetailContent"></div>
+      
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeProductDetailModal()">Yopish</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="warehouse-view.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

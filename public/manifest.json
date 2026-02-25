@@ -6,7 +6,7 @@
   "display": "standalone",
   "background_color": "#3b82f6",
   "theme_color": "#1d4ed8",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "scope": "/",
   "icons": [
     {
@@ -26,6 +26,7 @@
   "lang": "uz",
   "dir": "ltr",
   "prefer_related_applications": false,
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "shortcuts": [
     {
       "name": "Yangi mijoz",
@@ -35,6 +36,30 @@
       "icons": [
         {
           "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E👤%3C/text%3E%3C/svg%3E",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Kassir Panel",
+      "short_name": "Kassir",
+      "description": "Kassir paneliga kirish",
+      "url": "/cashier-simple.html",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💼%3C/text%3E%3C/svg%3E",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Admin Panel",
+      "short_name": "Admin",
+      "description": "Admin paneliga kirish",
+      "url": "/admin-dashboard.html",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⚙️%3C/text%3E%3C/svg%3E",
           "sizes": "96x96"
         }
       ]

@@ -1,0 +1,145 @@
+<div class="cashier-sidebar">
+    <div class="sidebar-header">
+        <h2>💼 Kassir Panel</h2>
+        <p id="sidebarCashierInfo">
+            <span id="sidebarCashierName">-</span><br>
+            <small id="sidebarBranchName">-</small>
+        </p>
+    </div>
+    <ul class="sidebar-menu">
+        <li class="menu-section">Asosiy</li>
+        <li><a href="cashier-dashboard-pro.html" id="menu-dashboard"><span>📊</span> Dashboard</a></li>
+        <li><a href="cashier-new.html" id="menu-new-sale"><span>🛒</span> Yangi Savdo</a></li>
+        <li><a href="cashier-quick-sale.html" id="menu-quick"><span>⚡</span> Tezkor Savdo</a></li>
+        
+        <li class="menu-section">Savdolar</li>
+        <li><a href="cashier-history-enhanced.html" id="menu-history"><span>📋</span> Savdo Tarixi</a></li>
+        <li><a href="cashier-transactions.html" id="menu-transactions"><span>💳</span> Tranzaksiyalar</a></li>
+        <li><a href="cashier-advanced.html" id="menu-advanced"><span>🎯</span> Kengaytirilgan</a></li>
+        
+        <li class="menu-section">Mijozlar</li>
+        <li><a href="customer-search.html" id="menu-customers"><span>👥</span> Mijozlar</a></li>
+        <li><a href="#" onclick="showAddCustomer(); return false;"><span>➕</span> Yangi Mijoz</a></li>
+        
+        <li class="menu-section">Hisobotlar</li>
+        <li><a href="cashier-report.html" id="menu-report"><span>📈</span> Kunlik Hisobot</a></li>
+        <li><a href="cashier-daily-report.html" id="menu-daily"><span>📅</span> Umumiy Hisobot</a></li>
+        
+        <li class="menu-section">Boshqalar</li>
+        <li><a href="#" onclick="showHandover(); return false;"><span>💵</span> Kirim Berish</a></li>
+        <li><a href="#" onclick="showBalance(); return false;"><span>💰</span> Balans</a></li>
+        <li><a href="#" onclick="cashierLogout(); return false;"><span>🚪</span> Chiqish</a></li>
+    </ul>
+</div>
+
+<script>
+// Kassir sidebar ma'lumotlarini yuklash
+(function() {
+    const cashierData = localStorage.getItem('cashierData');
+    if (cashierData) {
+        try {
+            const data = JSON.parse(cashierData);
+            const nameEl = document.getElementById('sidebarCashierName');
+            const branchEl = document.getElementById('sidebarBranchName');
+            
+            if (nameEl) nameEl.textContent = data.name || '-';
+            if (branchEl) branchEl.textContent = data.branchName || 'Asosiy Filial';
+            
+            // Active menyu elementini belgilash
+            const currentPage = window.location.pathname.split('/').pop();
+            const menuMap = {
+                'cashier-new.html': 'menu-new-sale',
+                'cashier-dashboard-pro.html': 'menu-dashboard',
+                'cashier-history-enhanced.html': 'menu-history',
+                'cashier-report.html': 'menu-report',
+                'cashier-quick-sale.html': 'menu-quick',
+                'cashier-transactions.html': 'menu-transactions',
+                'cashier-advanced.html': 'menu-advanced',
+                'customer-search.html': 'menu-customers',
+                'cashier-daily-report.html': 'menu-daily'
+            };
+            
+            const activeMenuId = menuMap[currentPage];
+            if (activeMenuId) {
+                const activeEl = document.getElementById(activeMenuId);
+                if (activeEl) activeEl.classList.add('active');
+            }
+        } catch (e) {
+            console.error('Kassir ma\'lumotlarini yuklashda xato:', e);
+        }
+    }
+})();
+
+// Kirim berish
+function showHandover() {
+    const cashierData = localStorage.getItem('cashierData');
+    if (cashierData) {
+        const data = JSON.parse(cashierData);
+        window.location.href = `cashier-handover.html?cashierId=${data.cashierId}`;
+    } else {
+        alert('Kassir ma\'lumotlari topilmadi!');
+    }
+}
+
+// Chiqish
+function cashierLogout() {
+    if (confirm('Tizimdan chiqmoqchimisiz?')) {
+        localStorage.removeItem('cashierData');
+        window.location.href = 'cashier-login-enhanced.html';
+    }
+}
+
+// Yangi mijoz qo'shish
+function showAddCustomer() {
+    const name = prompt('Mijoz ismi:');
+    if (!name) return;
+    
+    const phone = prompt('Telefon raqami:');
+    if (!phone) return;
+    
+    const cashierData = JSON.parse(localStorage.getItem('cashierData'));
+    
+    fetch('/api/customers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: name,
+            phone: phone,
+            branchId: cashierData.branchId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Mijoz muvaffaqiyatli qo\'shildi!\nID: ' + data.customer.customerId);
+        } else {
+            alert('❌ Xato: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('❌ Xato: ' + error.message);
+    });
+}
+
+// Balansni ko'rsatish
+function showBalance() {
+    const cashierData = JSON.parse(localStorage.getItem('cashierData'));
+    
+    fetch(`/api/cashier-stats?cashierId=${cashierData.cashierId}&date=${new Date().toLocaleDateString('uz-UZ')}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const stats = data.stats;
+                alert(`💰 Bugungi Balans:\n\n` +
+                      `Savdolar: ${stats.totalSales} ta\n` +
+                      `Daromad: $${stats.totalRevenue.toFixed(2)}\n` +
+                      `To'lovlar: $${stats.totalPayments.toFixed(2)}\n` +
+                      `Mijozlar: ${stats.totalCustomers} ta\n` +
+                      `Qarz: $${stats.totalDebt.toFixed(2)}`);
+            }
+        })
+        .catch(error => {
+            alert('❌ Xato: ' + error.message);
+        });
+}
+</script>

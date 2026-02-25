@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Yangi Savdo - Kassir</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-professional.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+        }
+
+        .sale-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .sale-header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sale-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .sale-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .customer-select {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        .customer-selected {
+            background: #10b981;
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-search {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 100;
+            margin-top: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-item {
+            padding: 16px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-item:hover {
+            background: #f9fafb;
+        }
+
+        .payment-section {
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 20px;
+        }
+
+        .currency-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .currency-tab {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .currency-tab.active {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .summary-box {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        .summary-total {
+            font-size: 24px;
+            font-weight: 900;
+            color: #059669;
+            padding-top: 12px;
+            border-top: 2px solid #fbbf24;
+        }
+
+        @media (max-width: 768px) {
+            .sale-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="sale-container">
+        <!-- Header -->
+        <div class="sale-header">
+            <div>
+                <h1 style="margin: 0; color: white; font-size: 32px; font-weight: 900;">🛍️ Yangi Savdo</h1>
+                <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9);" id="cashierName"></p>
+            </div>
+            <button class="settings-btn" onclick="window.location.href='cashier-dashboard.html'" style="background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.3);">
+                <span>←</span>
+                <span>Orqaga</span>
+            </button>
+        </div>
+
+        <!-- Sale Grid -->
+        <div class="sale-grid">
+            <!-- Left: Customer & Product -->
+            <div class="sale-card">
+                <h2 style="margin: 0 0 20px 0;">1️⃣ Mijoz va Mahsulot</h2>
+
+                <!-- Customer Selection -->
+                <div id="customerSelectBox" class="customer-select">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">👤 Mijozni tanlang</label>
+                    <input type="text" id="customerSearch" placeholder="🔍 Mijoz qidirish..." 
+                           style="width: 100%; padding: 14px; border: 2px solid #3b82f6; border-radius: 12px;"
+                           oninput="searchCustomers()">
+                    <div id="customerResults" style="margin-top: 12px;"></div>
+                </div>
+
+                <div id="customerSelected" class="customer-selected" style="display: none;">
+                    <div>
+                        <div style="font-size: 18px; font-weight: 700;" id="selectedCustomerName"></div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-top: 4px;" id="selectedCustomerInfo"></div>
+                    </div>
+                    <button onclick="clearCustomer()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        Boshqa mijoz
+                    </button>
+                </div>
+
+                <!-- Product Search -->
+                <div class="product-search">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">📦 Mahsulot qidirish</label>
+                    <input type="text" id="productSearch" placeholder="🔍 IMEI, Barcode yoki nomi..." 
+                           style="width: 100%; padding: 14px; border: 2px solid #8b5cf6; border-radius: 12px;"
+                           oninput="searchProducts()">
+                    <div id="productResults" class="search-results" style="display: none;"></div>
+                </div>
+
+                <!-- Selected Product -->
+                <div id="selectedProductBox" style="display: none; background: #f0f9ff; padding: 20px; border-radius: 16px; margin-top: 16px;">
+                    <h3 style="margin: 0 0 12px 0; color: #1e40af;">✅ Tanlangan mahsulot</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 18px; font-weight: 700; color: #111827;" id="selectedProductName"></div>
+                            <div style="font-size: 14px; color: #6b7280; margin-top: 4px;" id="selectedProductInfo"></div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 24px; font-weight: 900; color: #059669;" id="selectedProductPrice"></div>
+                            <button onclick="clearProduct()" style="margin-top: 8px; background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                                O'chirish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Payment -->
+            <div class="sale-card">
+                <h2 style="margin: 0 0 20px 0;">2️⃣ To'lov</h2>
+
+                <!-- Currency Tabs -->
+                <div class="currency-tabs">
+                    <div class="currency-tab active" onclick="selectCurrency('USD')" id="tabUSD">
+                        💵 Dollar
+                    </div>
+                    <div class="currency-tab" onclick="selectCurrency('UZS')" id="tabUZS">
+                        💰 So'm
+                    </div>
+                    <div class="currency-tab" onclick="selectCurrency('BOTH')" id="tabBOTH">
+                        💱 Ikkalasi
+                    </div>
+                </div>
+
+                <!-- Payment Inputs -->
+                <div class="payment-section">
+                    <div id="usdPayment" style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">💵 Dollar to'lov</label>
+                        <input type="number" id="paidUSD" placeholder="0.00" step="0.01" 
+                               style="width: 100%; padding: 14px; border: 2px solid #10b981; border-radius: 12px; font-size: 18px; font-weight: 700;"
+                               oninput="calculateTotal()">
+                    </div>
+
+                    <div id="uzsPayment" style="display: none; margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">💰 So'm to'lov</label>
+                        <input type="number" id="paidUZS" placeholder="0" step="1000" 
+                               style="width: 100%; padding: 14px; border: 2px solid #10b981; border-radius: 12px; font-size: 18px; font-weight: 700;"
+                               oninput="calculateTotal()">
+                        <div style="margin-top: 8px; font-size: 14px; color: #6b7280;">
+                            Kurs: 1 USD = <span id="exchangeRate">12,500</span> so'm
+                            <button onclick="changeExchangeRate()" style="margin-left: 8px; background: #3b82f6; color: white; border: none; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">
+                                O'zgartirish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="summary-box">
+                    <h3 style="margin: 0 0 12px 0; color: #92400e;">📊 Hisob</h3>
+                    <div class="summary-row">
+                        <span>Mahsulot narxi:</span>
+                        <span style="font-weight: 700;" id="summaryPrice">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>To'lov (USD):</span>
+                        <span style="font-weight: 700; color: #10b981;" id="summaryPaidUSD">$0.00</span>
+                    </div>
+                    <div class="summary-row" id="summaryUZSRow" style="display: none;">
+                        <span>To'lov (So'm):</span>
+                        <span style="font-weight: 700; color: #10b981;" id="summaryPaidUZS">0 so'm</span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span>Qarz:</span>
+                        <span id="summaryDebt">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button onclick="submitSale()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: all 0.3s;">
+                    ✅ Savdoni Saqlash
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="cashier-sale.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📦 Ombor Ogohlantirishlari - Professional</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .alerts-grid {
+      display: grid;
+      gap: 20px;
+    }
+    
+    .alert-card {
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      border-left: 4px solid #ef4444;
+      transition: all 0.3s;
+    }
+    
+    .alert-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .alert-card.warning {
+      border-left-color: #f59e0b;
+    }
+    
+    .alert-card.critical {
+      border-left-color: #ef4444;
+      background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+    }
+    
+    .alert-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+    
+    .alert-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .alert-badge.critical {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .alert-badge.warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .product-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+    
+    .product-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .detail-item {
+      background: #f9fafb;
+      padding: 12px;
+      border-radius: 10px;
+    }
+    
+    .detail-label {
+      font-size: 11px;
+      color: #6b7280;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    
+    .detail-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+    }
+    
+    .alert-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .action-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .order-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+    
+    .order-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .dismiss-btn {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    
+    .dismiss-btn:hover {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-box {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      border: 1px solid #f3f4f6;
+    }
+    
+    .stat-box.red {
+      border-left: 4px solid #ef4444;
+    }
+    
+    .stat-box.orange {
+      border-left: 4px solid #f59e0b;
+    }
+    
+    .stat-box.green {
+      border-left: 4px solid #10b981;
+    }
+    
+    .filter-tabs-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      background: white;
+      padding: 8px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    
+    .filter-tab-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .filter-tab-btn.active {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="card header-card">
+      <div class="header-content">
+        <div>
+          <h1>📦 Ombor Ogohlantirishlari</h1>
+          <p class="subtitle" id="todayDate"></p>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="settings-btn" onclick="window.location.href='1.html'">
+            <span>←</span>
+            <span>Orqaga</span>
+          </button>
+          <button class="settings-btn" onclick="refreshAlerts()">
+            <span>🔄</span>
+            <span>Yangilash</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-box red">
+        <div class="stat-label">🚨 Kritik</div>
+        <div class="stat-value" id="criticalCount">0</div>
+        <div class="stat-sub">Tugagan mahsulotlar</div>
+      </div>
+      
+      <div class="stat-box orange">
+        <div class="stat-label">⚠️ Ogohlantirish</div>
+        <div class="stat-value" id="warningCount">0</div>
+        <div class="stat-sub">Kam qolgan mahsulotlar</div>
+      </div>
+      
+      <div class="stat-box green">
+        <div class="stat-label">✅ Yaxshi</div>
+        <div class="stat-value" id="goodCount">0</div>
+        <div class="stat-sub">Yetarli mahsulotlar</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-tabs-row">
+      <button class="filter-tab-btn active" onclick="filterAlerts('all')">
+        📋 Barchasi
+      </button>
+      <button class="filter-tab-btn" onclick="filterAlerts('critical')">
+        🚨 Kritik
+      </button>
+      <button class="filter-tab-btn" onclick="filterAlerts('warning')">
+        ⚠️ Ogohlantirish
+      </button>
+      <button class="filter-tab-btn" onclick="filterAlerts('good')">
+        ✅ Yaxshi
+      </button>
+    </div>
+
+    <!-- Alerts List -->
+    <div class="alerts-grid" id="alertsList"></div>
+  </div>
+
+  <!-- Order Modal -->
+  <div id="orderModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📦 Buyurtma berish</h2>
+        <button class="modal-close" onclick="closeOrderModal()">×</button>
+      </div>
+      
+      <div style="background: #f9fafb; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+        <p style="font-weight: 700; color: #111827; margin-bottom: 4px;" id="orderProductName"></p>
+        <p style="font-size: 13px; color: #6b7280;" id="orderProductDetails"></p>
+      </div>
+      
+      <div class="form-group">
+        <label>Buyurtma miqdori</label>
+        <input type="number" id="orderQuantity" placeholder="Miqdor" min="1">
+      </div>
+      
+      <div class="form-group">
+        <label>Yetkazib beruvchi</label>
+        <input type="text" id="orderSupplier" placeholder="Yetkazib beruvchi nomi">
+      </div>
+      
+      <div class="form-group">
+        <label>Izoh (ixtiyoriy)</label>
+        <textarea id="orderNotes" rows="3" placeholder="Qo'shimcha ma'lumot..."></textarea>
+      </div>
+      
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeOrderModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="submitOrder()">
+          <span>✓</span>
+          Buyurtma berish
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="inventory-alerts.js"></script>
+</body>
+</html>

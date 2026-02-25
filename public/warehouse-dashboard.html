@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ombor Dashboard</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f3f4f6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 36px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      color: #374151;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #e5e7eb;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 20px;
+      margin-bottom: 15px;
+      background: #f9fafb;
+      border-radius: 10px;
+      border-left: 4px solid #667eea;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -24px;
+      top: 25px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #667eea;
+      border: 3px solid white;
+    }
+
+    .timeline-item.sold {
+      border-left-color: #10b981;
+    }
+
+    .timeline-item.sold::before {
+      background: #10b981;
+    }
+
+    .timeline-item.available {
+      border-left-color: #3b82f6;
+    }
+
+    .timeline-item.available::before {
+      background: #3b82f6;
+    }
+
+    .timeline-date {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .timeline-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .timeline-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .detail-item strong {
+      color: #374151;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-available {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .status-sold {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-reserved {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 10px 20px;
+      border: 2px solid #e5e7eb;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+    }
+
+    .filter-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    .filter-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 15px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6b7280;
+    }
+
+    .empty-state-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .timeline-item {
+      animation: fadeIn 0.5s ease-out;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📦 Ombor Dashboard</h1>
+      <p>Real-time ombor monitoring va tarix</p>
+    </div>
+
+    <!-- Statistika -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-label">Jami Dona</div>
+        <div class="stat-value" id="totalItems">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-label">Mavjud Dona</div>
+        <div class="stat-value" id="availableItems">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-label">Sotilgan Dona</div>
+        <div class="stat-value" id="soldItems">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">💵</div>
+        <div class="stat-label">Mavjud Qiymat</div>
+        <div class="stat-value" id="totalValue">$0</div>
+      </div>
+    </div>
+
+    <!-- Foyda Statistikasi -->
+    <div class="stats-grid">
+      <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
+        <div class="stat-icon">💎</div>
+        <div class="stat-label" style="color: rgba(255,255,255,0.9);">Oylik Foyda</div>
+        <div class="stat-value" style="color: white;" id="monthlyProfit">$0</div>
+        <small style="opacity: 0.9;" id="monthlyProfitPercent">0% margin</small>
+      </div>
+
+      <div class="stat-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">
+        <div class="stat-icon">📊</div>
+        <div class="stat-label" style="color: rgba(255,255,255,0.9);">Oylik Savdo</div>
+        <div class="stat-value" style="color: white;" id="monthlySales">$0</div>
+        <small style="opacity: 0.9;" id="monthlySalesCount">0 dona</small>
+      </div>
+
+      <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">
+        <div class="stat-icon">💸</div>
+        <div class="stat-label" style="color: rgba(255,255,255,0.9);">Oylik Xarajat</div>
+        <div class="stat-value" style="color: white;" id="monthlyCost">$0</div>
+        <small style="opacity: 0.9;" id="monthlyCostCount">0 dona sotib olindi</small>
+      </div>
+
+      <div class="stat-card" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white;">
+        <div class="stat-icon">📈</div>
+        <div class="stat-label" style="color: rgba(255,255,255,0.9);">O'rtacha Foyda</div>
+        <div class="stat-value" style="color: white;" id="avgProfit">$0</div>
+        <small style="opacity: 0.9;">har bir dona uchun</small>
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="card">
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterItems('all')">
+          Barchasi
+        </button>
+        <button class="filter-btn" onclick="filterItems('available')">
+          ✅ Mavjud
+        </button>
+        <button class="filter-btn" onclick="filterItems('sold')">
+          💰 Sotilgan
+        </button>
+        <button class="filter-btn" onclick="filterItems('today')">
+          📅 Bugun
+        </button>
+        <div class="search-box">
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="🔍 IMEI, mahsulot nomi yoki mijoz qidirish..."
+            oninput="searchItems()"
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="card">
+      <h2>📋 Ombor Tarixi</h2>
+      <div class="timeline" id="timeline">
+        <div class="empty-state">
+          <div class="empty-state-icon">📦</div>
+          <p>Yuklanmoqda...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000';
+    let allItems = [];
+    let currentFilter = 'all';
+
+    // Ma'lumotlarni yuklash
+    async function loadData() {
+      try {
+        const response = await fetch(`${API_URL}/api/warehouse/items`);
+        const data = await response.json();
+        
+        if (data.success) {
+          allItems = data.items;
+          updateStats();
+          displayTimeline(allItems);
+        }
+      } catch (error) {
+        console.error('Xato:', error);
+        document.getElementById('timeline').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">❌</div>
+            <p>Ma'lumotlarni yuklashda xatolik</p>
+          </div>
+        `;
+      }
+    }
+
+    // Statistikani yangilash
+    function updateStats() {
+      const total = allItems.length;
+      const available = allItems.filter(item => item.status === 'available').length;
+      const sold = allItems.filter(item => item.status === 'sold').length;
+      const totalValue = allItems
+        .filter(item => item.status === 'available')
+        .reduce((sum, item) => sum + (item.sellPrice || 0), 0);
+
+      document.getElementById('totalItems').textContent = total;
+      document.getElementById('availableItems').textContent = available;
+      document.getElementById('soldItems').textContent = sold;
+      document.getElementById('totalValue').textContent = '$' + totalValue.toFixed(2);
+
+      // Oylik statistika
+      calculateMonthlyStats();
+    }
+
+    // Oylik statistikani hisoblash
+    function calculateMonthlyStats() {
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+
+      // Shu oyda sotilgan mahsulotlar
+      const monthlySoldItems = allItems.filter(item => {
+        if (item.status !== 'sold' || !item.soldDate) return false;
+        const soldDate = new Date(item.soldDate);
+        return soldDate.getMonth() === currentMonth && soldDate.getFullYear() === currentYear;
+      });
+
+      // Shu oyda sotib olingan mahsulotlar
+      const monthlyPurchasedItems = allItems.filter(item => {
+        const purchaseDate = new Date(item.createdAt || item.purchaseDate);
+        return purchaseDate.getMonth() === currentMonth && purchaseDate.getFullYear() === currentYear;
+      });
+
+      // Oylik savdo (sotilgan mahsulotlar narxi)
+      const monthlySalesAmount = monthlySoldItems.reduce((sum, item) => 
+        sum + (item.sellPrice || 0), 0
+      );
+
+      // Oylik xarajat (sotib olingan mahsulotlar narxi)
+      const monthlyCostAmount = monthlyPurchasedItems.reduce((sum, item) => 
+        sum + (item.buyPrice || 0), 0
+      );
+
+      // Oylik foyda (sotilgan mahsulotlarning foyda summasi)
+      const monthlyProfitAmount = monthlySoldItems.reduce((sum, item) => 
+        sum + ((item.sellPrice || 0) - (item.buyPrice || 0)), 0
+      );
+
+      // Foyda foizi
+      const profitMargin = monthlySalesAmount > 0 
+        ? ((monthlyProfitAmount / monthlySalesAmount) * 100).toFixed(1)
+        : 0;
+
+      // O'rtacha foyda (har bir dona uchun)
+      const avgProfitPerItem = monthlySoldItems.length > 0
+        ? monthlyProfitAmount / monthlySoldItems.length
+        : 0;
+
+      // Ko'rsatish
+      document.getElementById('monthlyProfit').textContent = '$' + monthlyProfitAmount.toFixed(2);
+      document.getElementById('monthlyProfitPercent').textContent = profitMargin + '% margin';
+      
+      document.getElementById('monthlySales').textContent = '$' + monthlySalesAmount.toFixed(2);
+      document.getElementById('monthlySalesCount').textContent = monthlySoldItems.length + ' dona sotildi';
+      
+      document.getElementById('monthlyCost').textContent = '$' + monthlyCostAmount.toFixed(2);
+      document.getElementById('monthlyCostCount').textContent = monthlyPurchasedItems.length + ' dona sotib olindi';
+      
+      document.getElementById('avgProfit').textContent = '$' + avgProfitPerItem.toFixed(2);
+    }
+
+    // Timeline ko'rsatish
+    function displayTimeline(items) {
+      const timeline = document.getElementById('timeline');
+      
+      if (items.length === 0) {
+        timeline.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <p>Hech qanday mahsulot topilmadi</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Sanaga ko'ra saralash (yangi birinchi)
+      const sortedItems = [...items].sort((a, b) => 
+        new Date(b.createdAt || b.purchaseDate) - new Date(a.createdAt || a.purchaseDate)
+      );
+
+      timeline.innerHTML = sortedItems.map(item => {
+        const date = new Date(item.createdAt || item.purchaseDate);
+        const dateStr = date.toLocaleDateString('uz-UZ');
+        const timeStr = date.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
+        
+        const statusClass = item.status === 'sold' ? 'sold' : 'available';
+        const statusText = item.status === 'sold' ? 'Sotilgan' : 'Mavjud';
+        const statusBadgeClass = item.status === 'sold' ? 'status-sold' : 'status-available';
+
+        return `
+          <div class="timeline-item ${statusClass}">
+            <div class="timeline-date">
+              📅 ${dateStr} • 🕐 ${timeStr}
+            </div>
+            <div class="timeline-title">
+              ${item.productName}
+              <span class="status-badge ${statusBadgeClass}">${statusText}</span>
+            </div>
+            <div class="timeline-details">
+              <div class="detail-item">
+                <span>📱 IMEI:</span>
+                <strong>${item.imei || 'N/A'}</strong>
+              </div>
+              <div class="detail-item">
+                <span>💰 Narx:</span>
+                <strong>$${(item.sellPrice || 0).toFixed(2)}</strong>
+              </div>
+              ${item.status === 'sold' ? `
+                <div class="detail-item">
+                  <span>👤 Mijoz:</span>
+                  <strong>${item.soldTo || 'N/A'}</strong>
+                </div>
+                <div class="detail-item">
+                  <span>📅 Sotilgan:</span>
+                  <strong>${item.soldDate ? new Date(item.soldDate).toLocaleDateString('uz-UZ') : 'N/A'}</strong>
+                </div>
+              ` : ''}
+              ${item.supplier ? `
+                <div class="detail-item">
+                  <span>🏢 Yetkazib beruvchi:</span>
+                  <strong>${item.supplier}</strong>
+                </div>
+              ` : ''}
+              ${item.serialNumber ? `
+                <div class="detail-item">
+                  <span>🔢 Serial:</span>
+                  <strong>${item.serialNumber}</strong>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Filter
+    function filterItems(filter) {
+      currentFilter = filter;
+      
+      // Button active qilish
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      let filtered = allItems;
+
+      if (filter === 'available') {
+        filtered = allItems.filter(item => item.status === 'available');
+      } else if (filter === 'sold') {
+        filtered = allItems.filter(item => item.status === 'sold');
+      } else if (filter === 'today') {
+        const today = new Date().toDateString();
+        filtered = allItems.filter(item => {
+          const itemDate = new Date(item.createdAt || item.purchaseDate).toDateString();
+          return itemDate === today;
+        });
+      }
+
+      displayTimeline(filtered);
+    }
+
+    // Qidiruv
+    function searchItems() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      
+      if (!query) {
+        filterItems(currentFilter);
+        return;
+      }
+
+      const filtered = allItems.filter(item => {
+        return (
+          (item.productName && item.productName.toLowerCase().includes(query)) ||
+          (item.imei && item.imei.toLowerCase().includes(query)) ||
+          (item.soldTo && item.soldTo.toLowerCase().includes(query)) ||
+          (item.supplier && item.supplier.toLowerCase().includes(query))
+        );
+      });
+
+      displayTimeline(filtered);
+    }
+
+    // Auto refresh har 30 soniyada
+    setInterval(loadData, 30000);
+
+    // Dastlabki yuklash
+    loadData();
+  </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

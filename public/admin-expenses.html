@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Xarajatlar Boshqaruvi</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 1.8em;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-back {
+            background: #6b7280;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #374151;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        table th {
+            background: #f3f4f6;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        table tr:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.4em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            table th,
+            table td {
+                padding: 8px;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💸 Xarajatlar Boshqaruvi</h1>
+            <div>
+                <button class="btn btn-back" onclick="location.href='admin-simple.html'">← Orqaga</button>
+            </div>
+        </div>
+        
+        <!-- Statistika -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalExpenses">$0</div>
+                <div class="stat-label">Jami Xarajat</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalRevenue">$0</div>
+                <div class="stat-label">Jami Daromad</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="netProfit">$0</div>
+                <div class="stat-label">Sof Foyda</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="profitMargin">0%</div>
+                <div class="stat-label">Foyda Marjasi</div>
+            </div>
+        </div>
+        
+        <!-- Xarajat qo'shish -->
+        <div class="section">
+            <h3>➕ Yangi Xarajat</h3>
+            <form id="expenseForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Kategoriya *</label>
+                        <select id="category" required>
+                            <option value="">Tanlang...</option>
+                            <option value="Ish haqi">Ish haqi</option>
+                            <option value="Ijara">Ijara</option>
+                            <option value="Kommunal">Kommunal</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Mahsulot sotib olish">Mahsulot sotib olish</option>
+                            <option value="Ta'mirlash">Ta'mirlash</option>
+                            <option value="Ofis jihozlari">Ofis jihozlari</option>
+                            <option value="Internet va telefon">Internet va telefon</option>
+                            <option value="Soliq">Soliq</option>
+                            <option value="Boshqa">Boshqa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Summa (USD) *</label>
+                        <input type="number" id="amount" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>To'lov usuli</label>
+                        <select id="paymentMethod">
+                            <option value="cash">Naqd</option>
+                            <option value="card">Karta</option>
+                            <option value="bank">Bank</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tavsif</label>
+                    <textarea id="description" placeholder="Xarajat haqida qo'shimcha ma'lumot..."></textarea>
+                </div>
+                <button type="submit" class="btn">💾 Saqlash</button>
+            </form>
+        </div>
+        
+        <!-- Xarajatlar ro'yxati -->
+        <div class="section">
+            <h3>📋 Xarajatlar Tarixi</h3>
+            <div style="overflow-x: auto;">
+                <table id="expensesTable">
+                    <thead>
+                        <tr>
+                            <th>Sana</th>
+                            <th>Kategoriya</th>
+                            <th>Summa</th>
+                            <th>To'lov</th>
+                            <th>Tavsif</th>
+                            <th>Amal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expensesBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #6b7280;">Yuklanmoqda...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Login tekshiruvi
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = '/login.html';
+        }
+        
+        // Statistikani yuklash
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/profit');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('totalExpenses').textContent = '$' + data.profit.totalExpenses.toFixed(2);
+                    document.getElementById('totalRevenue').textContent = '$' + data.profit.totalRevenue.toFixed(2);
+                    document.getElementById('netProfit').textContent = '$' + data.profit.netProfit.toFixed(2);
+                    document.getElementById('profitMargin').textContent = data.profit.profitMargin + '%';
+                    
+                    // Rang o'zgartirish
+                    const profitElement = document.getElementById('netProfit');
+                    profitElement.style.color = data.profit.netProfit >= 0 ? '#10b981' : '#ef4444';
+                }
+            } catch (error) {
+                console.error('Statistika yuklash xatosi:', error);
+            }
+        }
+        
+        // Xarajatlarni yuklash
+        async function loadExpenses() {
+            try {
+                const response = await fetch('/api/expenses');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const tbody = document.getElementById('expensesBody');
+                    
+                    if (data.expenses.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #6b7280;">Xarajatlar yo\'q</td></tr>';
+                        return;
+                    }
+                    
+                    tbody.innerHTML = data.expenses.map(exp => `
+                        <tr>
+                            <td>${exp.date} ${exp.time}</td>
+                            <td><strong>${exp.category}</strong></td>
+                            <td style="font-weight: 700; color: #ef4444;">$${exp.amount.toFixed(2)}</td>
+                            <td>${getPaymentMethodText(exp.paymentMethod)}</td>
+                            <td>${exp.description || '-'}</td>
+                            <td>
+                                <button class="btn-delete" onclick="deleteExpense(${exp.expenseId})">🗑️ O'chirish</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Xarajatlar yuklash xatosi:', error);
+            }
+        }
+        
+        // To'lov usuli matni
+        function getPaymentMethodText(method) {
+            const methods = {
+                'cash': '💵 Naqd',
+                'card': '💳 Karta',
+                'bank': '🏦 Bank'
+            };
+            return methods[method] || method;
+        }
+        
+        // Xarajat qo'shish
+        document.getElementById('expenseForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const category = document.getElementById('category').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const description = document.getElementById('description').value;
+            
+            if (!category || amount <= 0) {
+                alert('❌ Kategoriya va summa to\'g\'ri kiritilmagan!');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/expenses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        category,
+                        amount,
+                        paymentMethod,
+                        description,
+                        addedBy: 'Admin'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Xarajat qo\'shildi!');
+                    document.getElementById('expenseForm').reset();
+                    loadExpenses();
+                    loadStats();
+                } else {
+                    alert('❌ Xatolik: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Server bilan aloqa yo\'q!');
+            }
+        });
+        
+        // Xarajat o'chirish
+        async function deleteExpense(expenseId) {
+            if (!confirm('Bu xarajatni o\'chirmoqchimisiz?')) return;
+            
+            try {
+                const response = await fetch(`/api/expenses/${expenseId}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Xarajat o\'chirildi!');
+                    loadExpenses();
+                    loadStats();
+                } else {
+                    alert('❌ Xatolik!');
+                }
+            } catch (error) {
+                alert('❌ Server bilan aloqa yo\'q!');
+            }
+        }
+        
+        // Sahifa yuklanganda
+        loadStats();
+        loadExpenses();
+        
+        // Har 30 sekundda yangilash
+        setInterval(() => {
+            loadStats();
+            loadExpenses();
+        }, 30000);
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

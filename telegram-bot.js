@@ -6,11 +6,12 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
 // Modellarni import qilish (qayta yaratmaslik uchun)
-let Customer, Sale;
+let Customer, Sale, Branch;
 
-function setModels(customerModel, saleModel) {
+function setModels(customerModel, saleModel, branchModel) {
   Customer = customerModel;
   Sale = saleModel;
+  Branch = branchModel;
 }
 
 // Telegram API functions
@@ -46,7 +47,7 @@ async function sendMessage(chatId, text) {
 async function getUpdates(offset = 0) {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 soniya timeout
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
     
     const response = await fetch(`${API_URL}/getUpdates?offset=${offset}&timeout=25`, {
       signal: controller.signal
@@ -62,13 +63,10 @@ async function getUpdates(offset = 0) {
     return data.ok ? data.result : [];
   } catch (error) {
     if (error.name === 'AbortError') {
-      // Timeout - bu normal, faqat debug rejimida ko'rsatamiz
-      // console.log('⏱️  Timeout (normal)');
+      // Timeout - normal
     } else if (error.message.includes('ECONNRESET') || error.message.includes('ETIMEDOUT')) {
-      // Ulanish xatolari - faqat debug rejimida
-      // console.log('🔌 Ulanish xatosi, qayta ulanilmoqda...');
+      // Ulanish xatolari
     } else {
-      // Faqat haqiqiy xatolarni ko'rsatamiz
       console.error('❌ Telegram API xatosi:', error.message);
     }
     return [];
@@ -100,27 +98,27 @@ async function processMessage(message) {
       if (!customer) {
         console.log(`👤 Yangi mijoz yaratilmoqda: ${fullName}`);
         
-        // Yangi mijoz yaratish
-        let customerId = generateCustomerId();
+        // Filiallarni olish
+        const branches = await Branch.find({ isActive: true });
         
-        // ID takrorlanmasligini ta'minlash
-        while (await Customer.findOne({ customerId })) {
-          customerId = generateCustomerId();
-        }
-        
-        customer = await Customer.create({
-          customerId,
-          name: fullName,
-          chatId: String(chatId),
-          totalDebt: 0
-        });
-        
-        console.log(`✅ Yangi mijoz ro'yxatga olindi: ${fullName} (ID: ${customerId})`);
-      } else {
-        console.log(`👤 Mavjud mijoz topildi: ${customer.name} (ID: ${customer.customerId})`);
-      }
-      
-      const welcomeMsg = `👋 <b>Assalomu alaykum ${customer.name}!</b>
+        if (branches.length === 0) {
+          // Filial yo'q bo'lsa, umumiy mijoz sifatida qo'shish
+          let customerId = generateCustomerId();
+          while (await Customer.findOne({ customerId })) {
+            customerId = generateCustomerId();
+          }
+          
+          customer = await Customer.create({
+            customerId,
+            name: fullName,
+            chatId: String(chatId),
+            branchId: 0,
+            totalDebt: 0
+          });
+          
+          console.log(`✅ Yangi mijoz ro'yxatga olindi: ${fullName} (ID: ${customerId})`);
+          
+          const welcomeMsg = `👋 <b>Assalomu alaykum ${customer.name}!</b>
 
 🆔 <b>Sizning mijoz ID raqamingiz:</b>
 <code>${customer.customerId}</code>
@@ -130,10 +128,112 @@ async function processMessage(message) {
 💡 <b>Buyruqlar:</b>
 /balans - Qarzni ko'rish
 /id - ID ni qayta ko'rish
+/filial - Filialni o'zgartirish
 
 📞 <b>Yordam:</b> Agar muammo bo'lsa, do'kon egasiga murojaat qiling.`;
 
-      await sendMessage(chatId, welcomeMsg);
+          await sendMessage(chatId, welcomeMsg);
+        } else {
+          // Filial tanlash
+          let branchMsg = `👋 <b>Assalomu alaykum ${fullName}!</b>
+
+🏢 <b>Qaysi filialdan xarid qilasiz?</b>
+
+Filial raqamini yuboring:\n\n`;
+          
+          branches.forEach((branch, index) => {
+            branchMsg += `${index + 1}. ${branch.name}\n`;
+            if (branch.address) branchMsg += `   📍 ${branch.address}\n`;
+            branchMsg += `\n`;
+          });
+          
+          branchMsg += `\n💡 Masalan: <code>1</code> yoki <code>2</code> deb yuboring`;
+          
+          await sendMessage(chatId, branchMsg);
+          
+          // Vaqtinchalik mijoz yaratish (filial tanlanmagan)
+          let customerId = generateCustomerId();
+          while (await Customer.findOne({ customerId })) {
+            customerId = generateCustomerId();
+          }
+          
+          await Customer.create({
+            customerId,
+            name: fullName,
+            chatId: String(chatId),
+            branchId: -1, // Filial tanlanmagan
+            totalDebt: 0
+          });
+        }
+      } else {
+        console.log(`👤 Mavjud mijoz topildi: ${customer.name} (ID: ${customer.customerId})`);
+        
+        if (customer.branchId === -1) {
+          // Filial hali tanlanmagan
+          const branches = await Branch.find({ isActive: true });
+          
+          let branchMsg = `🏢 <b>Qaysi filialdan xarid qilasiz?</b>
+
+Filial raqamini yuboring:\n\n`;
+          
+          branches.forEach((branch, index) => {
+            branchMsg += `${index + 1}. ${branch.name}\n`;
+            if (branch.address) branchMsg += `   📍 ${branch.address}\n`;
+            branchMsg += `\n`;
+          });
+          
+          branchMsg += `\n💡 Masalan: <code>1</code> yoki <code>2</code> deb yuboring`;
+          
+          await sendMessage(chatId, branchMsg);
+        } else {
+          const welcomeMsg = `👋 <b>Xush kelibsiz ${customer.name}!</b>
+
+🆔 <b>Sizning mijoz ID raqamingiz:</b>
+<code>${customer.customerId}</code>
+
+📝 <b>Bu ID ni do'konga ayting</b> - yangi daftar ochishda kerak bo'ladi.
+
+💡 <b>Buyruqlar:</b>
+/balans - Qarzni ko'rish
+/id - ID ni qayta ko'rish
+/filial - Filialni o'zgartirish
+
+📞 <b>Yordam:</b> Agar muammo bo'lsa, do'kon egasiga murojaat qiling.`;
+
+          await sendMessage(chatId, welcomeMsg);
+        }
+      }
+    }
+    
+    else if (text === '/filial') {
+      const customer = await Customer.findOne({ chatId: String(chatId) });
+      
+      if (!customer) {
+        await sendMessage(chatId, '❌ Siz tizimda topilmadingiz. /start buyrug\'ini yuboring.');
+        return;
+      }
+      
+      const branches = await Branch.find({ isActive: true });
+      
+      if (branches.length === 0) {
+        await sendMessage(chatId, '❌ Hozircha filiallar mavjud emas.');
+        return;
+      }
+      
+      let branchMsg = `🏢 <b>Filialni tanlang:</b>
+
+Filial raqamini yuboring:\n\n`;
+      
+      branches.forEach((branch, index) => {
+        const current = customer.branchId === branch.branchId ? ' ✅' : '';
+        branchMsg += `${index + 1}. ${branch.name}${current}\n`;
+        if (branch.address) branchMsg += `   📍 ${branch.address}\n`;
+        branchMsg += `\n`;
+      });
+      
+      branchMsg += `\n💡 Masalan: <code>1</code> yoki <code>2</code> deb yuboring`;
+      
+      await sendMessage(chatId, branchMsg);
     }
     
     else if (text === '/id') {
@@ -141,10 +241,17 @@ async function processMessage(message) {
       
       if (!customer) {
         await sendMessage(chatId, '❌ Siz tizimda topilmadingiz. /start buyrug\'ini yuboring.');
+      } else if (customer.branchId === -1) {
+        await sendMessage(chatId, '⚠️ Avval filialni tanlang!\n\n/filial buyrug\'ini yuboring.');
       } else {
+        const branch = await Branch.findOne({ branchId: customer.branchId });
+        const branchName = branch ? branch.name : 'Umumiy';
+        
         const idMsg = `🆔 <b>Sizning mijoz ID raqamingiz:</b>
 
 <code>${customer.customerId}</code>
+
+🏢 <b>Filial:</b> ${branchName}
 
 📝 Bu ID ni do'konga ayting - yangi daftar ochishda kerak bo'ladi.`;
         await sendMessage(chatId, idMsg);
@@ -154,11 +261,12 @@ async function processMessage(message) {
     else if (text === '/balans') {
       const customer = await Customer.findOne({ chatId: String(chatId) });
       
-      // Pul formatini USD ga o'zgartirish
       const formatUSD = (amount) => `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       
       if (!customer) {
         await sendMessage(chatId, '❌ Siz tizimda topilmadingiz.\n\n📝 /start buyrug\'ini yuboring.');
+      } else if (customer.branchId === -1) {
+        await sendMessage(chatId, '⚠️ Avval filialni tanlang!\n\n/filial buyrug\'ini yuboring.');
       } else if (customer.totalDebt <= 0) {
         const balanceMsg = customer.totalDebt < 0 
           ? `✅ <b>Sizning balansingiz</b>
@@ -181,7 +289,7 @@ async function processMessage(message) {
           ? Math.floor((new Date() - customer.firstDebtDate) / (1000 * 60 * 60 * 24))
           : 0;
         
-        const blocked = debtDays >= 10; // 10 kun bloklash
+        const blocked = debtDays >= 10;
         
         let balanceMsg = blocked ? '🚫 <b>SIZ BLOKLANGANSIZ!</b>\n\n' : '💰 <b>Sizning balansingiz</b>\n\n';
         balanceMsg += `🆔 Mijoz ID: <code>${customer.customerId}</code>\n`;
@@ -204,6 +312,56 @@ async function processMessage(message) {
       }
     }
     
+    // Filial raqami yuborilgan bo'lsa
+    else if (/^\d+$/.test(text)) {
+      const customer = await Customer.findOne({ chatId: String(chatId) });
+      
+      if (!customer) {
+        await sendMessage(chatId, '❌ Siz tizimda topilmadingiz. /start buyrug\'ini yuboring.');
+        return;
+      }
+      
+      if (customer.branchId !== -1) {
+        // Filial allaqachon tanlangan
+        return;
+      }
+      
+      const branches = await Branch.find({ isActive: true });
+      const branchIndex = parseInt(text) - 1;
+      
+      if (branchIndex < 0 || branchIndex >= branches.length) {
+        await sendMessage(chatId, `❌ Noto'g'ri filial raqami!\n\n1 dan ${branches.length} gacha raqam kiriting.`);
+        return;
+      }
+      
+      const selectedBranch = branches[branchIndex];
+      
+      // Mijozga filialni biriktirish
+      customer.branchId = selectedBranch.branchId;
+      await customer.save();
+      
+      console.log(`✅ Mijoz ${customer.name} filialni tanladi: ${selectedBranch.name}`);
+      
+      const successMsg = `✅ <b>Filial tanlandi!</b>
+
+🏢 <b>Sizning filialingiz:</b> ${selectedBranch.name}
+${selectedBranch.address ? `📍 ${selectedBranch.address}` : ''}
+
+🆔 <b>Sizning mijoz ID raqamingiz:</b>
+<code>${customer.customerId}</code>
+
+📝 <b>Bu ID ni do'konga ayting</b> - yangi daftar ochishda kerak bo'ladi.
+
+💡 <b>Buyruqlar:</b>
+/balans - Qarzni ko'rish
+/id - ID ni qayta ko'rish
+/filial - Filialni o'zgartirish
+
+😊 Xaridlaringiz baxtiyor bo'lsin!`;
+      
+      await sendMessage(chatId, successMsg);
+    }
+    
     else {
       // Noma'lum buyruq
       await sendMessage(chatId, `❓ Noma'lum buyruq: "${text}"
@@ -212,6 +370,7 @@ async function processMessage(message) {
 /start - Boshlash
 /id - ID ko'rish  
 /balans - Qarz ko'rish
+/filial - Filialni o'zgartirish
 
 📞 Yordam kerak bo'lsa, do'kon egasiga murojaat qiling.`);
     }
@@ -221,11 +380,6 @@ async function processMessage(message) {
   }
 }
 
-// Asosiy bot loop
-async function startBot() {
-  return start();
-}
-
 // Bot ishga tushirish
 async function start() {
   if (!BOT_TOKEN) {
@@ -233,19 +387,30 @@ async function start() {
     return;
   }
   
-  console.log('🤖 Telegram bot ishga tushdi...');
+  try {
+    const response = await fetch(`${API_URL}/getMe`);
+    const data = await response.json();
+    
+    if (!data.ok) {
+      console.error('❌ Telegram bot token noto\'g\'ri!');
+      return;
+    }
+    
+    console.log('✅ Telegram bot ulandi:', data.result.username);
+  } catch (error) {
+    console.error('❌ Telegram API ga ulanib bo\'lmadi:', error.message);
+    return;
+  }
+  
   console.log('📡 Xabarlar kutilmoqda...\n');
   
   let offset = 0;
   let errorCount = 0;
-  let maxErrors = 10;
-  let lastErrorTime = 0;
   
   while (true) {
     try {
       const updates = await getUpdates(offset);
       
-      // Muvaffaqiyatli so'rov - xatolar sonini qayta tiklash
       if (errorCount > 0) {
         errorCount = Math.max(0, errorCount - 1);
       }
@@ -257,44 +422,34 @@ async function start() {
         offset = update.update_id + 1;
       }
       
-      // Agar updates bo'sh bo'lsa, biroz kutish
       if (updates.length === 0) {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
       
     } catch (error) {
-      const now = Date.now();
-      
-      // Faqat 5 soniyada bir marta xato xabarini ko'rsatamiz
-      if (now - lastErrorTime > 5000) {
-        errorCount++;
-        console.error(`❌ Bot xatosi (${errorCount}/${maxErrors}):`, error.message);
-        lastErrorTime = now;
+      errorCount++;
+      if (errorCount % 5 === 0) {
+        console.error(`❌ Bot xatosi (${errorCount}):`, error.message);
       }
       
-      // Xatolar ko'p bo'lsa, uzoqroq kutish
-      const waitTime = Math.min(errorCount * 1000, 5000); // Max 5 soniya
+      const waitTime = Math.min(errorCount * 1000, 5000);
       await new Promise(resolve => setTimeout(resolve, waitTime));
       
-      // Juda ko'p xato bo'lsa, ogohlantiramiz
-      if (errorCount >= maxErrors) {
-        console.error('⚠️  Ko\'p xatolar! Internet ulanishini tekshiring.');
-        console.log('⏳ 30 soniya kutilmoqda...\n');
-        errorCount = 0; // Qayta boshlash
-        await new Promise(resolve => setTimeout(resolve, 30000)); // 30 soniya kutish
+      if (errorCount >= 10) {
+        console.error('⚠️  Ko\'p xatolar! 30 soniya kutilmoqda...\n');
+        errorCount = 0;
+        await new Promise(resolve => setTimeout(resolve, 30000));
       }
     }
   }
 }
 
-// Export
 module.exports = {
   start,
   sendMessage,
   setModels
 };
 
-// Agar to'g'ridan-to'g'ri ishga tushirilsa
 if (require.main === module) {
   start();
 }

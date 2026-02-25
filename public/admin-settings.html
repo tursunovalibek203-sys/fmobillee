@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sozlamalar - Admin</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-professional.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #5b21b6 100%);
+        }
+
+        .settings-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .settings-header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .settings-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .setting-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .setting-card h2 {
+            margin: 0 0 20px 0;
+            color: #5b21b6;
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .setting-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid #f3f4f6;
+            align-items: center;
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .setting-description {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .setting-input {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .setting-input input,
+        .setting-input select {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .setting-input button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .setting-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #7c3aed;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 32px;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .setting-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="settings-container">
+        <!-- Header -->
+        <div class="settings-header">
+            <div>
+                <h1 style="margin: 0; color: white; font-size: 32px; font-weight: 900;">⚙️ Tizim Sozlamalari</h1>
+                <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9);">Tizim parametrlarini boshqarish</p>
+            </div>
+            <button class="settings-btn" onclick="window.location.href='admin.html'" style="background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.3);">
+                <span>←</span>
+                <span>Orqaga</span>
+            </button>
+        </div>
+
+        <div class="settings-grid">
+            <!-- Currency Settings -->
+            <div class="setting-card">
+                <h2>💱 Valyuta Sozlamalari</h2>
+                
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Valyuta kursi</div>
+                        <div class="setting-description">1 USD = ? UZS</div>
+                    </div>
+                    <div class="setting-input">
+                        <input type="number" id="exchangeRate" value="12500" step="100" min="1">
+                        <button onclick="saveExchangeRate()">Saqlash</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Asosiy valyuta</div>
+                        <div class="setting-description">Tizimda ishlatiladigan asosiy valyuta</div>
+                    </div>
+                    <div class="setting-input">
+                        <select id="baseCurrency">
+                            <option value="USD">💵 Dollar (USD)</option>
+                            <option value="UZS">💰 So'm (UZS)</option>
+                        </select>
+                        <button onclick="saveBaseCurrency()">Saqlash</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Dual Currency</div>
+                        <div class="setting-description">Dollar va So'm to'lovlarini qo'llab-quvvatlash</div>
+                    </div>
+                    <div class="setting-input">
+                        <div class="toggle-switch active" id="dualCurrencyToggle" onclick="toggleDualCurrency()"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Settings -->
+            <div class="setting-card">
+                <h2>🔧 Tizim Sozlamalari</h2>
+                
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Avtomatik backup</div>
+                        <div class="setting-description">Kunlik avtomatik backup yaratish</div>
+                    </div>
+                    <div class="setting-input">
+                        <div class="toggle-switch active" id="autoBackupToggle" onclick="toggleAutoBackup()"></div>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Backup vaqti</div>
+                        <div class="setting-description">Backup yaratish vaqti (soat)</div>
+                    </div>
+                    <div class="setting-input">
+                        <input type="time" id="backupTime" value="02:00">
+                        <button onclick="saveBackupTime()">Saqlash</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Session timeout</div>
+                        <div class="setting-description">Foydalanuvchi sessiyasi (soat)</div>
+                    </div>
+                    <div class="setting-input">
+                        <input type="number" id="sessionTimeout" value="24" min="1" max="168">
+                        <button onclick="saveSessionTimeout()">Saqlash</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Settings -->
+            <div class="setting-card">
+                <h2>🔔 Bildirishnomalar</h2>
+                
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Telegram bildirishnomalar</div>
+                        <div class="setting-description">Telegram orqali xabar yuborish</div>
+                    </div>
+                    <div class="setting-input">
+                        <div class="toggle-switch active" id="telegramToggle" onclick="toggleTelegram()"></div>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Kam qolgan mahsulotlar</div>
+                        <div class="setting-description">Mahsulot kam qolganda ogohlantirish</div>
+                    </div>
+                    <div class="setting-input">
+                        <div class="toggle-switch active" id="lowStockToggle" onclick="toggleLowStock()"></div>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Minimal miqdor</div>
+                        <div class="setting-description">Kam qolgan deb hisoblanadigan miqdor</div>
+                    </div>
+                    <div class="setting-input">
+                        <input type="number" id="minStock" value="5" min="1">
+                        <button onclick="saveMinStock()">Saqlash</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Katta qarzlar</div>
+                        <div class="setting-description">Katta qarz bo'lganda ogohlantirish</div>
+                    </div>
+                    <div class="setting-input">
+                        <div class="toggle-switch active" id="largeDebtToggle" onclick="toggleLargeDebt()"></div>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Katta qarz miqdori</div>
+                        <div class="setting-description">Katta deb hisoblanadigan qarz ($)</div>
+                    </div>
+                    <div class="setting-input">
+                        <input type="number" id="largeDebtAmount" value="1000" min="100" step="100">
+                        <button onclick="saveLargeDebtAmount()">Saqlash</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display Settings -->
+            <div class="setting-card">
+                <h2>🎨 Ko'rinish Sozlamalari</h2>
+                
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Til</div>
+                        <div class="setting-description">Interfeys tili</div>
+                    </div>
+                    <div class="setting-input">
+                        <select id="language">
+                            <option value="uz">🇺🇿 O'zbekcha</option>
+                            <option value="ru">🇷🇺 Русский</option>
+                            <option value="en">🇬🇧 English</option>
+                        </select>
+                        <button onclick="saveLanguage()">Saqlash</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Sana formati</div>
+                        <div class="setting-description">Sanani ko'rsatish formati</div>
+                    </div>
+                    <div class="setting-input">
+                        <select id="dateFormat">
+                            <option value="DD.MM.YYYY">DD.MM.YYYY</option>
+                            <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                            <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                        </select>
+                        <button onclick="saveDateFormat()">Saqlash</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Sahifadagi elementlar</div>
+                        <div class="setting-description">Bir sahifada ko'rsatiladigan elementlar soni</div>
+                    </div>
+                    <div class="setting-input">
+                        <select id="itemsPerPage">
+                            <option value="10">10</option>
+                            <option value="20" selected>20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <button onclick="saveItemsPerPage()">Saqlash</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save All Button -->
+        <button class="save-btn" onclick="saveAllSettings()">
+            ✅ Barcha Sozlamalarni Saqlash
+        </button>
+    </div>
+
+    <script src="admin-settings.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

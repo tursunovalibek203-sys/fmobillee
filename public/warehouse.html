@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ombor Boshqaruvi</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 20%, #1d4ed8 40%, #1e40af 60%, #1e3a8a 80%, #1e3a8a 100%) !important;
+    }
+    
+    .warehouse-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    
+    .product-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .product-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+    
+    .product-info {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 4px 0;
+    }
+    
+    .product-stock {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 12px;
+    }
+    
+    .stock-ok {
+      color: #059669;
+    }
+    
+    .stock-low {
+      color: #dc2626;
+    }
+    
+    .add-product-btn {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      font-size: 32px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+      transition: all 0.3s;
+      z-index: 100;
+    }
+    
+    .add-product-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 32px rgba(59, 130, 246, 0.5);
+    }
+    
+    .filter-section {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 2px solid #e5e7eb;
+      background: white;
+      color: #6b7280;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .filter-btn.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+    
+    .imei-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #dbeafe;
+      color: #1e40af;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="card header-card">
+      <div class="header-content">
+        <div>
+          <h1>🏭 Ombor Boshqaruvi</h1>
+          <p class="subtitle" id="todayDate"></p>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="settings-btn" onclick="goBack()">
+            <span>←</span>
+            <span>Orqaga</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-icon">📦</div>
+        <div class="stat-content">
+          <p class="stat-label">Jami mahsulotlar</p>
+          <p class="stat-value" id="totalProducts">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+          <p class="stat-label">Omborda bor</p>
+          <p class="stat-value" id="inStockProducts">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card red">
+        <div class="stat-icon">⚠️</div>
+        <div class="stat-content">
+          <p class="stat-label">Kam qolgan</p>
+          <p class="stat-value" id="lowStockProducts">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-icon">💰</div>
+        <div class="stat-content">
+          <p class="stat-label">Ombor qiymati</p>
+          <p class="stat-value" id="totalValue">$0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <input type="text" class="search-input" placeholder="🔍 Mahsulot qidirish (nom, barcode, IMEI)..." id="searchInput" oninput="searchProducts()" style="flex: 1; margin-right: 12px;">
+        <button class="settings-btn" onclick="window.location.href='/warehouse-history.html'" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.2);">
+          <span>📊</span>
+          <span>Chiqim Tarixi</span>
+        </button>
+      </div>
+      
+      <div class="filter-section">
+        <button class="filter-btn active" onclick="filterProducts('all')">Barchasi</button>
+        <button class="filter-btn" onclick="filterProducts('in-stock')">Omborda bor</button>
+        <button class="filter-btn" onclick="filterProducts('low-stock')">Kam qolgan</button>
+        <button class="filter-btn" onclick="filterProducts('out-of-stock')">Tugagan</button>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="warehouse-grid" id="productsGrid">
+      <p class="empty">Mahsulotlar yuklanmoqda...</p>
+    </div>
+  </div>
+
+  <!-- Add Product Button -->
+  <button class="add-product-btn" onclick="openAddProductModal()" title="Yangi mahsulot">+</button>
+
+  <!-- Add/Edit Product Modal -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">➕ Yangi mahsulot</h2>
+        <button class="modal-close" onclick="closeProductModal()">×</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Mahsulot nomi *</label>
+        <input type="text" id="productName" placeholder="Masalan: iPhone 14 Pro Max 256GB" required>
+      </div>
+      
+      <div class="form-group">
+        <label>IMEI / Serial Number *</label>
+        <input type="text" id="productIMEI" placeholder="123456789012345" required>
+        <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">
+          💡 Har bir dona mahsulot uchun alohida IMEI kiriting
+        </p>
+      </div>
+      
+      <div class="row">
+        <div class="form-group">
+          <label>Kelgan narxi *</label>
+          <input type="number" id="productBuyPrice" placeholder="0" step="0.01" min="0" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Sotish narxi *</label>
+          <input type="number" id="productSellPrice" placeholder="0" step="0.01" min="0" required>
+        </div>
+      </div>
+      
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeProductModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="saveProduct()">
+          <span>✓</span>
+          Saqlash
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Detail Modal -->
+  <div id="productDetailModal" class="modal">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h2 id="detailProductName">📦 Mahsulot</h2>
+        <button class="modal-close" onclick="closeProductDetailModal()">×</button>
+      </div>
+      
+      <div id="productDetailContent"></div>
+      
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeProductDetailModal()">Yopish</button>
+        <button class="confirm-btn" onclick="viewProductItems()" style="background: #3b82f6;">
+          <span>📱</span>
+          IMEI Kodlarni Ko'rish
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="warehouse.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

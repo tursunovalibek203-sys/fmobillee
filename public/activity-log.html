@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Faoliyat Tarixi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .filters {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .filter-group label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 900;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .activity-list {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s;
+        }
+        
+        .activity-item:hover {
+            background: #f9fafb;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon.create { background: #d1fae5; }
+        .activity-icon.update { background: #dbeafe; }
+        .activity-icon.delete { background: #fee2e2; }
+        .activity-icon.sale { background: #fef3c7; }
+        .activity-icon.payment { background: #d1fae5; }
+        .activity-icon.login { background: #e0e7ff; }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 5px;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        .activity-description {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+        
+        .activity-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        .activity-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .badge.admin { background: #fef3c7; color: #92400e; }
+        .badge.cashier { background: #dbeafe; color: #1e40af; }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Faoliyat Tarixi</h1>
+            <p>Tizimda amalga oshirilgan barcha harakatlar tarixi</p>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalActivities">0</div>
+                <div class="stat-label">Jami Harakatlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="todayActivities">0</div>
+                <div class="stat-label">Bugungi Harakatlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-label">Faol Foydalanuvchilar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="mostAction">-</div>
+                <div class="stat-label">Eng Ko'p Harakat</div>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>Harakat Turi</label>
+                    <select id="actionFilter">
+                        <option value="">Barchasi</option>
+                        <option value="create">Yaratish</option>
+                        <option value="update">Yangilash</option>
+                        <option value="delete">O'chirish</option>
+                        <option value="sale">Savdo</option>
+                        <option value="payment">To'lov</option>
+                        <option value="login">Kirish</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Ob'ekt Turi</label>
+                    <select id="entityFilter">
+                        <option value="">Barchasi</option>
+                        <option value="product">Mahsulot</option>
+                        <option value="customer">Mijoz</option>
+                        <option value="sale">Savdo</option>
+                        <option value="cashier">Kassir</option>
+                        <option value="branch">Filial</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Boshlanish Sanasi</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="filter-group">
+                    <label>Tugash Sanasi</label>
+                    <input type="date" id="endDate">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="loadActivities()">🔍 Qidirish</button>
+        </div>
+        
+        <!-- Activity List -->
+        <div class="activity-list">
+            <h2 style="margin-bottom: 20px; color: #374151;">Faoliyat Ro'yxati</h2>
+            <div id="activityList">
+                <div class="loading">Ma'lumotlar yuklanmoqda...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const actionIcons = {
+            create: '➕',
+            update: '✏️',
+            delete: '🗑️',
+            sale: '💰',
+            payment: '💵',
+            login: '🔐',
+            logout: '🚪'
+        };
+        
+        const actionNames = {
+            create: 'Yaratildi',
+            update: 'Yangilandi',
+            delete: 'O\'chirildi',
+            sale: 'Savdo',
+            payment: 'To\'lov',
+            login: 'Kirish',
+            logout: 'Chiqish'
+        };
+        
+        const entityNames = {
+            product: 'Mahsulot',
+            customer: 'Mijoz',
+            sale: 'Savdo',
+            cashier: 'Kassir',
+            branch: 'Filial',
+            expense: 'Xarajat'
+        };
+        
+        async function loadActivities() {
+            try {
+                const action = document.getElementById('actionFilter').value;
+                const entity = document.getElementById('entityFilter').value;
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                
+                let url = '/api/activity-log?limit=100';
+                if (action) url += `&action=${action}`;
+                if (entity) url += `&entity=${entity}`;
+                if (startDate) url += `&startDate=${startDate}`;
+                if (endDate) url += `&endDate=${endDate}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayActivities(data.activities);
+                } else {
+                    document.getElementById('activityList').innerHTML = 
+                        '<div class="loading">❌ Xato: ' + data.error + '</div>';
+                }
+            } catch (error) {
+                document.getElementById('activityList').innerHTML = 
+                    '<div class="loading">❌ Xato: ' + error.message + '</div>';
+            }
+        }
+        
+        function displayActivities(activities) {
+            const container = document.getElementById('activityList');
+            
+            if (activities.length === 0) {
+                container.innerHTML = '<div class="loading">Faoliyat topilmadi</div>';
+                return;
+            }
+            
+            container.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon ${activity.action}">
+                        ${actionIcons[activity.action] || '📝'}
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-header">
+                            <div class="activity-title">
+                                ${actionNames[activity.action] || activity.action}: 
+                                ${entityNames[activity.entity] || activity.entity}
+                                ${activity.entityName ? ' - ' + activity.entityName : ''}
+                            </div>
+                            <div class="activity-time">
+                                ${activity.date} ${activity.time}
+                            </div>
+                        </div>
+                        <div class="activity-description">
+                            ${activity.description || 'Tavsif yo\'q'}
+                        </div>
+                        <div class="activity-meta">
+                            <span>
+                                👤 ${activity.userName}
+                                <span class="badge ${activity.userRole}">${activity.userRole}</span>
+                            </span>
+                            ${activity.branchName ? `<span>🏢 ${activity.branchName}</span>` : ''}
+                            ${activity.entityId ? `<span>🆔 ${activity.entityId}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/activity-log/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('totalActivities').textContent = data.stats.total;
+                    document.getElementById('todayActivities').textContent = data.stats.today;
+                    document.getElementById('totalUsers').textContent = data.stats.topUsers.length;
+                    
+                    if (data.stats.byAction.length > 0) {
+                        const mostAction = data.stats.byAction[0];
+                        document.getElementById('mostAction').textContent = 
+                            actionNames[mostAction._id] || mostAction._id;
+                    }
+                }
+            } catch (error) {
+                console.error('Stats xato:', error);
+            }
+        }
+        
+        // Sahifa yuklanganda
+        window.addEventListener('load', () => {
+            loadActivities();
+            loadStats();
+        });
+    </script>
+</body>
+</html>

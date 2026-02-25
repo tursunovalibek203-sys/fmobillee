@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ombor - Kassir</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-professional.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+        }
+
+        .warehouse-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .warehouse-header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .warehouse-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-mini {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            color: white;
+        }
+
+        .stat-mini h3 {
+            font-size: 28px;
+            font-weight: 900;
+            margin: 0 0 8px 0;
+        }
+
+        .stat-mini p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .search-filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .products-table {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: 50px 2fr 1fr 1fr 1fr 1fr;
+            gap: 12px;
+            font-weight: 700;
+        }
+
+        .table-row {
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: 50px 2fr 1fr 1fr 1fr 1fr;
+            gap: 12px;
+            border-bottom: 1px solid #f3f4f6;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .table-row:hover {
+            background: #fef3c7;
+        }
+
+        .stock-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .stock-high {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .stock-low {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .stock-out {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .readonly-badge {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header, .table-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .table-header > div:not(:first-child),
+            .table-row > div:not(:first-child) {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .table-header > div:not(:first-child)::before,
+            .table-row > div:not(:first-child)::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #6b7280;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="warehouse-container">
+        <!-- Header -->
+        <div class="warehouse-header">
+            <div>
+                <h1 style="margin: 0; color: white; font-size: 32px; font-weight: 900;">📦 Ombor</h1>
+                <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">
+                    <span class="readonly-badge">👁️ Faqat Ko'rish</span>
+                    <span style="margin-left: 12px;" id="cashierName"></span>
+                </p>
+            </div>
+            <button class="settings-btn" onclick="window.location.href='cashier-dashboard.html'" style="background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.3);">
+                <span>←</span>
+                <span>Orqaga</span>
+            </button>
+        </div>
+
+        <!-- Statistics -->
+        <div class="warehouse-stats">
+            <div class="stat-mini">
+                <h3 id="totalProducts">0</h3>
+                <p>📦 Jami mahsulotlar</p>
+            </div>
+            <div class="stat-mini">
+                <h3 id="totalStock">0</h3>
+                <p>📊 Jami dona</p>
+            </div>
+            <div class="stat-mini">
+                <h3 id="totalValue">$0</h3>
+                <p>💰 Jami qiymat</p>
+            </div>
+            <div class="stat-mini">
+                <h3 id="lowStock">0</h3>
+                <p>⚠️ Kam qolgan</p>
+            </div>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="search-filter-bar">
+            <div class="filter-row">
+                <input type="text" id="searchInput" placeholder="🔍 Mahsulot, IMEI, Barcode qidirish..." 
+                       style="padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 14px;"
+                       oninput="filterProducts()">
+                
+                <select id="categoryFilter" onchange="filterProducts()" 
+                        style="padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 14px; font-weight: 600;">
+                    <option value="">Barcha kategoriyalar</option>
+                </select>
+                
+                <select id="stockFilter" onchange="filterProducts()" 
+                        style="padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 14px; font-weight: 600;">
+                    <option value="">Barcha mahsulotlar</option>
+                    <option value="available">✅ Mavjud</option>
+                    <option value="low">⚠️ Kam qolgan</option>
+                    <option value="out">❌ Tugagan</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Products Table -->
+        <div class="products-table">
+            <div class="table-header">
+                <div>#</div>
+                <div>Mahsulot</div>
+                <div>Kategoriya</div>
+                <div>Narx</div>
+                <div>Omborda</div>
+                <div>Holat</div>
+            </div>
+            <div id="productsTableBody">
+                <div style="padding: 40px; text-align: center; color: #6b7280;">
+                    Yuklanmoqda...
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 20px;">
+            <button onclick="previousPage()" id="prevBtn" style="padding: 10px 20px; background: white; border: 2px solid #e5e7eb; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                ← Oldingi
+            </button>
+            <span style="color: white; font-weight: 700; font-size: 16px;" id="pageInfo">1 / 1</span>
+            <button onclick="nextPage()" id="nextBtn" style="padding: 10px 20px; background: white; border: 2px solid #e5e7eb; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                Keyingi →
+            </button>
+        </div>
+    </div>
+
+    <script src="cashier-warehouse.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

@@ -5,9 +5,17 @@ const BackupManager = require('./backup-manager');
 const cron = require('node-cron');
 
 // MongoDB ulanish
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ Backup tizimi: MongoDB ulandi'))
-  .catch(err => console.error('❌ Backup tizimi: MongoDB xato:', err));
+const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGODB_LOCAL || 'mongodb://127.0.0.1:27017/dokon_db';
+
+if (MONGODB_URI && MONGODB_URI.trim()) {
+  mongoose.connect(MONGODB_URI)
+    .then(() => console.log('✅ Backup tizimi: MongoDB ulandi'))
+    .catch(err => {
+      console.log('⚠️ Backup tizimi: MongoDB ulanmadi, JSON fayllar ishlatiladi');
+    });
+} else {
+  console.log('⚠️ Backup tizimi: MongoDB URI topilmadi, JSON fayllar ishlatiladi');
+}
 
 // Schemas
 const CustomerSchema = new mongoose.Schema({

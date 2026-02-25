@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>💼 Kassa - 3 Valyuta</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .currency-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .currency-card {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .currency-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+    }
+    
+    .currency-card.usd::before {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+    
+    .currency-card.uzs::before {
+      background: linear-gradient(90deg, #3b82f6, #2563eb);
+    }
+    
+    .currency-card.rub::before {
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+    }
+    
+    .currency-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    
+    .currency-label {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+    
+    .currency-amount {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+    
+    .currency-equivalent {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    
+    .exchange-rates {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+    }
+    
+    .rate-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    
+    .rate-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 10px;
+    }
+    
+    .rate-label {
+      font-size: 14px;
+      color: #6b7280;
+    }
+    
+    .rate-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin-left: auto;
+    }
+    
+    .rate-input {
+      width: 100px;
+      padding: 8px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: right;
+    }
+    
+    .rate-input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .content-section {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #374151;
+    }
+    
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    
+    .currency-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .currency-tab {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .currency-tab.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+    
+    .payment-summary {
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    
+    .summary-row.total {
+      font-size: 18px;
+      font-weight: 700;
+      padding-top: 12px;
+      border-top: 2px solid #e5e7eb;
+    }
+    
+    .calculator {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    .calc-btn {
+      padding: 16px;
+      background: #f3f4f6;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .calc-btn:hover {
+      background: #e5e7eb;
+    }
+    
+    .calc-btn.full {
+      background: #10b981;
+      color: white;
+      grid-column: span 3;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1>💼 Kassa - 3 Valyuta</h1>
+        <p style="color: #6b7280; margin-top: 4px;">Dollar, So'm, Rubl</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-primary" onclick="window.location.href='cashier-report.html'">
+          📊 Mening Hisobotim
+        </button>
+        <button class="btn btn-primary" onclick="window.location.href='admin.html'">
+          🏠 Asosiy
+        </button>
+      </div>
+    </div>
+
+    <!-- Currency Cards -->
+    <div class="currency-cards">
+      <div class="currency-card usd">
+        <div class="currency-icon">💵</div>
+        <div class="currency-label">Dollar (USD)</div>
+        <div class="currency-amount" id="balanceUSD">$0.00</div>
+        <div class="currency-equivalent">Asosiy valyuta</div>
+      </div>
+      
+      <div class="currency-card uzs">
+        <div class="currency-icon">🇺🇿</div>
+        <div class="currency-label">So'm (UZS)</div>
+        <div class="currency-amount" id="balanceUZS">0 so'm</div>
+        <div class="currency-equivalent" id="uzsEquivalent">≈ $0.00</div>
+      </div>
+      
+      <div class="currency-card rub">
+        <div class="currency-icon">🇷🇺</div>
+        <div class="currency-label">Rubl (RUB)</div>
+        <div class="currency-amount" id="balanceRUB">0 ₽</div>
+        <div class="currency-equivalent" id="rubEquivalent">≈ $0.00</div>
+      </div>
+    </div>
+
+    <!-- Exchange Rates -->
+    <div class="exchange-rates">
+      <h3 style="margin-bottom: 16px;">💱 Valyuta Kurslari</h3>
+      <div class="rate-grid">
+        <div class="rate-item">
+          <span class="rate-label">1 USD =</span>
+          <input type="number" class="rate-input" id="rateUZS" value="12500" onchange="saveRates()">
+          <span style="font-size: 14px; color: #6b7280;">so'm</span>
+        </div>
+        
+        <div class="rate-item">
+          <span class="rate-label">1 USD =</span>
+          <input type="number" class="rate-input" id="rateRUB" value="90" onchange="saveRates()">
+          <span style="font-size: 14px; color: #6b7280;">₽</span>
+        </div>
+        
+        <div class="rate-item">
+          <span class="rate-label">Oxirgi yangilanish:</span>
+          <span class="rate-value" id="lastUpdate">Hozir</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+      <button class="btn btn-success" onclick="openSaleModal()" style="padding: 20px; font-size: 16px;">
+        🛒 Yangi Savdo
+      </button>
+      <button class="btn btn-primary" onclick="openExchangeModal()" style="padding: 20px; font-size: 16px;">
+        💱 Valyuta Almashtirish
+      </button>
+      <button class="btn btn-primary" onclick="viewHistory()" style="padding: 20px; font-size: 16px;">
+        📋 Tarix
+      </button>
+    </div>
+
+    <!-- Recent Sales -->
+    <div class="content-section">
+      <h3 style="margin-bottom: 16px;">📋 So'nggi Savdolar</h3>
+      <div id="salesList"></div>
+    </div>
+  </div>
+
+  <!-- Sale Modal -->
+  <div id="saleModal" class="modal">
+    <div class="modal-content">
+      <h2>🛒 Yangi Savdo</h2>
+      <form id="saleForm">
+        <div class="form-group">
+          <label>Mijoz ID *</label>
+          <input type="number" id="customerId" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Mahsulot *</label>
+          <input type="text" id="productName" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Narx (USD) *</label>
+          <input type="number" id="priceUSD" step="0.01" required>
+        </div>
+        
+        <div class="form-group">
+          <label>To'lov Valyutasi</label>
+          <div class="currency-tabs">
+            <div class="currency-tab active" onclick="selectCurrency('USD')">💵 Dollar</div>
+            <div class="currency-tab" onclick="selectCurrency('UZS')">🇺🇿 So'm</div>
+            <div class="currency-tab" onclick="selectCurrency('RUB')">🇷🇺 Rubl</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label id="paymentLabel">To'lov (USD)</label>
+          <input type="number" id="paymentAmount" step="0.01" value="0">
+          
+          <!-- Calculator -->
+          <div class="calculator">
+            <button type="button" class="calc-btn" onclick="addPayment(10)">10</button>
+            <button type="button" class="calc-btn" onclick="addPayment(50)">50</button>
+            <button type="button" class="calc-btn" onclick="addPayment(100)">100</button>
+            <button type="button" class="calc-btn" onclick="addPayment(500)">500</button>
+            <button type="button" class="calc-btn" onclick="addPayment(1000)">1000</button>
+            <button type="button" class="calc-btn" onclick="addPayment(5000)">5000</button>
+            <button type="button" class="calc-btn full" onclick="setFullPayment()">To'liq To'lov</button>
+          </div>
+        </div>
+        
+        <div class="payment-summary" id="paymentSummary" style="display: none;"></div>
+        
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="submit" class="btn btn-success" style="flex: 1;">
+            ✅ Savdoni Saqlash
+          </button>
+          <button type="button" class="btn btn-danger" onclick="closeModal('saleModal')">
+            ❌ Bekor qilish
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Exchange rates
+    let rates = {
+      UZS: 12500,
+      RUB: 90
+    };
+    
+    // Current balances
+    let balances = {
+      USD: 0,
+      UZS: 0,
+      RUB: 0
+    };
+    
+    // Selected currency for payment
+    let selectedCurrency = 'USD';
+    
+    // Load data
+    function loadData() {
+      loadRates();
+      loadBalances();
+      loadSales();
+    }
+    
+    function loadRates() {
+      const savedRates = localStorage.getItem('exchangeRates');
+      if (savedRates) {
+        rates = JSON.parse(savedRates);
+        document.getElementById('rateUZS').value = rates.UZS;
+        document.getElementById('rateRUB').value = rates.RUB;
+      }
+    }
+    
+    function saveRates() {
+      rates.UZS = parseFloat(document.getElementById('rateUZS').value) || 12500;
+      rates.RUB = parseFloat(document.getElementById('rateRUB').value) || 90;
+      localStorage.setItem('exchangeRates', JSON.stringify(rates));
+      document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('uz-UZ');
+      updateBalanceDisplay();
+    }
+    
+    function loadBalances() {
+      const savedBalances = localStorage.getItem('cashierBalances');
+      if (savedBalances) {
+        balances = JSON.parse(savedBalances);
+      }
+      updateBalanceDisplay();
+    }
+    
+    function saveBalances() {
+      localStorage.setItem('cashierBalances', JSON.stringify(balances));
+      updateBalanceDisplay();
+    }
+    
+    function updateBalanceDisplay() {
+      // USD
+      document.getElementById('balanceUSD').textContent = '$' + balances.USD.toFixed(2);
+      
+      // UZS
+      document.getElementById('balanceUZS').textContent = balances.UZS.toLocaleString('uz-UZ') + ' so\'m';
+      const uzsInUSD = balances.UZS / rates.UZS;
+      document.getElementById('uzsEquivalent').textContent = '≈ $' + uzsInUSD.toFixed(2);
+      
+      // RUB
+      document.getElementById('balanceRUB').textContent = balances.RUB.toLocaleString('ru-RU') + ' ₽';
+      const rubInUSD = balances.RUB / rates.RUB;
+      document.getElementById('rubEquivalent').textContent = '≈ $' + rubInUSD.toFixed(2);
+    }
+    
+    function loadSales() {
+      const sales = JSON.parse(localStorage.getItem('multiCurrencySales') || '[]');
+      const list = document.getElementById('salesList');
+      
+      if (sales.length === 0) {
+        list.innerHTML = '<p style="text-align: center; color: #6b7280;">Hali savdo yo\'q</p>';
+        return;
+      }
+      
+      list.innerHTML = sales.slice(0, 10).map(sale => `
+        <div style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <strong>${sale.product}</strong>
+            <span style="color: #10b981; font-weight: 600;">$${sale.priceUSD.toFixed(2)}</span>
+          </div>
+          <div style="font-size: 13px; color: #6b7280;">
+            Mijoz: ${sale.customerId} | 
+            To'lov: ${sale.paymentAmount.toFixed(2)} ${sale.paymentCurrency} |
+            ${sale.date} ${sale.time}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Modal functions
+    function openSaleModal() {
+      document.getElementById('saleModal').classList.add('active');
+    }
+    
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+    
+    function selectCurrency(currency) {
+      selectedCurrency = currency;
+      
+      // Update tabs
+      document.querySelectorAll('.currency-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      // Update label
+      const labels = {
+        'USD': 'To\'lov (USD)',
+        'UZS': 'To\'lov (So\'m)',
+        'RUB': 'To\'lov (Rubl)'
+      };
+      document.getElementById('paymentLabel').textContent = labels[currency];
+      
+      // Update calculator buttons
+      const amounts = {
+        'USD': [10, 50, 100, 500, 1000, 5000],
+        'UZS': [50000, 100000, 200000, 500000, 1000000, 5000000],
+        'RUB': [500, 1000, 2000, 5000, 10000, 50000]
+      };
+      
+      const buttons = document.querySelectorAll('.calc-btn:not(.full)');
+      buttons.forEach((btn, i) => {
+        btn.textContent = amounts[currency][i].toLocaleString();
+        btn.onclick = () => addPayment(amounts[currency][i]);
+      });
+      
+      updatePaymentSummary();
+    }
+    
+    function addPayment(amount) {
+      const current = parseFloat(document.getElementById('paymentAmount').value) || 0;
+      document.getElementById('paymentAmount').value = current + amount;
+      updatePaymentSummary();
+    }
+    
+    function setFullPayment() {
+      const priceUSD = parseFloat(document.getElementById('priceUSD').value) || 0;
+      
+      if (selectedCurrency === 'USD') {
+        document.getElementById('paymentAmount').value = priceUSD;
+      } else if (selectedCurrency === 'UZS') {
+        document.getElementById('paymentAmount').value = priceUSD * rates.UZS;
+      } else if (selectedCurrency === 'RUB') {
+        document.getElementById('paymentAmount').value = priceUSD * rates.RUB;
+      }
+      
+      updatePaymentSummary();
+    }
+    
+    document.getElementById('paymentAmount').addEventListener('input', updatePaymentSummary);
+    document.getElementById('priceUSD').addEventListener('input', updatePaymentSummary);
+    
+    function updatePaymentSummary() {
+      const priceUSD = parseFloat(document.getElementById('priceUSD').value) || 0;
+      const paymentAmount = parseFloat(document.getElementById('paymentAmount').value) || 0;
+      
+      if (priceUSD === 0) {
+        document.getElementById('paymentSummary').style.display = 'none';
+        return;
+      }
+      
+      // Convert payment to USD
+      let paymentUSD = paymentAmount;
+      if (selectedCurrency === 'UZS') {
+        paymentUSD = paymentAmount / rates.UZS;
+      } else if (selectedCurrency === 'RUB') {
+        paymentUSD = paymentAmount / rates.RUB;
+      }
+      
+      const debtUSD = priceUSD - paymentUSD;
+      
+      const summary = document.getElementById('paymentSummary');
+      summary.style.display = 'block';
+      summary.innerHTML = `
+        <div class="summary-row">
+          <span>Narx:</span>
+          <strong>$${priceUSD.toFixed(2)}</strong>
+        </div>
+        <div class="summary-row">
+          <span>To'lov (${selectedCurrency}):</span>
+          <strong>${paymentAmount.toFixed(2)} ${selectedCurrency}</strong>
+        </div>
+        <div class="summary-row">
+          <span>To'lov ($):</span>
+          <strong style="color: #10b981;">$${paymentUSD.toFixed(2)}</strong>
+        </div>
+        <div class="summary-row total">
+          <span>Qarz:</span>
+          <strong style="color: ${debtUSD > 0 ? '#ef4444' : '#10b981'};">
+            $${debtUSD.toFixed(2)}
+          </strong>
+        </div>
+      `;
+    }
+    
+    // Sale form submit
+    document.getElementById('saleForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const priceUSD = parseFloat(document.getElementById('priceUSD').value);
+      const paymentAmount = parseFloat(document.getElementById('paymentAmount').value);
+      
+      // Convert payment to USD
+      let paymentUSD = paymentAmount;
+      if (selectedCurrency === 'UZS') {
+        paymentUSD = paymentAmount / rates.UZS;
+      } else if (selectedCurrency === 'RUB') {
+        paymentUSD = paymentAmount / rates.RUB;
+      }
+      
+      // Update balances
+      if (selectedCurrency === 'USD') {
+        balances.USD += paymentAmount;
+      } else if (selectedCurrency === 'UZS') {
+        balances.UZS += paymentAmount;
+      } else if (selectedCurrency === 'RUB') {
+        balances.RUB += paymentAmount;
+      }
+      
+      // Save sale
+      const sale = {
+        customerId: document.getElementById('customerId').value,
+        product: document.getElementById('productName').value,
+        priceUSD: priceUSD,
+        paymentAmount: paymentAmount,
+        paymentCurrency: selectedCurrency,
+        paymentUSD: paymentUSD,
+        debtUSD: priceUSD - paymentUSD,
+        date: new Date().toLocaleDateString('uz-UZ'),
+        time: new Date().toLocaleTimeString('uz-UZ')
+      };
+      
+      const sales = JSON.parse(localStorage.getItem('multiCurrencySales') || '[]');
+      sales.unshift(sale);
+      localStorage.setItem('multiCurrencySales', JSON.stringify(sales));
+      
+      saveBalances();
+      
+      alert('✅ Savdo saqlandi!\n\nNarx: $' + priceUSD.toFixed(2) + 
+            '\nTo\'lov: ' + paymentAmount.toFixed(2) + ' ' + selectedCurrency +
+            '\nQarz: $' + (priceUSD - paymentUSD).toFixed(2));
+      
+      closeModal('saleModal');
+      this.reset();
+      selectedCurrency = 'USD';
+      selectCurrency('USD');
+      loadData();
+    });
+    
+    function openExchangeModal() {
+      alert('Valyuta almashtirish funksiyasi tez orada qo\'shiladi');
+    }
+    
+    function viewHistory() {
+      alert('Batafsil tarix funksiyasi tez orada qo\'shiladi');
+    }
+    
+    // Initialize
+    loadData();
+  </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

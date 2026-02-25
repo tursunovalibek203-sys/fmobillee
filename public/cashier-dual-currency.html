@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>💼 Kassa - Dollar va So'm</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        .balance-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .balance-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+        
+        .balance-card.usd::before {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+        
+        .balance-card.uzs::before {
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+        }
+        
+        .balance-card.total::before {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .balance-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .balance-label {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+        
+        .balance-amount {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+        
+        .balance-equivalent {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .exchange-rate {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .rate-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .rate-label {
+            font-size: 18px;
+            color: #374151;
+            font-weight: 600;
+        }
+        
+        .rate-value {
+            font-size: 24px;
+            color: #667eea;
+            font-weight: 700;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .sale-section, .handover-section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .payment-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .payment-group {
+            position: relative;
+        }
+        
+        .currency-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+        
+        .payment-input {
+            width: 100%;
+            padding: 12px 16px 12px 45px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .payment-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .conversion-display {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .conversion-text {
+            font-size: 16px;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+        
+        .conversion-result {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stats-section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-inputs {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>💼 Kassa - Dollar va So'm</h1>
+                <p style="color: #6b7280; margin-top: 4px;">Asosiy balans Dollar da</p>
+            </div>
+            <div class="header-buttons">
+                <button class="btn btn-warning" onclick="openSettings()">⚙️ Sozlamalar</button>
+                <button class="btn btn-primary" onclick="window.location.href='cashier-report.html'">📊 Hisobot</button>
+                <button class="btn btn-primary" onclick="window.location.href='admin-dashboard.html'">🏠 Asosiy</button>
+            </div>
+        </div>
+
+        <!-- Balans Cards -->
+        <div class="balance-section">
+            <div class="balance-card usd">
+                <div class="balance-icon">💵</div>
+                <div class="balance-label">Dollar Balansi</div>
+                <div class="balance-amount" id="balanceUSD">$0.00</div>
+                <div class="balance-equivalent">Asosiy valyuta</div>
+            </div>
+            
+            <div class="balance-card uzs">
+                <div class="balance-icon">🇺🇿</div>
+                <div class="balance-label">So'm Balansi</div>
+                <div class="balance-amount" id="balanceUZS">0 so'm</div>
+                <div class="balance-equivalent" id="uzsEquivalent">≈ $0.00</div>
+            </div>
+            
+            <div class="balance-card total">
+                <div class="balance-icon">💰</div>
+                <div class="balance-label">Jami Balans</div>
+                <div class="balance-amount" id="totalBalance">$0.00</div>
+                <div class="balance-equivalent">USD ekvivalenti</div>
+            </div>
+        </div>
+
+        <!-- Exchange Rate -->
+        <div class="exchange-rate">
+            <div class="rate-info">
+                <span class="rate-label">Joriy Kurs:</span>
+                <span class="rate-value" id="currentRate">1 USD = 12,500 UZS</span>
+            </div>
+            <button class="btn btn-warning" onclick="openSettings()">Kursni O'zgartirish</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sale Section -->
+            <div class="sale-section">
+                <div class="section-title">
+                    <span>🛒</span>
+                    <span>Savdo Qilish</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Mijoz ID</label>
+                    <input type="number" class="form-input" id="customerId" placeholder="1001">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Mijoz Ismi</label>
+                    <input type="text" class="form-input" id="customerName" placeholder="Vali Toshmatov">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Mahsulot</label>
+                    <input type="text" class="form-input" id="productName" placeholder="iPhone 15 Pro Max">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Narx (USD)</label>
+                    <input type="number" class="form-input" id="productPrice" placeholder="1200" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">To'lov</label>
+                    <div class="payment-inputs">
+                        <div class="payment-group">
+                            <span class="currency-icon">💵</span>
+                            <input type="number" class="payment-input" id="paymentUSD" placeholder="0.00" step="0.01" oninput="calculateConversion()">
+                            <div style="text-align: center; margin-top: 5px; font-size: 12px; color: #6b7280;">Dollar</div>
+                        </div>
+                        <div class="payment-group">
+                            <span class="currency-icon">🇺🇿</span>
+                            <input type="number" class="payment-input" id="paymentUZS" placeholder="0" step="1" oninput="calculateConversion()">
+                            <div style="text-align: center; margin-top: 5px; font-size: 12px; color: #6b7280;">So'm</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="conversion-display" id="conversionDisplay">
+                    <div class="conversion-text">Jami to'lov:</div>
+                    <div class="conversion-result" id="totalPayment">$0.00</div>
+                </div>
+                
+                <button class="btn btn-success" onclick="makeSale()" style="width: 100%; padding: 15px; font-size: 18px;">
+                    💰 Savdo Qilish
+                </button>
+            </div>
+
+            <!-- Handover Section -->
+            <div class="handover-section">
+                <div class="section-title">
+                    <span>💸</span>
+                    <span>Kirim Topshirish</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Topshiriladigan Miqdor (USD)</label>
+                    <input type="number" class="form-input" id="handoverAmount" placeholder="1000" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Izoh</label>
+                    <input type="text" class="form-input" id="handoverNotes" placeholder="Kunlik kirim">
+                </div>
+                
+                <button class="btn btn-primary" onclick="makeHandover()" style="width: 100%; padding: 15px; font-size: 18px;">
+                    📤 Kirim Topshirish
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-section">
+            <div class="section-title">
+                <span>📊</span>
+                <span>Bugungi Statistika</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="todaySales">0</div>
+                    <div class="stat-label">Savdolar</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="todayRevenue">$0</div>
+                    <div class="stat-label">Daromad</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="todayHandovers">0</div>
+                    <div class="stat-label">Kirimlar</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="todayHandoverAmount">$0</div>
+                    <div class="stat-label">Topshirilgan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="color: #667eea;">⚙️ Kurs Sozlamalari</h2>
+                <button class="close-btn" onclick="closeSettings()">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">USD/UZS Kursi</label>
+                <input type="number" class="form-input" id="exchangeRateInput" placeholder="12500" step="1">
+                <div style="font-size: 12px; color: #6b7280; margin-top: 5px;">
+                    1 Dollar = ? So'm
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-success" onclick="saveSettings()" style="flex: 1;">
+                    ✅ Saqlash
+                </button>
+                <button class="btn btn-primary" onclick="closeSettings()" style="flex: 1;">
+                    ❌ Bekor Qilish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let cashierData = null;
+        let exchangeRate = 12500; // Default: 1 USD = 12,500 UZS
+        
+        // LocalStorage dan ma'lumotlarni olish
+        function loadFromStorage() {
+            const stored = localStorage.getItem('cashierData');
+            if (stored) {
+                cashierData = JSON.parse(stored);
+            }
+            
+            // Server dan kursni olish
+            loadExchangeRate();
+        }
+        
+        // Server dan kursni olish
+        async function loadExchangeRate() {
+            try {
+                const response = await fetch(`${API_URL}/exchange-rate`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    exchangeRate = data.exchangeRate;
+                } else {
+                    // Fallback to localStorage
+                    const storedRate = localStorage.getItem('exchangeRate');
+                    if (storedRate) {
+                        exchangeRate = parseFloat(storedRate);
+                    }
+                }
+            } catch (error) {
+                console.error('Kursni olishda xato:', error);
+                // Fallback to localStorage
+                const storedRate = localStorage.getItem('exchangeRate');
+                if (storedRate) {
+                    exchangeRate = parseFloat(storedRate);
+                }
+            }
+            
+            updateExchangeRateDisplay();
+        }
+        
+        // Kurs ko'rsatkichini yangilash
+        function updateExchangeRateDisplay() {
+            document.getElementById('currentRate').textContent = `1 USD = ${exchangeRate.toLocaleString()} UZS`;
+            document.getElementById('exchangeRateInput').value = exchangeRate;
+        }
+        
+        // Konvertatsiya hisoblash
+        function calculateConversion() {
+            const usdInput = document.getElementById('paymentUSD');
+            const uzsInput = document.getElementById('paymentUZS');
+            const totalDisplay = document.getElementById('totalPayment');
+            
+            const usdAmount = parseFloat(usdInput.value) || 0;
+            const uzsAmount = parseFloat(uzsInput.value) || 0;
+            
+            // Agar USD kiritilgan bo'lsa, UZS ni hisoblash
+            if (document.activeElement === usdInput && usdAmount > 0) {
+                const equivalentUZS = usdAmount * exchangeRate;
+                uzsInput.value = Math.round(equivalentUZS);
+            }
+            
+            // Agar UZS kiritilgan bo'lsa, USD ni hisoblash
+            if (document.activeElement === uzsInput && uzsAmount > 0) {
+                const equivalentUSD = uzsAmount / exchangeRate;
+                usdInput.value = equivalentUSD.toFixed(2);
+            }
+            
+            // Jami to'lovni hisoblash
+            const finalUSD = parseFloat(usdInput.value) || 0;
+            const finalUZS = parseFloat(uzsInput.value) || 0;
+            const totalUSD = finalUSD + (finalUZS / exchangeRate);
+            
+            totalDisplay.textContent = `$${totalUSD.toFixed(2)}`;
+        }
+        
+        // Balansni yangilash
+        async function updateBalance() {
+            if (!cashierData) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/cashiers`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const cashier = data.cashiers.find(c => c.cashierId === cashierData.cashierId);
+                    
+                    if (cashier) {
+                        const usdBalance = cashier.balanceUSD || 0;
+                        const uzsBalance = cashier.balanceUZS || 0;
+                        const totalBalance = usdBalance + (uzsBalance / exchangeRate);
+                        
+                        document.getElementById('balanceUSD').textContent = `$${usdBalance.toFixed(2)}`;
+                        document.getElementById('balanceUZS').textContent = `${uzsBalance.toLocaleString()} so'm`;
+                        document.getElementById('uzsEquivalent').textContent = `≈ $${(uzsBalance / exchangeRate).toFixed(2)}`;
+                        document.getElementById('totalBalance').textContent = `$${totalBalance.toFixed(2)}`;
+                    }
+                }
+            } catch (error) {
+                console.error('Balansni yangilashda xato:', error);
+            }
+        }
+        
+        // Savdo qilish
+        async function makeSale() {
+            const customerId = document.getElementById('customerId').value;
+            const customerName = document.getElementById('customerName').value;
+            const productName = document.getElementById('productName').value;
+            const productPrice = parseFloat(document.getElementById('productPrice').value);
+            const paymentUSD = parseFloat(document.getElementById('paymentUSD').value) || 0;
+            const paymentUZS = parseFloat(document.getElementById('paymentUZS').value) || 0;
+            
+            if (!customerId || !customerName || !productName || !productPrice) {
+                alert('Barcha maydonlarni to\'ldiring!');
+                return;
+            }
+            
+            if (paymentUSD === 0 && paymentUZS === 0) {
+                alert('To\'lov miqdorini kiriting!');
+                return;
+            }
+            
+            const totalPaymentUSD = paymentUSD + (paymentUZS / exchangeRate);
+            
+            if (totalPaymentUSD < productPrice) {
+                alert(`Yetarli to'lov emas! Kerak: $${productPrice}, Berildi: $${totalPaymentUSD.toFixed(2)}`);
+                return;
+            }
+            
+            try {
+                const saleData = {
+                    saleId: Date.now(),
+                    cashierId: cashierData.cashierId,
+                    cashierName: cashierData.name,
+                    customerId: parseInt(customerId),
+                    customerName: customerName,
+                    product: productName,
+                    price: productPrice,
+                    paidUSD: paymentUSD,
+                    paidUZS: paymentUZS,
+                    exchangeRate: exchangeRate,
+                    type: 'sale'
+                };
+                
+                const response = await fetch(`${API_URL}/cashier-sales`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(saleData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Savdo muvaffaqiyatli amalga oshirildi!');
+                    
+                    // Formani tozalash
+                    document.getElementById('customerId').value = '';
+                    document.getElementById('customerName').value = '';
+                    document.getElementById('productName').value = '';
+                    document.getElementById('productPrice').value = '';
+                    document.getElementById('paymentUSD').value = '';
+                    document.getElementById('paymentUZS').value = '';
+                    document.getElementById('totalPayment').textContent = '$0.00';
+                    
+                    // Balansni yangilash
+                    updateBalance();
+                    loadTodayStats();
+                } else {
+                    alert('❌ Xato: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Savdo qilishda xato:', error);
+                alert('Savdo qilishda xato yuz berdi!');
+            }
+        }
+        
+        // Kirim topshirish
+        async function makeHandover() {
+            const amount = parseFloat(document.getElementById('handoverAmount').value);
+            const notes = document.getElementById('handoverNotes').value;
+            
+            if (!amount || amount <= 0) {
+                alert('To\'g\'ri miqdorni kiriting!');
+                return;
+            }
+            
+            try {
+                const handoverData = {
+                    cashierId: cashierData.cashierId,
+                    amount: amount,
+                    notes: notes
+                };
+                
+                const response = await fetch(`${API_URL}/cashier-handover`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(handoverData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Kirim muvaffaqiyatli topshirildi!');
+                    
+                    // Formani tozalash
+                    document.getElementById('handoverAmount').value = '';
+                    document.getElementById('handoverNotes').value = '';
+                    
+                    // Balansni yangilash
+                    updateBalance();
+                    loadTodayStats();
+                } else {
+                    alert('❌ Xato: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Kirim topshirishda xato:', error);
+                alert('Kirim topshirishda xato yuz berdi!');
+            }
+        }
+        
+        // Bugungi statistikani yuklash
+        async function loadTodayStats() {
+            if (!cashierData) return;
+            
+            try {
+                const today = new Date().toLocaleDateString('uz-UZ');
+                
+                // Savdolar
+                const salesRes = await fetch(`${API_URL}/cashier-sales/${cashierData.cashierId}`);
+                const salesData = await salesRes.json();
+                
+                if (salesData.success) {
+                    const todaySales = salesData.sales.filter(s => s.date === today);
+                    const todayRevenue = todaySales.reduce((sum, s) => sum + (s.price || 0), 0);
+                    
+                    document.getElementById('todaySales').textContent = todaySales.length;
+                    document.getElementById('todayRevenue').textContent = `$${todayRevenue.toFixed(2)}`;
+                }
+                
+                // Kirimlar
+                const handoversRes = await fetch(`${API_URL}/cashier-handovers/${cashierData.cashierId}`);
+                const handoversData = await handoversRes.json();
+                
+                if (handoversData.success) {
+                    const todayHandovers = handoversData.handovers.filter(h => h.date === today);
+                    const todayHandoverAmount = todayHandovers.reduce((sum, h) => sum + (h.amount || 0), 0);
+                    
+                    document.getElementById('todayHandovers').textContent = todayHandovers.length;
+                    document.getElementById('todayHandoverAmount').textContent = `$${todayHandoverAmount.toFixed(2)}`;
+                }
+                
+            } catch (error) {
+                console.error('Statistikani yuklashda xato:', error);
+            }
+        }
+        
+        // Sozlamalar modal
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'block';
+        }
+        
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+        
+        function saveSettings() {
+            const newRate = parseFloat(document.getElementById('exchangeRateInput').value);
+            
+            if (!newRate || newRate <= 0) {
+                alert('To\'g\'ri kurs kiriting!');
+                return;
+            }
+            
+            // Server ga saqlash
+            saveExchangeRateToServer(newRate);
+        }
+        
+        // Server ga kursni saqlash
+        async function saveExchangeRateToServer(newRate) {
+            try {
+                const response = await fetch(`${API_URL}/exchange-rate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ exchangeRate: newRate })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    exchangeRate = data.exchangeRate;
+                    localStorage.setItem('exchangeRate', exchangeRate.toString());
+                    
+                    updateExchangeRateDisplay();
+                    updateBalance();
+                    
+                    alert('✅ Kurs saqlandi!');
+                    closeSettings();
+                } else {
+                    alert('❌ Xato: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Kursni saqlashda xato:', error);
+                alert('Kursni saqlashda xato yuz berdi!');
+            }
+        }
+        
+        // Modal tashqarisiga bosilganda yopish
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target === modal) {
+                closeSettings();
+            }
+        }
+        
+        // Sahifa yuklanganda
+        window.onload = function() {
+            loadFromStorage();
+            
+            if (!cashierData) {
+                alert('Iltimos avval login qiling!');
+                window.location.href = 'cashier-multi-currency.html';
+                return;
+            }
+            
+            updateBalance();
+            loadTodayStats();
+            
+            // Har 30 sekundda yangilash
+            setInterval(() => {
+                updateBalance();
+                loadTodayStats();
+            }, 30000);
+        };
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

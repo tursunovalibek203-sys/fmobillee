@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Filiallar Savdo Hisoboti</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+        }
+        
+        .branches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .branch-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .branch-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .branch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .branch-name {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .branch-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .sales-periods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .period-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+        
+        .period-title {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .period-count {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .period-revenue {
+            font-size: 1.1em;
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .today-card { border-left-color: #28a745; }
+        .week-card { border-left-color: #ffc107; }
+        .month-card { border-left-color: #dc3545; }
+        
+        .today-card .period-count { color: #28a745; }
+        .week-card .period-count { color: #ffc107; }
+        .month-card .period-count { color: #dc3545; }
+        
+        .branch-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            color: white;
+        }
+        
+        .btn-details {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .btn-export {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: white;
+            font-size: 1.2em;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .summary-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .summary-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .summary-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .summary-label {
+            color: #666;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .branches-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sales-periods {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <a href="admin-dashboard.html" class="back-btn">← Orqaga</a>
+    
+    <div class="container">
+        <div class="header">
+            <h1>📊 Filiallar Savdo Hisoboti</h1>
+            <p class="subtitle">Har bir filialning bugungi, haftalik va oylik savdolari</p>
+        </div>
+        
+        <div class="summary-card">
+            <div class="summary-title">📈 Umumiy Statistika</div>
+            <div class="summary-stats">
+                <div class="summary-item">
+                    <div class="summary-value" id="totalBranches">0</div>
+                    <div class="summary-label">Jami Filiallar</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="totalTodaySales">0</div>
+                    <div class="summary-label">Bugungi Savdolar</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="totalTodayRevenue">$0</div>
+                    <div class="summary-label">Bugungi Daromad</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="totalWeekRevenue">$0</div>
+                    <div class="summary-label">Haftalik Daromad</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="totalMonthRevenue">$0</div>
+                    <div class="summary-label">Oylik Daromad</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="loadingMessage" class="loading">
+            📊 Filiallar ma'lumotlari yuklanmoqda...
+        </div>
+        
+        <div id="errorMessage" class="error" style="display: none;">
+            ❌ Ma'lumotlarni yuklashda xatolik yuz berdi
+        </div>
+        
+        <div id="branchesContainer" class="branches-grid" style="display: none;">
+            <!-- Filiallar bu yerda ko'rsatiladi -->
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        
+        let allBranchesData = [];
+        
+        async function loadBranchesSales() {
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+                document.getElementById('branchesContainer').style.display = 'none';
+                
+                // Filiallar ro'yxatini olish
+                const branchesRes = await fetch(`${API_URL}/branches`);
+                const branchesData = await branchesRes.json();
+                
+                if (!branchesData.success) {
+                    throw new Error(branchesData.error || 'Filiallar ma\'lumotini olishda xato');
+                }
+                
+                allBranchesData = [];
+                
+                // Har bir filial uchun savdo ma'lumotlarini olish
+                for (const branch of branchesData.branches) {
+                    try {
+                        const salesRes = await fetch(`${API_URL}/cashier-sales/branch/${branch.branchId}`);
+                        const salesData = await salesRes.json();
+                        
+                        if (salesData.success) {
+                            allBranchesData.push({
+                                branch: branch,
+                                stats: salesData.stats
+                            });
+                        } else {
+                            // Agar savdo ma'lumoti yo'q bo'lsa, bo'sh statistika
+                            allBranchesData.push({
+                                branch: branch,
+                                stats: {
+                                    today: { count: 0, revenue: 0, sales: [] },
+                                    week: { count: 0, revenue: 0, sales: [] },
+                                    month: { count: 0, revenue: 0, sales: [] },
+                                    total: { count: 0, revenue: 0 }
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Filial ${branch.name} uchun xato:`, error);
+                        // Bo'sh statistika bilan davom etish
+                        allBranchesData.push({
+                            branch: branch,
+                            stats: {
+                                today: { count: 0, revenue: 0, sales: [] },
+                                week: { count: 0, revenue: 0, sales: [] },
+                                month: { count: 0, revenue: 0, sales: [] },
+                                total: { count: 0, revenue: 0 }
+                            }
+                        });
+                    }
+                }
+                
+                displayBranches();
+                updateSummary();
+                
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('branchesContainer').style.display = 'grid';
+                
+            } catch (error) {
+                console.error('Xato:', error);
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').textContent = `❌ ${error.message}`;
+            }
+        }
+        
+        function displayBranches() {
+            const container = document.getElementById('branchesContainer');
+            container.innerHTML = '';
+            
+            allBranchesData.forEach(data => {
+                const { branch, stats } = data;
+                
+                const branchCard = document.createElement('div');
+                branchCard.className = 'branch-card';
+                branchCard.innerHTML = `
+                    <div class="branch-header">
+                        <div class="branch-name">🏢 ${branch.name}</div>
+                        <div class="branch-status ${branch.isActive ? 'status-active' : 'status-inactive'}">
+                            ${branch.isActive ? 'Faol' : 'Nofaol'}
+                        </div>
+                    </div>
+                    
+                    <div class="sales-periods">
+                        <div class="period-card today-card">
+                            <div class="period-title">📅 Bugun</div>
+                            <div class="period-count">${stats.today.count}</div>
+                            <div class="period-revenue">$${stats.today.revenue.toFixed(2)}</div>
+                        </div>
+                        
+                        <div class="period-card week-card">
+                            <div class="period-title">📊 Hafta</div>
+                            <div class="period-count">${stats.week.count}</div>
+                            <div class="period-revenue">$${stats.week.revenue.toFixed(2)}</div>
+                        </div>
+                        
+                        <div class="period-card month-card">
+                            <div class="period-title">📈 Oy</div>
+                            <div class="period-count">${stats.month.count}</div>
+                            <div class="period-revenue">$${stats.month.revenue.toFixed(2)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="branch-actions">
+                        <a href="admin-branch-details.html?branchId=${branch.branchId}" class="action-btn btn-details">
+                            📋 Batafsil
+                        </a>
+                        <button onclick="exportBranchData(${branch.branchId}, '${branch.name}')" class="action-btn btn-export">
+                            📊 Excel
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(branchCard);
+            });
+        }
+        
+        function updateSummary() {
+            const totalBranches = allBranchesData.length;
+            const totalTodaySales = allBranchesData.reduce((sum, data) => sum + data.stats.today.count, 0);
+            const totalTodayRevenue = allBranchesData.reduce((sum, data) => sum + data.stats.today.revenue, 0);
+            const totalWeekRevenue = allBranchesData.reduce((sum, data) => sum + data.stats.week.revenue, 0);
+            const totalMonthRevenue = allBranchesData.reduce((sum, data) => sum + data.stats.month.revenue, 0);
+            
+            document.getElementById('totalBranches').textContent = totalBranches;
+            document.getElementById('totalTodaySales').textContent = totalTodaySales;
+            document.getElementById('totalTodayRevenue').textContent = `$${totalTodayRevenue.toFixed(2)}`;
+            document.getElementById('totalWeekRevenue').textContent = `$${totalWeekRevenue.toFixed(2)}`;
+            document.getElementById('totalMonthRevenue').textContent = `$${totalMonthRevenue.toFixed(2)}`;
+        }
+        
+        async function exportBranchData(branchId, branchName) {
+            try {
+                const response = await fetch(`${API_URL}/export/branch-sales/${branchId}`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${branchName}_Savdolar_${new Date().toLocaleDateString('uz-UZ')}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    alert(`✅ ${branchName} filiali savdolari Excel faylga eksport qilindi!`);
+                } else {
+                    throw new Error('Eksport qilishda xatolik');
+                }
+            } catch (error) {
+                console.error('Eksport xato:', error);
+                alert(`❌ Eksport qilishda xatolik: ${error.message}`);
+            }
+        }
+        
+        // Sahifa yuklanganda
+        loadBranchesSales();
+        
+        // Har 60 sekundda yangilash
+        setInterval(loadBranchesSales, 60000);
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

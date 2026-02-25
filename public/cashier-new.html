@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💼 Kassir Panel - Yangi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            margin-left: 280px;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header-info h1 {
+            color: #667eea;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        /* Sale Type Selector */
+        .sale-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .sale-type-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .sale-type-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .sale-type-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        /* Customer Info */
+        .customer-info {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .customer-info.show {
+            display: block;
+        }
+
+        .customer-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .customer-info-label {
+            color: #666;
+        }
+
+        .customer-info-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Products List */
+        .products-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .product-item {
+            padding: 15px;
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .product-item:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .product-price {
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        /* Cart */
+        .cart-items {
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .cart-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .cart-item-remove {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .cart-item-details {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .qty-value {
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .cart-item-price {
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        /* Cart Summary */
+        .cart-summary {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .summary-row.total {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+            padding-top: 10px;
+            border-top: 2px solid #ddd;
+        }
+
+        /* Complete Sale Button */
+        .complete-sale-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #10b981, #047857);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .complete-sale-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .complete-sale-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .container {
+                margin-left: 0;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-info">
+                <h1>💼 Kassir Panel</h1>
+                <p id="cashierInfo">Kassir: <span id="cashierName">-</span> | Filial: <span id="branchName">-</span></p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="showHistory()">📋 Tarix</button>
+                <button class="btn btn-secondary" onclick="handoverMoney()">💵 Kirim Berish</button>
+                <button class="btn btn-secondary" onclick="logout()">🚪 Chiqish</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Bugungi Savdolar</div>
+                <div class="stat-value" id="todaySales">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Bugungi Daromad</div>
+                <div class="stat-value" id="todayRevenue">$0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Jami Balans</div>
+                <div class="stat-value" id="totalBalance">$0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Kirim Berilgan</div>
+                <div class="stat-value" id="handedOver">$0</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left: Sale Form -->
+            <div class="card">
+                <h2 class="card-title">🛒 Yangi Savdo</h2>
+
+                <!-- Sale Type Selector -->
+                <div class="sale-type-selector">
+                    <button class="sale-type-btn active" onclick="setSaleType('customer')" id="customerSaleBtn">
+                        👤 Doimiy Mijoz
+                    </button>
+                    <button class="sale-type-btn" onclick="setSaleType('walk-in')" id="walkInSaleBtn">
+                        🚶 Ochiq Savdo
+                    </button>
+                </div>
+
+                <!-- Customer Sale Form -->
+                <div id="customerSaleForm">
+                    <div class="form-group">
+                        <label>Mijoz ID</label>
+                        <input type="number" id="customerId" placeholder="Mijoz ID ni kiriting">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 20px;" onclick="searchCustomer()">
+                        🔍 Mijozni Qidirish
+                    </button>
+
+                    <div class="customer-info" id="customerInfo">
+                        <div class="customer-info-item">
+                            <span class="customer-info-label">Ism:</span>
+                            <span class="customer-info-value" id="customerNameDisplay">-</span>
+                        </div>
+                        <div class="customer-info-item">
+                            <span class="customer-info-label">Telefon:</span>
+                            <span class="customer-info-value" id="customerPhone">-</span>
+                        </div>
+                        <div class="customer-info-item">
+                            <span class="customer-info-label">Qarz:</span>
+                            <span class="customer-info-value" id="customerDebt">$0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Walk-in Sale Form -->
+                <div id="walkInSaleForm" style="display: none;">
+                    <div class="form-group">
+                        <label>Mijoz Ismi (ixtiyoriy)</label>
+                        <input type="text" id="walkInCustomerName" placeholder="Masalan: Anvar">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefon (ixtiyoriy)</label>
+                        <input type="text" id="walkInCustomerPhone" placeholder="+998 90 123 45 67">
+                    </div>
+                </div>
+
+                <!-- Product Selection -->
+                <div class="form-group">
+                    <label>Mahsulot Tanlash</label>
+                    <input type="text" id="productSearch" placeholder="Mahsulot qidirish..." oninput="searchProducts()">
+                </div>
+
+                <div class="products-list" id="productsList">
+                    <div class="loading">Ma'lumotlar yuklanmoqda...</div>
+                </div>
+            </div>
+
+            <!-- Right: Cart -->
+            <div class="card">
+                <h2 class="card-title">🛍️ Savat</h2>
+
+                <div class="cart-items" id="cartItems">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🛒</div>
+                        <p>Savat bo'sh</p>
+                    </div>
+                </div>
+
+                <div class="cart-summary" id="cartSummary" style="display: none;">
+                    <div class="summary-row">
+                        <span>Mahsulotlar:</span>
+                        <span id="cartItemCount">0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Jami summa:</span>
+                        <span id="cartSubtotal">$0</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>TO'LOV:</span>
+                        <span id="cartTotal">$0</span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="paymentSection" style="display: none;">
+                    <label>To'lov Turi</label>
+                    <select id="paymentCurrency" class="form-control" onchange="updatePaymentDisplay()">
+                        <option value="USD">💵 Dollar (USD)</option>
+                        <option value="UZS">💸 So'm (UZS)</option>
+                        <option value="EUR">💶 Yevro (EUR)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="paymentAmountSection" style="display: none;">
+                    <label>To'lov Summasi</label>
+                    <input type="number" id="paymentAmount" placeholder="0.00" step="0.01" oninput="calculatePayment()">
+                    <div style="margin-top: 10px; padding: 10px; background: #f8f9ff; border-radius: 5px; font-size: 13px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>💵 USD:</span>
+                            <span id="paymentUSD">$0.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>💸 UZS:</span>
+                            <span id="paymentUZS">0 so'm</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>💶 EUR:</span>
+                            <span id="paymentEUR">€0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="complete-sale-btn" id="completeSaleBtn" onclick="completeSale()" disabled>
+                    ✅ Savdoni Yakunlash
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="cashier-sidebar-loader.js"></script>
+    <script src="cashier-new.js"></script>
+</body>
+</html>

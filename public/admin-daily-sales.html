@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Admin - Bugungi Savdolar</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      color: #667eea;
+      font-size: 32px;
+    }
+
+    .date-display {
+      text-align: right;
+    }
+
+    .date-display .today {
+      font-size: 24px;
+      font-weight: bold;
+      color: #374151;
+    }
+
+    .date-display .time {
+      font-size: 16px;
+      color: #6b7280;
+    }
+
+    .branches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 30px;
+    }
+
+    .branch-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+
+    .branch-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .branch-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+    }
+
+    .branch-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .branch-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+
+    .branch-body {
+      padding: 25px;
+    }
+
+    .sales-list {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .sale-item {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border-left: 4px solid #667eea;
+      transition: all 0.3s;
+    }
+
+    .sale-item:hover {
+      background: #f3f4f6;
+      transform: translateX(5px);
+    }
+
+    .sale-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .sale-time {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .sale-amount {
+      font-size: 20px;
+      font-weight: bold;
+      color: #10b981;
+    }
+
+    .sale-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .sale-details strong {
+      color: #374151;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6b7280;
+    }
+
+    .empty-icon {
+      font-size: 60px;
+      margin-bottom: 15px;
+      opacity: 0.5;
+    }
+
+    .total-summary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .summary-item {
+      text-align: center;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+
+    .summary-value {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .summary-label {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .refresh-btn {
+      background: white;
+      color: #667eea;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: #f3f4f6;
+      transform: translateY(-2px);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .branch-card {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: white;
+      font-size: 24px;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>📊 Bugungi Savdolar</h1>
+        <p style="color: #6b7280; margin-top: 5px;">Barcha filiallar bo'yicha</p>
+      </div>
+      <div class="date-display">
+        <div class="today" id="todayDate">13.02.2026</div>
+        <div class="time" id="currentTime">14:30:45</div>
+        <button class="refresh-btn" onclick="loadData()" style="margin-top: 10px;">
+          🔄 Yangilash
+        </button>
+      </div>
+    </div>
+
+    <!-- Umumiy Statistika -->
+    <div class="total-summary">
+      <h2>💰 Bugungi Umumiy Natija</h2>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="summary-value" id="totalSales">0</div>
+          <div class="summary-label">Jami Savdolar</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-value" id="totalRevenue">$0</div>
+          <div class="summary-label">Jami Daromad</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-value" id="totalBranches">0</div>
+          <div class="summary-label">Faol Filiallar</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-value" id="avgSale">$0</div>
+          <div class="summary-label">O'rtacha Savdo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filiallar Grid -->
+    <div class="branches-grid" id="branchesGrid">
+      <div class="loading">
+        ⏳ Yuklanmoqda...
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000';
+
+    // Vaqt va sanani yangilash
+    function updateDateTime() {
+      const now = new Date();
+      
+      // Sana
+      const dateStr = now.toLocaleDateString('uz-UZ', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      document.getElementById('todayDate').textContent = dateStr;
+
+      // Vaqt
+      const timeStr = now.toLocaleTimeString('uz-UZ');
+      document.getElementById('currentTime').textContent = timeStr;
+    }
+
+    // Har soniyada vaqtni yangilash
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    // Ma'lumotlarni yuklash
+    async function loadData() {
+      try {
+        // Filiallarni olish
+        const branchesResponse = await fetch(`${API_URL}/api/branches`);
+        const branchesData = await branchesResponse.json();
+
+        if (!branchesData.success) {
+          throw new Error('Filiallarni yuklashda xato');
+        }
+
+        const branches = branchesData.branches;
+
+        // Bugungi savdolarni olish
+        const today = new Date().toLocaleDateString('uz-UZ');
+        const salesResponse = await fetch(`${API_URL}/api/cashier-sales`);
+        const salesData = await salesResponse.json();
+
+        if (!salesData.success) {
+          throw new Error('Savdolarni yuklashda xato');
+        }
+
+        // Bugungi savdolarni filtrlash
+        const todaySales = salesData.sales.filter(sale => sale.date === today);
+
+        // Har bir filial uchun savdolarni guruhlash
+        const branchSales = {};
+        branches.forEach(branch => {
+          branchSales[branch.branchId] = {
+            branch: branch,
+            sales: todaySales.filter(sale => sale.branchId === branch.branchId)
+          };
+        });
+
+        // Ko'rsatish
+        displayBranches(branchSales);
+        updateSummary(todaySales);
+
+      } catch (error) {
+        console.error('Xato:', error);
+        document.getElementById('branchesGrid').innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; color: white; padding: 60px;">
+            <div style="font-size: 60px; margin-bottom: 20px;">❌</div>
+            <h2>Ma'lumotlarni yuklashda xatolik</h2>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // Filiallarni ko'rsatish
+    function displayBranches(branchSales) {
+      const grid = document.getElementById('branchesGrid');
+      
+      const branchCards = Object.values(branchSales).map(({ branch, sales }) => {
+        const totalRevenue = sales.reduce((sum, sale) => sum + (sale.paid || 0), 0);
+        const salesCount = sales.length;
+        const avgSale = salesCount > 0 ? totalRevenue / salesCount : 0;
+
+        return `
+          <div class="branch-card">
+            <div class="branch-header">
+              <div class="branch-name">
+                🏢 ${branch.name}
+              </div>
+              <div style="font-size: 14px; opacity: 0.9;">
+                📍 ${branch.address || 'Manzil kiritilmagan'}
+              </div>
+              <div class="branch-stats">
+                <div class="stat-item">
+                  <div class="stat-value">${salesCount}</div>
+                  <div class="stat-label">Savdolar</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">$${totalRevenue.toFixed(2)}</div>
+                  <div class="stat-label">Daromad</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">$${avgSale.toFixed(2)}</div>
+                  <div class="stat-label">O'rtacha</div>
+                </div>
+              </div>
+            </div>
+            <div class="branch-body">
+              <h3 style="margin-bottom: 15px; color: #374151;">📋 Bugungi Savdolar</h3>
+              <div class="sales-list">
+                ${sales.length > 0 ? sales.map(sale => `
+                  <div class="sale-item">
+                    <div class="sale-header">
+                      <span class="sale-time">🕐 ${sale.time}</span>
+                      <span class="sale-amount">$${(sale.paid || 0).toFixed(2)}</span>
+                    </div>
+                    <div class="sale-details">
+                      <div>
+                        <strong>Kassir:</strong> ${sale.cashierName}
+                      </div>
+                      <div>
+                        <strong>Mijoz:</strong> ${sale.customerName}
+                      </div>
+                      <div>
+                        <strong>Mahsulot:</strong> ${sale.product}
+                      </div>
+                      <div>
+                        <strong>Narx:</strong> $${(sale.price || 0).toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+                `).join('') : `
+                  <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <p>Bugun hali savdo yo'q</p>
+                  </div>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      grid.innerHTML = branchCards || `
+        <div style="grid-column: 1/-1; text-align: center; color: white; padding: 60px;">
+          <div style="font-size: 60px; margin-bottom: 20px;">🏢</div>
+          <h2>Filiallar topilmadi</h2>
+          <p>Iltimos, avval filial qo'shing</p>
+        </div>
+      `;
+    }
+
+    // Umumiy statistikani yangilash
+    function updateSummary(sales) {
+      const totalSales = sales.length;
+      const totalRevenue = sales.reduce((sum, sale) => sum + (sale.paid || 0), 0);
+      const activeBranches = new Set(sales.map(sale => sale.branchId)).size;
+      const avgSale = totalSales > 0 ? totalRevenue / totalSales : 0;
+
+      document.getElementById('totalSales').textContent = totalSales;
+      document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
+      document.getElementById('totalBranches').textContent = activeBranches;
+      document.getElementById('avgSale').textContent = '$' + avgSale.toFixed(2);
+    }
+
+    // Dastlabki yuklash
+    loadData();
+
+    // Har 30 soniyada avtomatik yangilash
+    setInterval(loadData, 30000);
+  </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

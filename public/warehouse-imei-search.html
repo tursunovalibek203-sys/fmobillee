@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 IMEI Qidirish</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .search-box {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        
+        .results {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .product-card {
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .product-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+        
+        .product-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .product-id {
+            font-size: 12px;
+            color: #9ca3af;
+            background: #f3f4f6;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        
+        .product-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .imei-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .imei-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .imei-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .imei-count {
+            font-size: 12px;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        
+        .imei-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .imei-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .imei-badge.highlight {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .add-imei-section {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+        
+        .add-imei-form {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+        }
+        
+        .form-group {
+            flex: 1;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 IMEI Qidirish va Boshqaruv</h1>
+            <p>Mahsulot IMEI kodlarini qidiring va boshqaring</p>
+        </div>
+        
+        <div class="search-box">
+            <input 
+                type="text" 
+                class="search-input" 
+                id="searchInput" 
+                placeholder="🔍 IMEI, mahsulot nomi yoki barcode kiriting..." 
+                oninput="searchProducts()"
+            >
+        </div>
+        
+        <div class="results" id="results">
+            <div class="no-results">
+                IMEI yoki mahsulot nomini kiriting
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let allProducts = [];
+        let searchTimeout;
+        
+        // Sahifa yuklanganda barcha mahsulotlarni olish
+        async function loadAllProducts() {
+            try {
+                const response = await fetch('/api/products');
+                const data = await response.json();
+                
+                if (data.products) {
+                    allProducts = data.products;
+                    console.log('✅ Mahsulotlar yuklandi:', allProducts.length);
+                }
+            } catch (error) {
+                console.error('❌ Xato:', error);
+            }
+        }
+        
+        // Qidirish funksiyasi
+        function searchProducts() {
+            clearTimeout(searchTimeout);
+            
+            searchTimeout = setTimeout(() => {
+                const query = document.getElementById('searchInput').value.trim();
+                
+                if (!query) {
+                    document.getElementById('results').innerHTML = 
+                        '<div class="no-results">IMEI yoki mahsulot nomini kiriting</div>';
+                    return;
+                }
+                
+                document.getElementById('results').innerHTML = 
+                    '<div class="loading">Qidirilmoqda...</div>';
+                
+                // Mahsulotlarni qidirish
+                const results = allProducts.filter(product => {
+                    const searchLower = query.toLowerCase();
+                    
+                    // Mahsulot nomi bo'yicha
+                    if (product.name && product.name.toLowerCase().includes(searchLower)) {
+                        return true;
+                    }
+                    
+                    // Barcode bo'yicha
+                    if (product.barcode && product.barcode.toLowerCase().includes(searchLower)) {
+                        return true;
+                    }
+                    
+                    // IMEI bo'yicha (agar imeis array mavjud bo'lsa)
+                    if (product.imeis && Array.isArray(product.imeis)) {
+                        return product.imeis.some(imei => 
+                            imei.toLowerCase().includes(searchLower)
+                        );
+                    }
+                    
+                    // IMEI bo'yicha (agar imei string mavjud bo'lsa)
+                    if (product.imei && product.imei.toLowerCase().includes(searchLower)) {
+                        return true;
+                    }
+                    
+                    return false;
+                });
+                
+                displayResults(results, query);
+            }, 300);
+        }
+        
+        // Natijalarni ko'rsatish
+        function displayResults(products, searchQuery) {
+            const container = document.getElementById('results');
+            
+            if (products.length === 0) {
+                container.innerHTML = '<div class="no-results">❌ Hech narsa topilmadi</div>';
+                return;
+            }
+            
+            container.innerHTML = products.map(product => {
+                const imeis = product.imeis || (product.imei ? [product.imei] : []);
+                const highlightedImeis = imeis.map(imei => {
+                    const isMatch = imei.toLowerCase().includes(searchQuery.toLowerCase());
+                    return { imei, highlight: isMatch };
+                });
+                
+                return `
+                    <div class="product-card">
+                        <div class="product-header">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-id">ID: ${product.productId}</div>
+                        </div>
+                        
+                        <div class="product-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Kategoriya</div>
+                                <div class="detail-value">${product.category || '-'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Sotish Narxi</div>
+                                <div class="detail-value">$${product.sellPrice || 0}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Stok</div>
+                                <div class="detail-value">${product.stock || 0} dona</div>
+                            </div>
+                            ${product.barcode ? `
+                            <div class="detail-item">
+                                <div class="detail-label">Barcode</div>
+                                <div class="detail-value">${product.barcode}</div>
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        ${imeis.length > 0 ? `
+                        <div class="imei-section">
+                            <div class="imei-header">
+                                <div class="imei-title">📱 IMEI Kodlar</div>
+                                <div class="imei-count">${imeis.length} ta</div>
+                            </div>
+                            <div class="imei-list">
+                                ${highlightedImeis.map(item => `
+                                    <div class="imei-badge ${item.highlight ? 'highlight' : ''}">
+                                        ${item.imei}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : '<div class="imei-section"><p style="color: #9ca3af; font-size: 14px;">IMEI kodlar mavjud emas</p></div>'}
+                        
+                        <div class="add-imei-section">
+                            <div class="add-imei-form">
+                                <div class="form-group">
+                                    <label>Yangi IMEI qo'shish</label>
+                                    <input 
+                                        type="text" 
+                                        id="newImei_${product.productId}" 
+                                        placeholder="15 raqamli IMEI" 
+                                        maxlength="15"
+                                    >
+                                </div>
+                                <button class="btn btn-primary" onclick="addIMEI(${product.productId})">
+                                    ➕ Qo'shish
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // IMEI qo'shish
+        async function addIMEI(productId) {
+            const input = document.getElementById(`newImei_${productId}`);
+            const imei = input.value.trim();
+            
+            if (!imei) {
+                alert('❌ IMEI kiriting!');
+                return;
+            }
+            
+            if (imei.length < 10) {
+                alert('❌ IMEI kamida 10 ta belgidan iborat bo\'lishi kerak!');
+                return;
+            }
+            
+            try {
+                // Mahsulotni topish
+                const product = allProducts.find(p => p.productId === productId);
+                if (!product) {
+                    alert('❌ Mahsulot topilmadi!');
+                    return;
+                }
+                
+                // IMEI arrayni yangilash
+                const currentImeis = product.imeis || (product.imei ? [product.imei] : []);
+                
+                // Takrorlanishni tekshirish
+                if (currentImeis.includes(imei)) {
+                    alert('❌ Bu IMEI allaqachon mavjud!');
+                    return;
+                }
+                
+                const updatedImeis = [...currentImeis, imei];
+                
+                // Serverga yuborish
+                const response = await fetch('/api/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        productId: productId,
+                        name: product.name,
+                        category: product.category,
+                        buyPrice: product.buyPrice,
+                        sellPrice: product.sellPrice,
+                        stock: product.stock,
+                        minStock: product.minStock,
+                        unit: product.unit,
+                        barcode: product.barcode,
+                        description: product.description,
+                        imeis: updatedImeis,
+                        userName: 'Admin',
+                        userId: 0
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ IMEI muvaffaqiyatli qo\'shildi!');
+                    input.value = '';
+                    
+                    // Mahsulotlarni qayta yuklash
+                    await loadAllProducts();
+                    searchProducts();
+                } else {
+                    alert('❌ Xato: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Xato: ' + error.message);
+            }
+        }
+        
+        // Sahifa yuklanganda
+        window.addEventListener('load', () => {
+            loadAllProducts();
+        });
+    </script>
+</body>
+</html>

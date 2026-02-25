@@ -6,6 +6,7 @@ let sales = [];
 let selectedCustomer = null;
 let editId = null;
 let currentFilter = 'all';
+let selectedProduct = null; // Tanlangan ombor mahsuloti
 let settings = {
   reminderDays: 7,
   reminderTime: '09:00',
@@ -44,7 +45,9 @@ async function saveSettingsAPI(newSettings) {
 
 async function loadCustomers() {
   try {
-    console.log('🔄 Mijozlar yuklanmoqda...', API_URL);
+    console.log('🔄 Mijozlar yuklanmoqda...');
+    console.log('📍 API URL:', API_URL);
+    console.log('📍 Full URL:', `${API_URL}/customers`);
     
     // Avval cache dan yuklash (tez)
     const cachedCustomers = localStorage.getItem('customers_cache');
@@ -62,14 +65,20 @@ async function loadCustomers() {
     }
     
     // Cache yo'q yoki eski - serverdan yuklash
+    console.log('📡 Serverga so\'rov yuborilmoqda...');
     const response = await fetch(`${API_URL}/customers`);
     console.log('📡 Response status:', response.status);
+    console.log('📡 Response OK:', response.ok);
     
     if (!response.ok) {
-      throw new Error(`Server xatosi: ${response.status}`);
+      const errorText = await response.text();
+      console.error('❌ Server xatosi:', errorText);
+      throw new Error(`Server xatosi: ${response.status} - ${errorText}`);
     }
     const data = await response.json();
     console.log('📦 Kelgan ma\'lumotlar:', data);
+    console.log('📦 Ma\'lumotlar turi:', typeof data);
+    console.log('📦 Ma\'lumotlar uzunligi:', Array.isArray(data) ? data.length : 'Array emas');
     
     customers = data.map(c => ({
       id: c.customerId,
@@ -454,12 +463,24 @@ function openCustomer(id) {
   } else {
     formCard.innerHTML = `
       <h2 id="formTitle">➕ Yangi savdo</h2>
+      
+      <!-- IMEI input - ombordan mahsulot tanlash -->
+      <div style="margin-bottom: 16px;">
+        <input type="text" id="imeiInput" placeholder="🔍 IMEI yoki Barcode kiriting (ombordan tanlash)" 
+               style="width: 100%; padding: 14px 16px; border: 2px solid #3b82f6; border-radius: 12px; font-size: 14px; font-weight: 500;"
+               oninput="searchProductByIMEI(this.value)">
+        <div id="imeiSearchResults" style="margin-top: 8px; display: none;"></div>
+      </div>
+      
       <input type="text" id="productInput" placeholder="Mahsulot nomi">
       <div class="row">
         <input type="number" id="priceInput" placeholder="Narxi (so'm)">
         <input type="number" id="paidInput" placeholder="Berilgan pul (so'm)">
       </div>
-      <button class="submit-btn" id="submitBtn" onclick="addSale()">Savdo qo'shish</button>
+      <button class="submit-btn" id="submitBtn" onclick="addSale()">
+        <span>➕</span>
+        Savdo qo'shish
+      </button>
     `;
   }
   
@@ -562,6 +583,29 @@ function renderCustomerSales() {
 
 // ==================== PAYMENT ====================
 
+// ==================== PAYMENT - DOLLAR ONLY ====================
+
+// Kassadagi balansni yangilash
+function updateCashBalance() {
+  // Bu funksiya serverdan ma'lumot oladi
+  // Hozircha static qiymat
+  const balanceUSD = 0; // Serverdan keladi - faqat dollar
+  const balanceUZS = 0; // Serverdan keladi - so'm miqdori
+  
+  // Dollar balansi
+  document.getElementById('cashBalanceUSD').textContent = formatMoney(balanceUSD, 'USD');
+  
+  // So'mning dollar qiymati
+  const exchangeRate = 12700;
+  const uzsInUSD = balanceUZS / exchangeRate;
+  document.getElementById('cashBalanceUZSinUSD').textContent = formatMoney(uzsInUSD, 'USD');
+  document.getElementById('cashBalanceUZSAmount').textContent = formatMoney(balanceUZS, 'UZS');
+  
+  // Jami balans
+  const totalBalance = balanceUSD + uzsInUSD;
+  document.getElementById('totalCashBalance').textContent = formatMoney(totalBalance, 'USD');
+}
+
 async function addPayment() {
   const paymentInput = document.getElementById('paymentAmount');
   const amount = Number(paymentInput.value);
@@ -610,7 +654,10 @@ async function addPayment() {
   // Background da mijozlarni yangilash
   fetchCustomersInBackground();
   
-  alert('✅ To\'lov qabul qilindi!');
+  // Kassadagi balansni yangilash
+  updateCashBalance();
+  
+  alert(`✅ To'lov qabul qilindi!\n\n💵 Miqdor: ${formatMoney(amount, 'USD')}`);
 }
 
 // ==================== SALES ====================
@@ -649,6 +696,23 @@ async function addSale() {
   };
   
   try {
+    // Agar mahsulot ombordan tanlangan bo'lsa, ombordan chiqarish
+    if (selectedProduct && selectedProduct.productId) {
+      console.log('📦 Ombordan mahsulot chiqarilmoqda...');
+      
+      const warehouseResult = await deductFromWarehouse(selectedProduct.productId, 1);
+      
+      if (!warehouseResult.success) {
+        throw new Error(`Ombordan chiqarishda xatolik: ${warehouseResult.error}`);
+      }
+      
+      console.log('✅ Ombordan muvaffaqiyatli chiqarildi');
+      
+      // Savdoga mahsulot ID ni qo'shish
+      newSale.warehouseProductId = selectedProduct.productId;
+      newSale.warehouseProductName = selectedProduct.name;
+    }
+    
     // Local arrayga qo'shish (tez)
     sales.push(newSale);
     
@@ -659,6 +723,8 @@ async function addSale() {
     productInput.value = '';
     priceInput.value = '';
     paidInput.value = '';
+    document.getElementById('imeiInput').value = '';
+    selectedProduct = null;
     
     // UI ni yangilash (tez)
     renderCustomerSales();
@@ -670,14 +736,17 @@ async function addSale() {
     submitBtn.disabled = false;
     
     // Focus qaytarish
-    productInput.focus();
+    document.getElementById('imeiInput').focus();
     
     // Background da mijozlarni yangilash (kutmasdan)
     fetchCustomersInBackground();
     
+    // Muvaffaqiyatli xabar
+    alert('✅ Savdo qo\'shildi!' + (newSale.warehouseProductId ? '\n📦 Ombordan chiqarildi' : ''));
+    
   } catch (error) {
     console.error('Savdo qo\'shish xatosi:', error);
-    alert('❌ Xatolik yuz berdi!');
+    alert('❌ Xatolik yuz berdi!\n\n' + error.message);
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
   }
@@ -1382,6 +1451,184 @@ function logout() {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('loginTime');
     window.location.href = '/login.html';
+  }
+}
+
+function openWarehousePage() {
+  window.location.href = '/warehouse.html';
+}
+
+function openCashierSystem() {
+  window.location.href = '/cashier-login-enhanced.html';
+}
+
+// ==================== OMBOR INTEGRATSIYASI ====================
+
+let searchTimeout = null;
+// selectedProduct allaqachon yuqorida e'lon qilingan
+
+// IMEI yoki Barcode orqali mahsulot qidirish
+async function searchProductByIMEI(query) {
+  // Agar input bo'sh bo'lsa, natijalarni yashirish
+  if (!query || query.trim().length < 2) {
+    document.getElementById('imeiSearchResults').style.display = 'none';
+    selectedProduct = null;
+    return;
+  }
+  
+  // Debounce - har bir belgi kiritilganda emas, 300ms kutib so'rov yuborish
+  clearTimeout(searchTimeout);
+  
+  searchTimeout = setTimeout(async () => {
+    try {
+      console.log('🔍 Mahsulot qidirilmoqda:', query);
+      
+      const response = await fetch(`${API_URL}/warehouse/search?q=${encodeURIComponent(query)}`);
+      
+      if (!response.ok) {
+        throw new Error(`Server xatosi: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('📦 Topilgan mahsulotlar:', data);
+      
+      displaySearchResults(data.products || []);
+      
+    } catch (error) {
+      console.error('❌ Qidiruv xatosi:', error);
+      document.getElementById('imeiSearchResults').innerHTML = `
+        <div style="padding: 12px; background: #fee2e2; border-radius: 8px; color: #dc2626; font-size: 13px;">
+          ❌ Qidiruv xatosi: ${error.message}
+        </div>
+      `;
+      document.getElementById('imeiSearchResults').style.display = 'block';
+    }
+  }, 300);
+}
+
+// Qidiruv natijalarini ko'rsatish
+function displaySearchResults(products) {
+  const resultsDiv = document.getElementById('imeiSearchResults');
+  
+  if (!products || products.length === 0) {
+    resultsDiv.innerHTML = `
+      <div style="padding: 12px; background: #fef3c7; border-radius: 8px; color: #92400e; font-size: 13px;">
+        ⚠️ Mahsulot topilmadi
+      </div>
+    `;
+    resultsDiv.style.display = 'block';
+    return;
+  }
+  
+  resultsDiv.innerHTML = `
+    <div style="background: white; border: 2px solid #e5e7eb; border-radius: 12px; max-height: 300px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+      ${products.map(product => `
+        <div onclick="selectProduct(${product.productId})" 
+             style="padding: 12px 16px; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: all 0.2s;"
+             onmouseover="this.style.background='#f9fafb'"
+             onmouseout="this.style.background='white'">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="flex: 1;">
+              <p style="font-weight: 600; font-size: 14px; color: #111827; margin: 0 0 4px 0;">
+                📦 ${product.name}
+              </p>
+              <p style="font-size: 12px; color: #6b7280; margin: 0;">
+                ${product.barcode ? `🏷️ ${product.barcode}` : ''} 
+                ${product.categoryName ? `• 📂 ${product.categoryName}` : ''}
+              </p>
+            </div>
+            <div style="text-align: right;">
+              <p style="font-weight: 700; font-size: 15px; color: #059669; margin: 0 0 4px 0;">
+                ${formatMoney(product.sellPrice)}
+              </p>
+              <p style="font-size: 12px; color: ${product.stock > product.minStock ? '#059669' : '#dc2626'}; margin: 0;">
+                📊 Ombor: ${product.stock} ${product.unit}
+              </p>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  resultsDiv.style.display = 'block';
+}
+
+// Mahsulotni tanlash va formani to'ldirish
+async function selectProduct(productId) {
+  try {
+    console.log('✅ Mahsulot tanlandi:', productId);
+    
+    // Mahsulot ma'lumotlarini olish
+    const response = await fetch(`${API_URL}/warehouse/product/${productId}`);
+    
+    if (!response.ok) {
+      throw new Error(`Server xatosi: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.success || !data.product) {
+      throw new Error('Mahsulot topilmadi');
+    }
+    
+    selectedProduct = data.product;
+    console.log('📦 Tanlangan mahsulot:', selectedProduct);
+    
+    // Formani to'ldirish
+    document.getElementById('productInput').value = selectedProduct.name;
+    document.getElementById('priceInput').value = selectedProduct.sellPrice;
+    document.getElementById('paidInput').value = ''; // Bo'sh qoldirish
+    
+    // IMEI inputni tozalash va natijalarni yashirish
+    document.getElementById('imeiInput').value = selectedProduct.barcode || selectedProduct.name;
+    document.getElementById('imeiSearchResults').style.display = 'none';
+    
+    // To'lov inputiga focus
+    document.getElementById('paidInput').focus();
+    
+    // Omborda yetarli mahsulot borligini tekshirish
+    if (selectedProduct.stock <= 0) {
+      alert(`⚠️ Diqqat! Omborda bu mahsulot qolmagan!\n\nMahsulot: ${selectedProduct.name}\nOmbor: ${selectedProduct.stock} ${selectedProduct.unit}`);
+    } else if (selectedProduct.stock <= selectedProduct.minStock) {
+      alert(`⚠️ Diqqat! Mahsulot kam qolgan!\n\nMahsulot: ${selectedProduct.name}\nOmbor: ${selectedProduct.stock} ${selectedProduct.unit}\nMinimal: ${selectedProduct.minStock} ${selectedProduct.unit}`);
+    }
+    
+  } catch (error) {
+    console.error('❌ Mahsulot tanlash xatosi:', error);
+    alert('❌ Mahsulot ma\'lumotlarini yuklashda xatolik!\n\nXato: ' + error.message);
+  }
+}
+
+// Savdo qo'shishda ombordan mahsulotni chiqarish
+async function deductFromWarehouse(productId, quantity) {
+  try {
+    console.log('📤 Ombordan chiqarilmoqda:', { productId, quantity });
+    
+    const response = await fetch(`${API_URL}/warehouse/stock-out`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        productId: productId,
+        quantity: quantity,
+        reason: 'Savdo',
+        notes: `Mijoz: ${selectedCustomer.name}`,
+        userId: 'admin',
+        userName: 'Admin'
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Server xatosi: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('✅ Ombordan chiqarildi:', data);
+    
+    return data;
+    
+  } catch (error) {
+    console.error('❌ Ombordan chiqarish xatosi:', error);
+    return { success: false, error: error.message };
   }
 }
 

@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>💼 Kassir Professional Panel</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: all 0.3s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .stat-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .action-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .action-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    }
+    
+    .action-icon {
+      font-size: 36px;
+      display: block;
+      margin-bottom: 8px;
+    }
+    
+    .content-section {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #111827;
+    }
+    
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .table th {
+      background: #f9fafb;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .table td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .table tr:hover {
+      background: #f9fafb;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .badge-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .badge-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #374151;
+    }
+    
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+    
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: #059669;
+    }
+    
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+    
+    .calculator {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    .calc-btn {
+      padding: 16px;
+      background: #f3f4f6;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .calc-btn:hover {
+      background: #e5e7eb;
+    }
+    
+    .calc-btn.full {
+      background: #10b981;
+      color: white;
+    }
+    
+    .calc-btn.full:hover {
+      background: #059669;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1>💼 Kassir Professional</h1>
+        <p style="color: #6b7280; margin-top: 4px;">Salom, <span id="cashierName">Kassir</span>!</p>
+      </div>
+      <div>
+        <button class="btn btn-danger" onclick="logout()">🚪 Chiqish</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value" id="myBalance">$0</div>
+        <div class="stat-label">Mening Balansi</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🛒</div>
+        <div class="stat-value" id="todaySales">0</div>
+        <div class="stat-label">Bugungi Savdolar</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💵</div>
+        <div class="stat-value" id="todayRevenue">$0</div>
+        <div class="stat-label">Bugungi Daromad</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-value" id="totalSales">0</div>
+        <div class="stat-label">Jami Savdolar</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-value" id="avgSale">$0</div>
+        <div class="stat-label">O'rtacha Savdo</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button class="action-btn" onclick="openQuickSale()">
+        <span class="action-icon">⚡</span>
+        Tezkor Savdo
+      </button>
+      <button class="action-btn" onclick="openCustomerSearch()">
+        <span class="action-icon">🔍</span>
+        Mijoz Qidirish
+      </button>
+      <button class="action-btn" onclick="openWarehouse()">
+        <span class="action-icon">📦</span>
+        Ombor
+      </button>
+      <button class="action-btn" onclick="openHandover()">
+        <span class="action-icon">💸</span>
+        Kirim Berish
+      </button>
+      <button class="action-btn" onclick="window.location.href='cashier-daily-report.html'">
+        <span class="action-icon">📅</span>
+        Bugungi Hisobot
+      </button>
+      <button class="action-btn" onclick="printReceipt()">
+        <span class="action-icon">🖨️</span>
+        Chek Chop Etish
+      </button>
+    </div>
+
+    <!-- Recent Sales -->
+    <div class="content-section">
+      <h2 class="section-title">📋 So'nggi Savdolar</h2>
+      <div id="recentSales"></div>
+    </div>
+  </div>
+
+  <!-- Quick Sale Modal -->
+  <div id="quickSaleModal" class="modal">
+    <div class="modal-content">
+      <h2>⚡ Tezkor Savdo</h2>
+      <form id="quickSaleForm">
+        <div class="form-group">
+          <label>Mijoz ID *</label>
+          <input type="number" id="customerId" required placeholder="123456">
+          <div id="customerInfo" style="margin-top: 8px; padding: 12px; background: #f3f4f6; border-radius: 8px; display: none;"></div>
+        </div>
+        
+        <div class="form-group">
+          <label>Mahsulot *</label>
+          <select id="productSelect" required>
+            <option value="">Tanlang...</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Narx (USD) *</label>
+          <input type="number" id="price" step="0.01" required readonly>
+        </div>
+        
+        <div class="form-group">
+          <label>To'lov (USD)</label>
+          <input type="number" id="payment" step="0.01" value="0">
+          
+          <!-- Calculator -->
+          <div class="calculator">
+            <button type="button" class="calc-btn" onclick="addPayment(10)">$10</button>
+            <button type="button" class="calc-btn" onclick="addPayment(20)">$20</button>
+            <button type="button" class="calc-btn" onclick="addPayment(50)">$50</button>
+            <button type="button" class="calc-btn" onclick="addPayment(100)">$100</button>
+            <button type="button" class="calc-btn" onclick="addPayment(200)">$200</button>
+            <button type="button" class="calc-btn full" onclick="setFullPayment()">To'liq</button>
+          </div>
+        </div>
+        
+        <div id="saleInfo" style="margin: 16px 0; padding: 16px; background: #f3f4f6; border-radius: 10px; display: none;"></div>
+        
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="submit" class="btn btn-success" style="flex: 1;">
+            ✅ Savdoni Saqlash
+          </button>
+          <button type="button" class="btn btn-danger" onclick="closeModal('quickSaleModal')">
+            ❌ Bekor qilish
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Handover Modal -->
+  <div id="handoverModal" class="modal">
+    <div class="modal-content">
+      <h2>💸 Adminga Kirim Berish</h2>
+      <form id="handoverForm">
+        <div class="form-group">
+          <label>Hozirgi Balans</label>
+          <input type="text" id="currentBalance" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label>Beriladigan Summa (USD) *</label>
+          <input type="number" id="handoverAmount" step="0.01" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Izoh</label>
+          <input type="text" id="handoverNotes" placeholder="Ixtiyoriy...">
+        </div>
+        
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="submit" class="btn btn-success" style="flex: 1;">
+            ✅ Kirim Berish
+          </button>
+          <button type="button" class="btn btn-danger" onclick="closeModal('handoverModal')">
+            ❌ Bekor qilish
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Get cashier info from localStorage
+    const cashierData = JSON.parse(localStorage.getItem('cashierData') || '{}');
+    document.getElementById('cashierName').textContent = cashierData.name || 'Kassir';
+
+    // Load dashboard
+    async function loadDashboard() {
+      try {
+        // Load cashier stats
+        const response = await fetch(`/api/cashiers/${cashierData.cashierId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          const cashier = data.cashier;
+          document.getElementById('myBalance').textContent = '$' + (cashier.balance || 0).toFixed(2);
+          document.getElementById('totalSales').textContent = cashier.totalSales || 0;
+          
+          // Load today's sales
+          loadTodaySales();
+        }
+      } catch (error) {
+        console.error('Dashboard yuklashda xato:', error);
+      }
+    }
+
+    async function loadTodaySales() {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const response = await fetch(`/api/cashier-sales?cashierId=${cashierData.cashierId}&date=${today}`);
+        const sales = await response.json();
+        
+        const todaySales = sales.filter(s => s.date === today);
+        document.getElementById('todaySales').textContent = todaySales.length;
+        
+        const todayRevenue = todaySales.reduce((sum, s) => sum + (s.price || 0), 0);
+        document.getElementById('todayRevenue').textContent = '$' + todayRevenue.toFixed(2);
+        
+        const avgSale = todaySales.length > 0 ? todayRevenue / todaySales.length : 0;
+        document.getElementById('avgSale').textContent = '$' + avgSale.toFixed(2);
+        
+        // Show recent sales
+        showRecentSales(todaySales.slice(0, 10));
+      } catch (error) {
+        console.error('Bugungi savdolarni yuklashda xato:', error);
+      }
+    }
+
+    function showRecentSales(sales) {
+      const container = document.getElementById('recentSales');
+      if (sales.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #6b7280;">Hali savdo yo\'q</p>';
+        return;
+      }
+      
+      container.innerHTML = `
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Vaqt</th>
+              <th>Mijoz</th>
+              <th>Mahsulot</th>
+              <th>Narx</th>
+              <th>To'lov</th>
+              <th>Holat</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sales.map(s => `
+              <tr>
+                <td>${s.time}</td>
+                <td>${s.customerName}</td>
+                <td>${s.product}</td>
+                <td>$${s.price.toFixed(2)}</td>
+                <td>$${(s.paid || 0).toFixed(2)}</td>
+                <td>
+                  <span class="badge ${s.paid >= s.price ? 'badge-success' : 'badge-warning'}">
+                    ${s.paid >= s.price ? 'To\'liq' : 'Qarz'}
+                  </span>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // Quick Sale
+    function openQuickSale() {
+      document.getElementById('quickSaleModal').classList.add('active');
+      loadProducts();
+    }
+
+    async function loadProducts() {
+      try {
+        const response = await fetch('/api/warehouse/products');
+        const products = await response.json();
+        
+        const select = document.getElementById('productSelect');
+        select.innerHTML = '<option value="">Tanlang...</option>' + 
+          products.map(p => `<option value="${p.productId}" data-price="${p.sellPrice}">${p.name} - $${p.sellPrice}</option>`).join('');
+      } catch (error) {
+        console.error('Mahsulotlarni yuklashda xato:', error);
+      }
+    }
+
+    document.getElementById('productSelect').addEventListener('change', function() {
+      const option = this.options[this.selectedIndex];
+      const price = option.getAttribute('data-price');
+      document.getElementById('price').value = price || 0;
+      updateSaleInfo();
+    });
+
+    document.getElementById('payment').addEventListener('input', updateSaleInfo);
+
+    function updateSaleInfo() {
+      const price = parseFloat(document.getElementById('price').value) || 0;
+      const payment = parseFloat(document.getElementById('payment').value) || 0;
+      const debt = price - payment;
+      
+      const info = document.getElementById('saleInfo');
+      info.style.display = 'block';
+      info.innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <div style="font-size: 12px; color: #6b7280;">Narx</div>
+            <div style="font-size: 20px; font-weight: 700;">$${price.toFixed(2)}</div>
+          </div>
+          <div>
+            <div style="font-size: 12px; color: #6b7280;">To'lov</div>
+            <div style="font-size: 20px; font-weight: 700; color: #10b981;">$${payment.toFixed(2)}</div>
+          </div>
+          <div>
+            <div style="font-size: 12px; color: #6b7280;">Qarz</div>
+            <div style="font-size: 20px; font-weight: 700; color: ${debt > 0 ? '#ef4444' : '#10b981'};">$${debt.toFixed(2)}</div>
+          </div>
+          <div>
+            <div style="font-size: 12px; color: #6b7280;">Holat</div>
+            <div style="font-size: 16px; font-weight: 600; color: ${debt > 0 ? '#ef4444' : '#10b981'};">
+              ${debt > 0 ? '⚠️ Qarz' : '✅ To\'liq'}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function addPayment(amount) {
+      const current = parseFloat(document.getElementById('payment').value) || 0;
+      document.getElementById('payment').value = current + amount;
+      updateSaleInfo();
+    }
+
+    function setFullPayment() {
+      const price = parseFloat(document.getElementById('price').value) || 0;
+      document.getElementById('payment').value = price;
+      updateSaleInfo();
+    }
+
+    // Customer search
+    document.getElementById('customerId').addEventListener('blur', async function() {
+      const customerId = this.value;
+      if (!customerId) return;
+      
+      try {
+        const response = await fetch(`/api/customers/search/${customerId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          const customer = data.customer;
+          const info = document.getElementById('customerInfo');
+          info.style.display = 'block';
+          info.innerHTML = `
+            <div style="font-weight: 600; margin-bottom: 4px;">✅ ${customer.name}</div>
+            <div style="font-size: 13px; color: #6b7280;">📱 ${customer.phone || 'N/A'}</div>
+            <div style="font-size: 13px; color: ${customer.totalDebt > 0 ? '#ef4444' : '#10b981'}; margin-top: 4px;">
+              💰 Qarz: $${(customer.totalDebt || 0).toFixed(2)}
+            </div>
+          `;
+        } else {
+          alert('❌ Mijoz topilmadi!');
+        }
+      } catch (error) {
+        alert('❌ Xato: ' + error.message);
+      }
+    });
+
+    // Quick Sale Form Submit
+    document.getElementById('quickSaleForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const customerId = document.getElementById('customerId').value;
+      const productSelect = document.getElementById('productSelect');
+      const productName = productSelect.options[productSelect.selectedIndex].text.split(' - ')[0];
+      const price = parseFloat(document.getElementById('price').value);
+      const payment = parseFloat(document.getElementById('payment').value) || 0;
+      
+      const saleData = {
+        saleId: Date.now(),
+        customerId: parseInt(customerId),
+        customerName: document.getElementById('customerInfo').textContent.split('\n')[0].replace('✅ ', ''),
+        product: productName,
+        price: price,
+        paid: payment,
+        paidUSD: payment,
+        date: new Date().toLocaleDateString('uz-UZ'),
+        time: new Date().toLocaleTimeString('uz-UZ'),
+        type: 'sale'
+      };
+      
+      try {
+        const response = await fetch('/api/sales', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(saleData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('✅ Savdo muvaffaqiyatli saqlandi!');
+          closeModal('quickSaleModal');
+          document.getElementById('quickSaleForm').reset();
+          loadDashboard();
+        } else {
+          alert('❌ Xato: ' + result.error);
+        }
+      } catch (error) {
+        alert('❌ Xato: ' + error.message);
+      }
+    });
+
+    // Handover
+    function openHandover() {
+      document.getElementById('handoverModal').classList.add('active');
+      document.getElementById('currentBalance').value = document.getElementById('myBalance').textContent;
+    }
+
+    function openCustomerSearch() {
+      window.location.href = 'customer-search.html';
+    }
+
+    function openWarehouse() {
+      window.location.href = 'cashier-warehouse.html';
+    }
+
+    function printReceipt() {
+      alert('🖨️ Chek chop etish funksiyasi tez orada qo'shiladi');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    function logout() {
+      if (confirm('Chiqishni xohlaysizmi?')) {
+        localStorage.removeItem('cashierData');
+        window.location.href = 'cashier-login.html';
+      }
+    }
+
+    // Initialize
+    loadDashboard();
+    
+    // Auto refresh every 30 seconds
+    setInterval(loadDashboard, 30000);
+  </script>
+    <script src="mobile-enhancements.js"></script>
+    <script src="cashier-sidebar-loader.js"></script>
+</body>
+</html>

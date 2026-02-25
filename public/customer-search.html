@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mijoz Qidirish</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        
+        .search-box button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .search-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .results {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .customer-card {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .customer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+        
+        .customer-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #111827;
+        }
+        
+        .customer-id {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+        
+        .customer-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-label {
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .debt-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        .debt-badge.has-debt {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .debt-badge.no-debt {
+            background: #d1fae5;
+            color: #059669;
+        }
+        
+        .sales-history {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .sales-history h4 {
+            color: #374151;
+            margin-bottom: 10px;
+        }
+        
+        .sale-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sale-info {
+            flex: 1;
+        }
+        
+        .sale-amount {
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.4em;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .customer-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Mijoz Qidirish</h1>
+            <p style="color: #6b7280; margin-bottom: 15px;">ID, telefon yoki ism bo'yicha qidiring</p>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Mijoz ID, telefon yoki ismini kiriting..." autofocus>
+                <button onclick="searchCustomer()">🔍 Qidirish</button>
+            </div>
+        </div>
+        
+        <div class="results" id="results" style="display: none;">
+            <h3 style="color: #374151; margin-bottom: 15px;">Natijalar</h3>
+            <div id="resultsContainer"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Enter tugmasi bilan qidirish
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchCustomer();
+            }
+        });
+        
+        // Mijoz qidirish
+        async function searchCustomer() {
+            const query = document.getElementById('searchInput').value.trim();
+            
+            if (!query) {
+                alert('❌ Qidiruv so\'zini kiriting!');
+                return;
+            }
+            
+            const resultsDiv = document.getElementById('results');
+            const container = document.getElementById('resultsContainer');
+            
+            resultsDiv.style.display = 'block';
+            container.innerHTML = '<p style="text-align: center; color: #6b7280;">Qidirilmoqda...</p>';
+            
+            try {
+                const response = await fetch(`/api/customers/find/${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                if (data.success && data.customers.length > 0) {
+                    container.innerHTML = data.customers.map(customer => renderCustomer(customer)).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="no-results">
+                            <div style="font-size: 3em; margin-bottom: 10px;">😕</div>
+                            <h3>Mijoz topilmadi</h3>
+                            <p>"${query}" bo'yicha hech qanday natija yo'q</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <div style="font-size: 3em; margin-bottom: 10px;">❌</div>
+                        <h3>Xatolik yuz berdi</h3>
+                        <p>Server bilan aloqa yo'q</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Mijoz kartochkasini render qilish
+        function renderCustomer(customer) {
+            const hasDebt = customer.totalDebt > 0;
+            const debtClass = hasDebt ? 'has-debt' : 'no-debt';
+            const debtText = hasDebt ? `$${customer.totalDebt.toFixed(2)} qarz` : 'Qarz yo\'q';
+            
+            let salesHTML = '';
+            if (customer.salesHistory && customer.salesHistory.length > 0) {
+                const recentSales = customer.salesHistory.slice(0, 5);
+                salesHTML = `
+                    <div class="sales-history">
+                        <h4>📋 So'nggi savdolar (${customer.salesHistory.length} ta)</h4>
+                        ${recentSales.map(sale => `
+                            <div class="sale-item">
+                                <div class="sale-info">
+                                    <div><strong>${sale.product}</strong></div>
+                                    <div style="font-size: 0.9em; color: #6b7280;">${sale.date} ${sale.time}</div>
+                                </div>
+                                <div class="sale-amount" style="color: ${sale.type === 'payment' ? '#059669' : '#667eea'};">
+                                    ${sale.type === 'payment' ? '+' : ''}$${(sale.paid || 0).toFixed(2)}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="customer-card">
+                    <div class="customer-header">
+                        <div class="customer-name">👤 ${customer.name}</div>
+                        <div class="customer-id">ID: ${customer.customerId}</div>
+                    </div>
+                    <div class="customer-info">
+                        <div class="info-item">
+                            <span class="info-label">📱 Telefon:</span>
+                            <span class="info-value">${customer.phone || 'Kiritilmagan'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">💰 Qarz:</span>
+                            <span class="debt-badge ${debtClass}">${debtText}</span>
+                        </div>
+                        ${customer.firstDebtDate ? `
+                            <div class="info-item">
+                                <span class="info-label">📅 Qarz boshlanishi:</span>
+                                <span class="info-value">${new Date(customer.firstDebtDate).toLocaleDateString('uz-UZ')}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${salesHTML}
+                </div>
+            `;
+        }
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

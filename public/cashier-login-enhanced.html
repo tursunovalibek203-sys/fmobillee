@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>💼 Kassir Login - Yaxshilangan</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .logo h1 {
+            color: white;
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+        
+        .logo p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-group select option {
+            background: #374151;
+            color: white;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+        }
+        
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .quick-login {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-btn {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .links {
+            text-align: center;
+        }
+        
+        .links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 12px;
+            transition: all 0.2s;
+        }
+        
+        .links a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .success-message {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 24px;
+                margin: 10px;
+            }
+            
+            .logo h1 {
+                font-size: 28px;
+            }
+            
+            .quick-login {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>💼 Kassir Panel</h1>
+            <p>Yaxshilangan kassa tizimi</p>
+        </div>
+        
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Kassir ID</label>
+                <input type="number" id="cashierId" placeholder="Kassir ID ni kiriting..." required>
+            </div>
+            
+            <div class="form-group">
+                <label>Foydalanuvchi nomi</label>
+                <input type="text" id="username" placeholder="Username..." required>
+            </div>
+            
+            <div class="form-group">
+                <label>Parol</label>
+                <input type="password" id="password" placeholder="Parol..." required>
+            </div>
+            
+            <div class="form-group">
+                <label>Filial</label>
+                <select id="branchSelect">
+                    <option value="">Filial tanlang...</option>
+                    <option value="1001">Asosiy filial</option>
+                    <option value="1002">2-filial</option>
+                    <option value="1003">3-filial</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="login-btn" id="loginBtn">
+                🔐 Kirish
+            </button>
+        </form>
+        
+        <div class="quick-login">
+            <button class="quick-btn" onclick="quickLogin(1001, 'kassir1', 'kassir123')">
+                👤 Demo Kassir 1
+            </button>
+            <button class="quick-btn" onclick="quickLogin(1002, 'kassir2', 'kassir123')">
+                👤 Demo Kassir 2
+            </button>
+        </div>
+        
+        <div class="loading" id="loading">
+            Tekshirilmoqda...
+        </div>
+        
+        <div class="links">
+            <a href="admin.html">👨‍💼 Admin Panel</a>
+            <a href="index.html">🏠 Bosh sahifa</a>
+        </div>
+    </div>
+
+    <script>
+        // ==================== LOGIN FUNCTIONALITY ====================
+        
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const cashierId = document.getElementById('cashierId').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const branchId = document.getElementById('branchSelect').value;
+            
+            if (!cashierId || !username || !password) {
+                showError('Barcha maydonlarni to\'ldiring!');
+                return;
+            }
+            
+            await login(cashierId, username, password, branchId);
+        });
+        
+        async function login(cashierId, username, password, branchId) {
+            try {
+                showLoading(true);
+                hideMessages();
+                
+                // Kassir ma'lumotlarini tekshirish
+                const response = await fetch(`/api/cashier/${cashierId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Kassir topilmadi');
+                }
+                
+                const cashier = await response.json();
+                
+                // Login ma'lumotlarini tekshirish
+                if (cashier.username !== username || cashier.password !== password) {
+                    throw new Error('Login yoki parol noto\'g\'ri');
+                }
+                
+                if (!cashier.isActive) {
+                    throw new Error('Kassir hisobi faol emas');
+                }
+                
+                // Filial tekshirish (agar tanlangan bo'lsa)
+                if (branchId && cashier.branchId !== Number(branchId)) {
+                    throw new Error('Noto\'g\'ri filial tanlandi');
+                }
+                
+                // Filial ma'lumotlarini olish
+                let branchName = 'Asosiy Filial';
+                try {
+                    const branchRes = await fetch(`/api/branches/${cashier.branchId}`);
+                    const branchData = await branchRes.json();
+                    if (branchData.success && branchData.branch) {
+                        branchName = branchData.branch.name;
+                    }
+                } catch (err) {
+                    console.error('Filial ma\'lumotlarini olishda xato:', err);
+                }
+                
+                // Login ma'lumotlarini saqlash (YANGI: cashierData obyekti)
+                const cashierData = {
+                    cashierId: cashier.cashierId,
+                    name: cashier.name,
+                    branchId: cashier.branchId,
+                    branchName: branchName,
+                    username: cashier.username,
+                    role: cashier.role || 'cashier',
+                    loginTime: new Date().toISOString()
+                };
+                
+                localStorage.setItem('cashierData', JSON.stringify(cashierData));
+                
+                // Eski formatda ham saqlash (backward compatibility)
+                localStorage.setItem('cashierId', cashier.cashierId);
+                localStorage.setItem('cashierName', cashier.name);
+                localStorage.setItem('branchId', cashier.branchId);
+                localStorage.setItem('loginTime', new Date().toISOString());
+                
+                // Oxirgi login vaqtini yangilash
+                await fetch(`/api/cashier/${cashier.cashierId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        lastLogin: new Date().toISOString()
+                    })
+                });
+                
+                showSuccess('Muvaffaqiyatli kirildi! Yo\'naltirilmoqda...');
+                
+                // 1 soniya kutib, yangi kassir paneliga yo'naltirish
+                setTimeout(() => {
+                    window.location.href = 'cashier-new.html';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Login xato:', error);
+                showError(error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function quickLogin(cashierId, username, password) {
+            document.getElementById('cashierId').value = cashierId;
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+            
+            // Filial avtomatik tanlash
+            const branchSelect = document.getElementById('branchSelect');
+            branchSelect.value = cashierId.toString();
+            
+            login(cashierId, username, password, cashierId.toString());
+        }
+        
+        // ==================== UI FUNCTIONS ====================
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = '❌ ' + message;
+            errorDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = '✅ ' + message;
+            successDiv.style.display = 'block';
+        }
+        
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            if (show) {
+                loading.style.display = 'block';
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'Tekshirilmoqda...';
+            } else {
+                loading.style.display = 'none';
+                loginBtn.disabled = false;
+                loginBtn.textContent = '🔐 Kirish';
+            }
+        }
+        
+        // ==================== INITIALIZATION ====================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agar allaqachon login qilingan bo'lsa, kassir paneliga yo'naltirish
+            const cashierId = localStorage.getItem('cashierId');
+            if (cashierId) {
+                const loginTime = localStorage.getItem('loginTime');
+                const now = new Date();
+                const loginDate = new Date(loginTime);
+                
+                // 24 soat ichida login qilingan bo'lsa
+                if (now - loginDate < 24 * 60 * 60 * 1000) {
+                    showSuccess('Avval login qilingansiz. Yo\'naltirilmoqda...');
+                    setTimeout(() => {
+                        window.location.href = 'cashier-enhanced.html';
+                    }, 1000);
+                    return;
+                }
+            }
+            
+            // Filiallarni yuklash
+            loadBranches();
+        });
+        
+        async function loadBranches() {
+            try {
+                const response = await fetch('/api/branches');
+                if (response.ok) {
+                    const branches = await response.json();
+                    const select = document.getElementById('branchSelect');
+                    
+                    // Mavjud optionlarni tozalash
+                    select.innerHTML = '<option value="">Filial tanlang...</option>';
+                    
+                    // Yangi filiallarni qo'shish
+                    branches.forEach(branch => {
+                        const option = document.createElement('option');
+                        option.value = branch.branchId;
+                        option.textContent = branch.name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Filiallarni yuklashda xato:', error);
+            }
+        }
+        
+        // Enter tugmasi bilan login qilish
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

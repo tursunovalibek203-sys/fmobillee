@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "name": "Test Mijoz 1",
+    "phone": "+998901234567",
+    "address": "Toshkent",
+    "debt": 0,
+    "createdAt": "2026-02-23T18:46:57.267Z"
+  },
+  {
+    "id": 2,
+    "name": "Test Mijoz 2",
+    "phone": "+998907654321",
+    "address": "Samarqand",
+    "debt": 50000,
+    "createdAt": "2026-02-23T18:46:57.267Z"
+  }
+]

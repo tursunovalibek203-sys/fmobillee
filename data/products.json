@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Test Mahsulot 1",
+    "sku": "TEST001",
+    "price": 100000,
+    "quantity": 10,
+    "category": "Test",
+    "createdAt": "2026-02-23T18:46:57.265Z"
+  },
+  {
+    "id": 2,
+    "name": "Test Mahsulot 2",
+    "sku": "TEST002",
+    "price": 200000,
+    "quantity": 5,
+    "category": "Test",
+    "createdAt": "2026-02-23T18:46:57.265Z"
+  }
+]

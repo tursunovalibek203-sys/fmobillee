@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🚀 Admin Ultimate Dashboard</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .sidebar.collapsed {
+            width: 80px;
+        }
+        
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-toggle:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: #6b7280;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border-left-color: #667eea;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .nav-text {
+            font-weight: 600;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .main-content.expanded {
+            margin-left: 80px;
+        }
+        
+        .top-bar {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 16px 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .search-bar input {
+            background: none;
+            border: none;
+            color: white;
+            placeholder-color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            width: 300px;
+        }
+        
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .notification-btn {
+            position: relative;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .notification-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .stat-icon {
+            font-size: 24px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+        
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+        }
+        
+        .stat-change.positive {
+            color: #10b981;
+        }
+        
+        .stat-change.negative {
+            color: #ef4444;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .chart-filters {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .activity-feed {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .action-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .action-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        
+        .action-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .action-desc {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+            <div class="sidebar-title">Admin Pro</div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" onclick="showSection('dashboard')">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('analytics')">
+                <span class="nav-icon">📈</span>
+                <span class="nav-text">Analytics</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('users')">
+                <span class="nav-icon">👥</span>
+                <span class="nav-text">Foydalanuvchilar</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('branches')">
+                <span class="nav-icon">🏢</span>
+                <span class="nav-text">Filiallar</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('inventory')">
+                <span class="nav-icon">📦</span>
+                <span class="nav-text">Ombor</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('finance')">
+                <span class="nav-icon">💰</span>
+                <span class="nav-text">Moliya</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('reports')">
+                <span class="nav-icon">📋</span>
+                <span class="nav-text">Hisobotlar</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('notifications')">
+                <span class="nav-icon">🔔</span>
+                <span class="nav-text">Bildirishnomalar</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('security')">
+                <span class="nav-icon">🔐</span>
+                <span class="nav-text">Xavfsizlik</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('settings')">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">Sozlamalar</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="search-bar">
+                <span>🔍</span>
+                <input type="text" placeholder="Qidirish..." id="globalSearch">
+            </div>
+            
+            <div class="user-menu">
+                <button class="notification-btn" onclick="showNotifications()">
+                    🔔
+                    <span class="notification-badge" id="notificationCount">3</span>
+                </button>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span>Admin</span>
+                    <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        👤
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboardSection" class="content-section">
+            <!-- Stats Overview -->
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-change positive">
+                            ↗️ +12.5%
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalRevenue">$0</div>
+                    <div class="stat-label">Jami Daromad</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">🛒</div>
+                        <div class="stat-change positive">
+                            ↗️ +8.3%
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalSales">0</div>
+                    <div class="stat-label">Jami Savdolar</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-change positive">
+                            ↗️ +5.7%
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalCustomers">0</div>
+                    <div class="stat-label">Jami Mijozlar</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-change negative">
+                            ↘️ -2.1%
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalDebt">$0</div>
+                    <div class="stat-label">Jami Qarz</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="cashier-login-enhanced.html" class="action-card">
+                    <div class="action-icon">💼</div>
+                    <div class="action-title">Kassir Panel</div>
+                    <div class="action-desc">Kassir tizimiga kirish</div>
+                </a>
+                <a href="admin-branches.html" class="action-card">
+                    <div class="action-icon">🏢</div>
+                    <div class="action-title">Filiallar</div>
+                    <div class="action-desc">Filiallarni boshqarish</div>
+                </a>
+                <a href="warehouse-select.html" class="action-card">
+                    <div class="action-icon">📦</div>
+                    <div class="action-title">Ombor</div>
+                    <div class="action-desc">Ombor boshqaruvi</div>
+                </a>
+                <a href="admin-reports.html" class="action-card">
+                    <div class="action-icon">📊</div>
+                    <div class="action-title">Hisobotlar</div>
+                    <div class="action-desc">Batafsil hisobotlar</div>
+                </a>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Sales Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">📈 Savdolar Dinamikasi</div>
+                        <div class="chart-filters">
+                            <button class="filter-btn active" onclick="setChartFilter('day')">Kun</button>
+                            <button class="filter-btn" onclick="setChartFilter('week')">Hafta</button>
+                            <button class="filter-btn" onclick="setChartFilter('month')">Oy</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div class="activity-feed">
+                    <div class="chart-header">
+                        <div class="chart-title">📱 So'nggi Faoliyat</div>
+                    </div>
+                    <div id="activityFeed">
+                        <!-- Activity items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="analyticsSection" class="content-section" style="display: none;">
+            <div style="margin-bottom: 24px;">
+                <h2 style="color: white; font-size: 28px; margin-bottom: 8px;">📈 Advanced Analytics</h2>
+                <p style="color: rgba(255,255,255,0.8);">Batafsil tahlil va hisobotlar</p>
+            </div>
+            
+            <!-- Analytics Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 24px;">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">💰 Daromad Tahlili</div>
+                        <select class="filter-btn" onchange="updateRevenueChart(this.value)">
+                            <option value="week">Bu hafta</option>
+                            <option value="month">Bu oy</option>
+                            <option value="year">Bu yil</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">📊 Mahsulot Kategoriyalari</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">👥 Mijozlar Faolligi</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="customerActivityChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">🏆 Top Mahsulotlar</div>
+                    </div>
+                    <div id="topProductsList" style="max-height: 300px; overflow-y: auto;">
+                        <!-- Top products will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Management Section -->
+        <div id="usersSection" class="content-section" style="display: none;">
+            <div style="margin-bottom: 24px;">
+                <h2 style="color: white; font-size: 28px; margin-bottom: 8px;">👥 Foydalanuvchilar Boshqaruvi</h2>
+                <p style="color: rgba(255,255,255,0.8);">Kassirlar va adminlar boshqaruvi</p>
+            </div>
+            
+            <!-- User Actions -->
+            <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+                <button class="btn btn-primary" onclick="addNewUser()">➕ Yangi Foydalanuvchi</button>
+                <button class="btn btn-secondary" onclick="exportUsers()">📊 Export</button>
+                <button class="btn btn-secondary" onclick="refreshUsers()">🔄 Yangilash</button>
+            </div>
+            
+            <!-- Users Grid -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Foydalanuvchilar Ro'yxati</div>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" placeholder="Qidirish..." id="userSearch" style="padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        <select id="userRoleFilter" onchange="filterUsers()" style="padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                            <option value="all">Barcha rollar</option>
+                            <option value="admin">Admin</option>
+                            <option value="cashier">Kassir</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="usersTable">
+                    <!-- Users table will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Branches Section -->
+        <div id="branchesSection" class="content-section" style="display: none;">
+            <div style="margin-bottom: 24px;">
+                <h2 style="color: white; font-size: 28px; margin-bottom: 8px;">🏢 Filiallar Boshqaruvi</h2>
+                <p style="color: rgba(255,255,255,0.8);">Barcha filiallar va ularning faoliyati</p>
+            </div>
+            
+            <!-- Branch Stats -->
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">🏢</div>
+                    </div>
+                    <div class="stat-value" id="totalBranches">0</div>
+                    <div class="stat-label">Jami Filiallar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">✅</div>
+                    </div>
+                    <div class="stat-value" id="activeBranches">0</div>
+                    <div class="stat-label">Faol Filiallar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">💰</div>
+                    </div>
+                    <div class="stat-value" id="branchRevenue">$0</div>
+                    <div class="stat-label">Jami Daromad</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">👥</div>
+                    </div>
+                    <div class="stat-value" id="branchEmployees">0</div>
+                    <div class="stat-label">Jami Xodimlar</div>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Filiallar Ro'yxati</div>
+                    <button class="btn btn-primary" onclick="addNewBranch()">➕ Yangi Filial</button>
+                </div>
+                <div id="branchesGrid">
+                    <!-- Branches grid will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Section -->
+        <div id="inventorySection" class="content-section" style="display: none;">
+            <div style="margin-bottom: 24px;">
+                <h2 style="color: white; font-size: 28px; margin-bottom: 8px;">📦 Ombor Boshqaruvi</h2>
+                <p style="color: rgba(255,255,255,0.8);">Mahsulotlar va inventar nazorati</p>
+            </div>
+            
+            <!-- Inventory Stats -->
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📦</div>
+                    </div>
+                    <div class="stat-value" id="totalProducts">0</div>
+                    <div class="stat-label">Jami Mahsulotlar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">⚠️</div>
+                    </div>
+                    <div class="stat-value" id="lowStockProducts">0</div>
+                    <div class="stat-label">Kam Qolgan</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">❌</div>
+                    </div>
+                    <div class="stat-value" id="outOfStockProducts">0</div>
+                    <div class="stat-label">Tugagan</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">💰</div>
+                    </div>
+                    <div class="stat-value" id="inventoryValue">$0</div>
+                    <div class="stat-label">Ombor Qiymati</div>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Mahsulotlar Ro'yxati</div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-primary" onclick="addNewProduct()">➕ Yangi Mahsulot</button>
+                        <button class="btn btn-secondary" onclick="importProducts()">📥 Import</button>
+                        <button class="btn btn-secondary" onclick="exportInventory()">📊 Export</button>
+                    </div>
+                </div>
+                <div id="inventoryTable">
+                    <!-- Inventory table will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Finance Section -->
+        <div id="financeSection" class="content-section" style="display: none;">
+            <div style="margin-bottom: 24px;">
+                <h2 style="color: white; font-size: 28px; margin-bottom: 8px;">💰 Moliya Boshqaruvi</h2>
+                <p style="color: rgba(255,255,255,0.8);">Moliyaviy hisobotlar va tahlillar</p>
+            </div>
+            
+            <!-- Finance Stats -->
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-change positive">↗️ +15.2%</div>
+                    </div>
+                    <div class="stat-value" id="totalIncome">$0</div>
+                    <div class="stat-label">Jami Daromad</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">💸</div>
+                        <div class="stat-change negative">↘️ -5.1%</div>
+                    </div>
+                    <div class="stat-value" id="totalExpenses">$0</div>
+                    <div class="stat-label">Jami Xarajatlar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-change positive">↗️ +22.8%</div>
+                    </div>
+                    <div class="stat-value" id="netProfit">$0</div>
+                    <div class="stat-label">Sof Foyda</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">⚠️</div>
+                    </div>
+                    <div class="stat-value" id="pendingDebts">$0</div>
+                    <div class="stat-label">Kutilayotgan Qarzlar</div>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">💹 Moliyaviy Dinamika</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="financeChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">📊 Xarajatlar Taqsimoti</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="expensesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div id="reportsSection" class="content-section" style="display: none;">
+            <div style="margin-bottom: 24px;">
+                <h2 style="color: white; font-size: 28px; margin-bottom: 8px;">📋 Hisobotlar</h2>
+                <p style="color: rgba(255,255,255,0.8);">Batafsil hisobotlar va eksportlar</p>
+            </div>
+            
+            <!-- Report Types -->
+            <div class="quick-actions">
+                <div class="action-card" onclick="generateSalesReport()">
+                    <div class="action-icon">🛒</div>
+                    <div class="action-title">Savdolar Hisoboti</div>
+                    <div class="action-desc">Kunlik/haftalik savdolar</div>
+                </div>
+                <div class="action-card" onclick="generateInventoryReport()">
+                    <div class="action-icon">📦</div>
+                    <div class="action-title">Ombor Hisoboti</div>
+                    <div class="action-desc">Mahsulotlar holati</div>
+                </div>
+                <div class="action-card" onclick="generateFinanceReport()">
+                    <div class="action-icon">💰</div>
+                    <div class="action-title">Moliya Hisoboti</div>
+                    <div class="action-desc">Daromad va xarajatlar</div>
+                </div>
+                <div class="action-card" onclick="generateCustomerReport()">
+                    <div class="action-icon">👥</div>
+                    <div class="action-title">Mijozlar Hisoboti</div>
+                    <div class="action-desc">Mijozlar faolligi</div>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">📊 Hisobot Yaratish</div>
+                </div>
+                <div style="padding: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Hisobot Turi:</label>
+                            <select id="reportType" style="width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                                <option value="sales">Savdolar</option>
+                                <option value="inventory">Ombor</option>
+                                <option value="finance">Moliya</option>
+                                <option value="customers">Mijozlar</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Davr:</label>
+                            <select id="reportPeriod" style="width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                                <option value="today">Bugun</option>
+                                <option value="week">Bu hafta</option>
+                                <option value="month">Bu oy</option>
+                                <option value="quarter">Bu chorak</option>
+                                <option value="year">Bu yil</option>
+                                <option value="custom">Maxsus davr</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Format:</label>
+                            <select id="reportFormat" style="width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                                <option value="excel">Excel (.xlsx)</option>
+                                <option value="csv">CSV</option>
+                                <option value="pdf">PDF</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; align-items: end;">
+                            <button class="btn btn-primary" onclick="generateCustomReport()" style="width: 100%;">📊 Hisobot Yaratish</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Section -->
+        <div id="notificationsSection" class="content-section" style="display: none;">
+            <iframe src="admin-notifications.html" style="width: 100%; height: 80vh; border: none; border-radius: 20px;"></iframe>
+        </div>
+
+        <!-- Security Section -->
+        <div id="securitySection" class="content-section" style="display: none;">
+            <div style="margin-bottom: 24px;">
+                <h2 style="color: white; font-size: 28px; margin-bottom: 8px;">🔐 Xavfsizlik Markazi</h2>
+                <p style="color: rgba(255,255,255,0.8);">Tizim xavfsizligi va audit loglar</p>
+            </div>
+            
+            <!-- Security Stats -->
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">🔐</div>
+                        <div class="stat-change positive">✅</div>
+                    </div>
+                    <div class="stat-value" id="securityStatus">Xavfsiz</div>
+                    <div class="stat-label">Tizim Holati</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">👤</div>
+                    </div>
+                    <div class="stat-value" id="activeUsers">0</div>
+                    <div class="stat-label">Faol Foydalanuvchilar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">⚠️</div>
+                    </div>
+                    <div class="stat-value" id="securityAlerts">0</div>
+                    <div class="stat-label">Xavfsizlik Ogohlantirishlari</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📊</div>
+                    </div>
+                    <div class="stat-value" id="auditLogs">0</div>
+                    <div class="stat-label">Audit Loglar</div>
+                </div>
+            </div>
+            
+            <!-- Security Actions -->
+            <div class="quick-actions">
+                <div class="action-card" onclick="runSecurityScan()">
+                    <div class="action-icon">🔍</div>
+                    <div class="action-title">Xavfsizlik Skaneri</div>
+                    <div class="action-desc">Tizimni tekshirish</div>
+                </div>
+                <div class="action-card" onclick="viewAuditLogs()">
+                    <div class="action-icon">📋</div>
+                    <div class="action-title">Audit Loglar</div>
+                    <div class="action-desc">Faoliyat tarixi</div>
+                </div>
+                <div class="action-card" onclick="managePermissions()">
+                    <div class="action-icon">🔑</div>
+                    <div class="action-title">Ruxsatlar</div>
+                    <div class="action-desc">Foydalanuvchi huquqlari</div>
+                </div>
+                <div class="action-card" onclick="backupSecurity()">
+                    <div class="action-icon">💾</div>
+                    <div class="action-title">Xavfsiz Backup</div>
+                    <div class="action-desc">Ma'lumotlar zaxirasi</div>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">🔒 So'nggi Xavfsizlik Hodisalari</div>
+                    <button class="btn btn-secondary" onclick="refreshSecurityLogs()">🔄 Yangilash</button>
+                </div>
+                <div id="securityLogsList" style="max-height: 400px; overflow-y: auto;">
+                    <!-- Security logs will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="settingsSection" class="content-section" style="display: none;">
+            <div style="margin-bottom: 24px;">
+                <h2 style="color: white; font-size: 28px; margin-bottom: 8px;">⚙️ Tizim Sozlamalari</h2>
+                <p style="color: rgba(255,255,255,0.8);">Umumiy tizim sozlamalari va konfiguratsiya</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
+                <!-- General Settings -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">🏪 Umumiy Sozlamalar</div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Do'kon Nomi:</label>
+                            <input type="text" id="shopName" value="Mening Do'konim" style="width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Asosiy Valyuta:</label>
+                            <select id="baseCurrency" style="width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                                <option value="USD">USD - Dollar</option>
+                                <option value="UZS">UZS - So'm</option>
+                                <option value="EUR">EUR - Evro</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Vaqt Zonasi:</label>
+                            <select id="timezone" style="width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                                <option value="Asia/Tashkent">Toshkent (UTC+5)</option>
+                                <option value="Asia/Samarkand">Samarqand (UTC+5)</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="saveGeneralSettings()">💾 Saqlash</button>
+                    </div>
+                </div>
+                
+                <!-- Backup Settings -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">💾 Backup Sozlamalari</div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="autoBackup" checked>
+                                <span>Avtomatik backup</span>
+                            </label>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Backup Davri:</label>
+                            <select id="backupInterval" style="width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                                <option value="1">Har soat</option>
+                                <option value="6">6 soatda bir</option>
+                                <option value="24">Kunlik</option>
+                                <option value="168">Haftalik</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Backup Soni:</label>
+                            <input type="number" id="backupCount" value="30" min="1" max="100" style="width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveBackupSettings()">💾 Saqlash</button>
+                    </div>
+                </div>
+                
+                <!-- Notification Settings -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">🔔 Bildirishnoma Sozlamalari</div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="emailNotifications" checked>
+                                <span>Email bildirishnomalar</span>
+                            </label>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="smsNotifications">
+                                <span>SMS bildirishnomalar</span>
+                            </label>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="lowStockAlerts" checked>
+                                <span>Kam qolgan mahsulot ogohlantirishlari</span>
+                            </label>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="debtAlerts" checked>
+                                <span>Qarz ogohlantirishlari</span>
+                            </label>
+                        </div>
+                        <button class="btn btn-primary" onclick="saveNotificationSettings()">💾 Saqlash</button>
+                    </div>
+                </div>
+                
+                <!-- Security Settings -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">🔐 Xavfsizlik Sozlamalari</div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Session Timeout (daqiqa):</label>
+                            <input type="number" id="sessionTimeout" value="60" min="5" max="480" style="width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="twoFactorAuth">
+                                <span>Ikki bosqichli autentifikatsiya</span>
+                            </label>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="auditLogging" checked>
+                                <span>Audit logging</span>
+                            </label>
+                        </div>
+                        <button class="btn btn-primary" onclick="saveSecuritySettings()">💾 Saqlash</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="admin-ultimate.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

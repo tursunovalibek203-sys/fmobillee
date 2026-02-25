@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📊 Kengaytirilgan Moliyaviy Tahlil</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 28px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-card.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f3f4f6;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .icon-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 350px;
+        }
+        
+        .chart-container.large {
+            height: 450px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #f9fafb, #ffffff);
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid #f3f4f6;
+            transition: all 0.2s;
+        }
+        
+        .metric-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .metric-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+        
+        .metric-change {
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        .metric-change.positive {
+            color: #059669;
+        }
+        
+        .metric-change.negative {
+            color: #dc2626;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th {
+            background: #f9fafb;
+            padding: 12px;
+            text-align: left;
+            font-weight: 700;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .comparison-table tr:hover {
+            background: #f9fafb;
+        }
+        
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        .trend-indicator.up {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .trend-indicator.down {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+        
+        @media (max-width: 1400px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1 style="margin: 0; font-size: 32px; font-weight: 900;">📊 Kengaytirilgan Moliyaviy Tahlil</h1>
+                <p style="margin: 8px 0 0 0; opacity: 0.9;">Professional Business Intelligence va Prognoz</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-primary" onclick="window.location.href='finance-dashboard.html'" style="background: rgba(255, 255, 255, 0.2); color: white;">
+                    ← Asosiy Dashboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('overview')">📊 Umumiy Ko'rinish</button>
+            <button class="tab-btn" onclick="switchTab('trends')">📈 Tendentsiyalar</button>
+            <button class="tab-btn" onclick="switchTab('comparison')">⚖️ Taqqoslash</button>
+            <button class="tab-btn" onclick="switchTab('forecast')">🔮 Prognoz</button>
+            <button class="tab-btn" onclick="switchTab('kpi')">🎯 KPI</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overviewTab" class="tab-content active">
+            <!-- Key Metrics -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">ROI (Return on Investment)</div>
+                    <div class="metric-value" id="roiValue">0%</div>
+                    <div class="metric-change positive" id="roiChange">↑ +5.2%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Foyda Marjasi</div>
+                    <div class="metric-value" id="profitMarginValue">0%</div>
+                    <div class="metric-change positive" id="profitMarginChange">↑ +3.1%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Break-even Point</div>
+                    <div class="metric-value" id="breakEvenValue">0</div>
+                    <div class="metric-change negative" id="breakEvenChange">↓ -2 kun</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Cash Flow</div>
+                    <div class="metric-value" id="cashFlowValue">0</div>
+                    <div class="metric-change positive" id="cashFlowChange">↑ +12.5%</div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="chart-grid">
+                <!-- Revenue Breakdown -->
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">💰 Daromad Tarkibi</div>
+                        <div class="card-actions">
+                            <button class="icon-btn" onclick="downloadChart('revenueBreakdown')">📥</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueBreakdownChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Expense Trend -->
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">💸 Xarajat Tendentsiyasi</div>
+                        <div class="card-actions">
+                            <button class="icon-btn" onclick="downloadChart('expenseTrend')">📥</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="expenseTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Cash Flow Analysis -->
+                <div class="chart-card full-width">
+                    <div class="card-header">
+                        <div class="card-title">💵 Pul Oqimi Tahlili (Cash Flow)</div>
+                        <div class="card-actions">
+                            <button class="icon-btn" onclick="downloadChart('cashFlow')">📥</button>
+                        </div>
+                    </div>
+                    <div class="chart-container large">
+                        <canvas id="cashFlowChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trends Tab -->
+        <div id="trendsTab" class="tab-content">
+            <div class="chart-grid">
+                <!-- Sales Growth -->
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">📈 Savdo O'sishi</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesGrowthChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Customer Growth -->
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">👥 Mijozlar O'sishi</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="customerGrowthChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Product Performance -->
+                <div class="chart-card full-width">
+                    <div class="card-header">
+                        <div class="card-title">📦 Mahsulot Samaradorligi</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="productPerformanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Tab -->
+        <div id="comparisonTab" class="tab-content">
+            <div class="chart-card">
+                <div class="card-header">
+                    <div class="card-title">⚖️ Davr Bo'yicha Taqqoslash</div>
+                </div>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Ko'rsatkich</th>
+                            <th>Joriy Oy</th>
+                            <th>O'tgan Oy</th>
+                            <th>O'zgarish</th>
+                            <th>Tendentsiya</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonTableBody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="chart-grid" style="margin-top: 24px;">
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">📊 Yillik Taqqoslash</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="yearlyComparisonChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">📅 Oylik Taqqoslash</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="monthlyComparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forecast Tab -->
+        <div id="forecastTab" class="tab-content">
+            <div class="chart-grid">
+                <div class="chart-card full-width">
+                    <div class="card-header">
+                        <div class="card-title">🔮 Daromad Prognozi (3 oy)</div>
+                    </div>
+                    <div class="chart-container large">
+                        <canvas id="revenueForecastChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">📊 Xarajat Prognozi</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="expenseForecastChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">💰 Foyda Prognozi</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="profitForecastChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Tab -->
+        <div id="kpiTab" class="tab-content">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Kunlik O'rtacha Savdo</div>
+                    <div class="metric-value" id="avgDailySales">0</div>
+                    <div class="metric-change positive">↑ +8.3%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Mijoz Saqlab Qolish</div>
+                    <div class="metric-value" id="customerRetention">0%</div>
+                    <div class="metric-change positive">↑ +5.1%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Inventar Aylanishi</div>
+                    <div class="metric-value" id="inventoryTurnover">0x</div>
+                    <div class="metric-change positive">↑ +2.4x</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Qarz Yig'ish Tezligi</div>
+                    <div class="metric-value" id="debtCollection">0 kun</div>
+                    <div class="metric-change negative">↓ -3 kun</div>
+                </div>
+            </div>
+
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">🎯 KPI Dashboard</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="kpiDashboardChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">⚡ Samaradorlik Ko'rsatkichlari</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="efficiencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="finance-advanced-analytics.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

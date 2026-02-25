@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IMEI Tizimi Test</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        h3 {
+            color: #374151;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #374151;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .result {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .success {
+            background: #d1fae5;
+            border-left-color: #10b981;
+        }
+        
+        .error {
+            background: #fee2e2;
+            border-left-color: #ef4444;
+        }
+        
+        pre {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔍 IMEI Tizimi Test</h1>
+            <p style="color: #6b7280; margin-bottom: 20px;">
+                IMEI tizimini test qilish va muammolarni topish
+            </p>
+        </div>
+        
+        <!-- 1. IMEI Qo'shish -->
+        <div class="card">
+            <h3>1️⃣ IMEI Qo'shish</h3>
+            <div class="form-group">
+                <label>Mahsulot ID</label>
+                <input type="number" id="addProductId" placeholder="12345">
+            </div>
+            <div class="form-group">
+                <label>Filial ID</label>
+                <input type="number" id="addBranchId" placeholder="1">
+            </div>
+            <div class="form-group">
+                <label>IMEI</label>
+                <input type="text" id="addImei" placeholder="123456789012345">
+            </div>
+            <div class="form-group">
+                <label>Sotib olish narxi (USD)</label>
+                <input type="number" id="addBuyPrice" placeholder="100" step="0.01">
+            </div>
+            <div class="form-group">
+                <label>Sotish narxi (USD)</label>
+                <input type="number" id="addSellPrice" placeholder="150" step="0.01">
+            </div>
+            <button onclick="addIMEI()">➕ IMEI Qo'shish</button>
+            <div id="addResult"></div>
+        </div>
+        
+        <!-- 2. IMEI Qidirish -->
+        <div class="card">
+            <h3>2️⃣ IMEI Qidirish</h3>
+            <div class="form-group">
+                <label>IMEI</label>
+                <input type="text" id="searchImei" placeholder="123456789012345">
+            </div>
+            <button onclick="searchIMEI()">🔍 Qidirish</button>
+            <div id="searchResult"></div>
+        </div>
+        
+        <!-- 3. Mahsulot IMEI lari -->
+        <div class="card">
+            <h3>3️⃣ Mahsulot IMEI lari</h3>
+            <div class="form-group">
+                <label>Mahsulot ID</label>
+                <input type="number" id="productId" placeholder="12345">
+            </div>
+            <button onclick="getProductIMEIs()">📋 IMEI larni Ko'rish</button>
+            <div id="productResult"></div>
+        </div>
+        
+        <!-- 4. Filial IMEI lari -->
+        <div class="card">
+            <h3>4️⃣ Filial IMEI lari</h3>
+            <div class="form-group">
+                <label>Filial ID</label>
+                <input type="number" id="branchId" placeholder="1">
+            </div>
+            <button onclick="getBranchIMEIs()">🏢 Filial IMEI lari</button>
+            <div id="branchResult"></div>
+        </div>
+        
+        <!-- 5. IMEI Sotish -->
+        <div class="card">
+            <h3>5️⃣ IMEI Sotish</h3>
+            <div class="form-group">
+                <label>IMEI</label>
+                <input type="text" id="sellImei" placeholder="123456789012345">
+            </div>
+            <div class="form-group">
+                <label>Kimga sotildi</label>
+                <input type="text" id="soldTo" placeholder="Alisher Valiyev">
+            </div>
+            <div class="form-group">
+                <label>Kim sotdi</label>
+                <input type="text" id="soldBy" placeholder="Kassir 1">
+            </div>
+            <button onclick="sellIMEI()">💰 Sotish</button>
+            <div id="sellResult"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = '';
+        
+        // 1. IMEI Qo'shish
+        async function addIMEI() {
+            const resultDiv = document.getElementById('addResult');
+            resultDiv.innerHTML = '<div class="result">Yuklanmoqda...</div>';
+            
+            const data = {
+                productId: document.getElementById('addProductId').value,
+                branchId: document.getElementById('addBranchId').value,
+                imei: document.getElementById('addImei').value,
+                buyPrice: parseFloat(document.getElementById('addBuyPrice').value),
+                sellPrice: parseFloat(document.getElementById('addSellPrice').value)
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/api/warehouse/product-items`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <strong>✅ Muvaffaqiyatli!</strong>
+                            <pre>${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <strong>❌ Xato:</strong> ${result.error}
+                            <pre>${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Server xatosi:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // 2. IMEI Qidirish
+        async function searchIMEI() {
+            const resultDiv = document.getElementById('searchResult');
+            resultDiv.innerHTML = '<div class="result">Qidirilmoqda...</div>';
+            
+            const imei = document.getElementById('searchImei').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/warehouse/search-imei/${imei}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <strong>✅ Topildi!</strong>
+                            <pre>${JSON.stringify(result.item, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <strong>❌ Topilmadi:</strong> ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Server xatosi:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // 3. Mahsulot IMEI lari
+        async function getProductIMEIs() {
+            const resultDiv = document.getElementById('productResult');
+            resultDiv.innerHTML = '<div class="result">Yuklanmoqda...</div>';
+            
+            const productId = document.getElementById('productId').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/warehouse/product-items/${productId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <strong>✅ ${result.items.length} ta IMEI topildi</strong>
+                            <pre>${JSON.stringify(result.items, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <strong>❌ Xato:</strong> ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Server xatosi:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // 4. Filial IMEI lari
+        async function getBranchIMEIs() {
+            const resultDiv = document.getElementById('branchResult');
+            resultDiv.innerHTML = '<div class="result">Yuklanmoqda...</div>';
+            
+            const branchId = document.getElementById('branchId').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/warehouse/branch-items/${branchId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <strong>✅ ${result.items.length} ta IMEI topildi</strong>
+                            <pre>${JSON.stringify(result.items, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <strong>❌ Xato:</strong> ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Server xatosi:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // 5. IMEI Sotish
+        async function sellIMEI() {
+            const resultDiv = document.getElementById('sellResult');
+            resultDiv.innerHTML = '<div class="result">Yuklanmoqda...</div>';
+            
+            const data = {
+                imei: document.getElementById('sellImei').value,
+                soldTo: document.getElementById('soldTo').value,
+                soldBy: document.getElementById('soldBy').value,
+                saleId: Math.floor(10000 + Math.random() * 90000)
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/api/warehouse/sell-item`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <strong>✅ Sotildi!</strong>
+                            <pre>${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <strong>❌ Xato:</strong> ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Server xatosi:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

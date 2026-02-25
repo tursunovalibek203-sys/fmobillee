@@ -1,0 +1,494 @@
+<!-- 📱 SIDEBAR COMPONENT - Barcha sahifalar uchun -->
+<style>
+    .app-sidebar {
+        position: fixed;
+        left: -300px;
+        top: 0;
+        width: 280px;
+        height: 100vh;
+        background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+        box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+        z-index: 9999;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .app-sidebar.active {
+        left: 0;
+    }
+    
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 9998;
+        display: none;
+        backdrop-filter: blur(2px);
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+    
+    .sidebar-header {
+        padding: 25px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        background: rgba(0,0,0,0.2);
+    }
+    
+    .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .sidebar-logo-icon {
+        font-size: 2em;
+    }
+    
+    .sidebar-logo-text h2 {
+        font-size: 1.3em;
+        margin-bottom: 2px;
+    }
+    
+    .sidebar-logo-text p {
+        font-size: 0.8em;
+        opacity: 0.7;
+    }
+    
+    .sidebar-menu {
+        flex: 1;
+        padding: 20px 0;
+    }
+    
+    .sidebar-section {
+        margin-bottom: 25px;
+    }
+    
+    .sidebar-section-title {
+        padding: 0 20px 10px;
+        font-size: 0.75em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255,255,255,0.5);
+        font-weight: 600;
+    }
+    
+    .sidebar-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 14px 20px;
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        transition: all 0.2s;
+        position: relative;
+        cursor: pointer;
+    }
+    
+    .sidebar-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background: linear-gradient(180deg, #667eea, #764ba2);
+        transform: scaleY(0);
+        transition: transform 0.2s;
+    }
+    
+    .sidebar-item:hover {
+        background: rgba(255,255,255,0.05);
+        color: white;
+    }
+    
+    .sidebar-item:hover::before {
+        transform: scaleY(1);
+    }
+    
+    .sidebar-item.active {
+        background: rgba(102, 126, 234, 0.15);
+        color: white;
+    }
+    
+    .sidebar-item.active::before {
+        transform: scaleY(1);
+    }
+    
+    .sidebar-item-icon {
+        font-size: 1.5em;
+        width: 30px;
+        text-align: center;
+    }
+    
+    .sidebar-item-text {
+        flex: 1;
+    }
+    
+    .sidebar-item-text h3 {
+        font-size: 0.95em;
+        margin-bottom: 2px;
+    }
+    
+    .sidebar-item-text p {
+        font-size: 0.75em;
+        opacity: 0.7;
+    }
+    
+    .sidebar-item-badge {
+        background: #ef4444;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.7em;
+        font-weight: 600;
+    }
+    
+    .sidebar-footer {
+        padding: 20px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        background: rgba(0,0,0,0.2);
+    }
+    
+    .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: white;
+        margin-bottom: 15px;
+    }
+    
+    .sidebar-user-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5em;
+    }
+    
+    .sidebar-user-info h4 {
+        font-size: 0.95em;
+        margin-bottom: 2px;
+    }
+    
+    .sidebar-user-info p {
+        font-size: 0.75em;
+        opacity: 0.7;
+    }
+    
+    .sidebar-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .sidebar-action-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.1);
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.85em;
+    }
+    
+    .sidebar-action-btn:hover {
+        background: rgba(255,255,255,0.15);
+    }
+    
+    .sidebar-toggle-btn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 10000;
+        background: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5em;
+        transition: all 0.3s;
+    }
+    
+    .sidebar-toggle-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+    
+    .sidebar-toggle-btn:active {
+        transform: scale(0.95);
+    }
+    
+    @media (max-width: 768px) {
+        .app-sidebar {
+            width: 85%;
+            max-width: 300px;
+        }
+    }
+</style>
+
+<!-- Sidebar Toggle Button -->
+<button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<div class="app-sidebar">
+    <!-- Header -->
+    <div class="sidebar-header">
+        <a href="dashboard-selector.html" class="sidebar-logo">
+            <span class="sidebar-logo-icon">🏪</span>
+            <div class="sidebar-logo-text">
+                <h2>Do'kon Pro</h2>
+                <p>Boshqaruv Tizimi</p>
+            </div>
+        </a>
+    </div>
+    
+    <!-- Menu -->
+    <div class="sidebar-menu">
+        <!-- Asosiy Bo'limlar -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Asosiy Bo'limlar</div>
+            
+            <a href="dashboard-selector.html" class="sidebar-item">
+                <span class="sidebar-item-icon">🏠</span>
+                <div class="sidebar-item-text">
+                    <h3>Bosh Sahifa</h3>
+                    <p>Bo'limlar tanlash</p>
+                </div>
+            </a>
+            
+            <a href="admin-dashboard.html" class="sidebar-item">
+                <span class="sidebar-item-icon">⚙️</span>
+                <div class="sidebar-item-text">
+                    <h3>Admin Panel</h3>
+                    <p>Tizim boshqaruvi</p>
+                </div>
+            </a>
+            
+            <a href="cashier-simple.html" class="sidebar-item">
+                <span class="sidebar-item-icon">💼</span>
+                <div class="sidebar-item-text">
+                    <h3>Kassir Panel</h3>
+                    <p>Savdo va mijozlar</p>
+                </div>
+            </a>
+            
+            <a href="warehouse-pro.html" class="sidebar-item">
+                <span class="sidebar-item-icon">📦</span>
+                <div class="sidebar-item-text">
+                    <h3>Ombor</h3>
+                    <p>Mahsulotlar</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Boshqaruv -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Boshqaruv</div>
+            
+            <a href="admin-branches.html" class="sidebar-item">
+                <span class="sidebar-item-icon">🏢</span>
+                <div class="sidebar-item-text">
+                    <h3>Filiallar</h3>
+                    <p>Filiallar boshqaruvi</p>
+                </div>
+            </a>
+            
+            <a href="admin-cashiers.html" class="sidebar-item">
+                <span class="sidebar-item-icon">👤</span>
+                <div class="sidebar-item-text">
+                    <h3>Kassirlar</h3>
+                    <p>Xodimlar</p>
+                </div>
+            </a>
+            
+            <a href="index.html" class="sidebar-item">
+                <span class="sidebar-item-icon">👥</span>
+                <div class="sidebar-item-text">
+                    <h3>Mijozlar</h3>
+                    <p>CRM tizimi</p>
+                </div>
+                <span class="sidebar-item-badge" id="debtBadge">0</span>
+            </a>
+        </div>
+        
+        <!-- Moliya -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Moliya</div>
+            
+            <a href="finance-dashboard.html" class="sidebar-item">
+                <span class="sidebar-item-icon">💰</span>
+                <div class="sidebar-item-text">
+                    <h3>Moliyaviy Tahlil</h3>
+                    <p>Daromad va xarajat</p>
+                </div>
+            </a>
+            
+            <a href="admin-handovers.html" class="sidebar-item">
+                <span class="sidebar-item-icon">💵</span>
+                <div class="sidebar-item-text">
+                    <h3>Kirim Topshirish</h3>
+                    <p>Kassir kirimlari</p>
+                </div>
+            </a>
+            
+            <a href="admin-expenses.html" class="sidebar-item">
+                <span class="sidebar-item-icon">💸</span>
+                <div class="sidebar-item-text">
+                    <h3>Xarajatlar</h3>
+                    <p>Chiqimlar</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Hisobotlar -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Hisobotlar</div>
+            
+            <a href="admin-reports.html" class="sidebar-item">
+                <span class="sidebar-item-icon">📊</span>
+                <div class="sidebar-item-text">
+                    <h3>Batafsil Hisobotlar</h3>
+                    <p>Grafiklar va tahlil</p>
+                </div>
+            </a>
+            
+            <a href="admin-branches-sales.html" class="sidebar-item">
+                <span class="sidebar-item-icon">📈</span>
+                <div class="sidebar-item-text">
+                    <h3>Filiallar Savdosi</h3>
+                    <p>Savdo statistikasi</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <div class="sidebar-user-avatar">👤</div>
+            <div class="sidebar-user-info">
+                <h4 id="sidebarUserName">Admin</h4>
+                <p id="sidebarUserRole">Administrator</p>
+            </div>
+        </div>
+        <div class="sidebar-actions">
+            <button class="sidebar-action-btn" onclick="showSettings()">
+                ⚙️ Sozlamalar
+            </button>
+            <button class="sidebar-action-btn" onclick="logout()">
+                🚪 Chiqish
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sidebar toggle
+    function toggleSidebar() {
+        document.querySelector('.app-sidebar').classList.toggle('active');
+        document.querySelector('.sidebar-overlay').classList.toggle('active');
+        window.vibrate && window.vibrate(10);
+    }
+    
+    // Active page highlight
+    function highlightActivePage() {
+        const currentPage = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            const href = item.getAttribute('href');
+            if (href && href.includes(currentPage)) {
+                item.classList.add('active');
+            }
+        });
+    }
+    
+    // Load user info
+    function loadSidebarUserInfo() {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const cashierData = JSON.parse(localStorage.getItem('cashierData') || '{}');
+        
+        if (userData.name) {
+            document.getElementById('sidebarUserName').textContent = userData.name;
+            document.getElementById('sidebarUserRole').textContent = userData.role || 'Admin';
+        } else if (cashierData.name) {
+            document.getElementById('sidebarUserName').textContent = cashierData.name;
+            document.getElementById('sidebarUserRole').textContent = 'Kassir';
+        }
+    }
+    
+    // Load debt count
+    async function loadDebtCount() {
+        try {
+            const response = await fetch('/api/customers');
+            const data = await response.json();
+            if (data.success) {
+                const debtCount = data.customers.filter(c => c.totalDebt > 0).length;
+                const badge = document.getElementById('debtBadge');
+                if (badge) {
+                    badge.textContent = debtCount;
+                    badge.style.display = debtCount > 0 ? 'block' : 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Qarz sonini yuklashda xato:', error);
+        }
+    }
+    
+    // Settings
+    function showSettings() {
+        window.location.href = 'admin-settings.html';
+    }
+    
+    // Logout
+    function logout() {
+        if (confirm('Tizimdan chiqmoqchimisiz?')) {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        highlightActivePage();
+        loadSidebarUserInfo();
+        loadDebtCount();
+    });
+    
+    // Close sidebar on link click (mobile)
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                setTimeout(() => toggleSidebar(), 200);
+            }
+        });
+    });
+    
+    // Keyboard shortcut (Ctrl+B)
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+            e.preventDefault();
+            toggleSidebar();
+        }
+    });
+</script>

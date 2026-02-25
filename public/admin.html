@@ -2,19 +2,26 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin Dashboard - Do'kon Boshqaruv</title>
+    <link rel="stylesheet" href="admin-sidebar.css">
+    <link rel="stylesheet" href="mobile-responsive.css">
     <link rel="stylesheet" href="style.css">
     <style>
         body {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 20%, #1d4ed8 40%, #1e40af 60%, #1e3a8a 80%, #1e3a8a 100%) !important;
+            background: transparent;
         }
         
-        body::before {
+        .admin-main {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 20%, #1d4ed8 40%, #1e40af 60%, #1e3a8a 80%, #1e3a8a 100%);
+            min-height: 100vh;
+        }
+        
+        .admin-main::before {
             content: '';
             position: fixed;
             top: 0;
-            left: 0;
+            left: 280px;
             right: 0;
             bottom: 0;
             background: 
@@ -26,8 +33,8 @@
         }
         
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
+            max-width: 100%;
+            margin: 0;
             padding: 20px;
             position: relative;
             z-index: 1;
@@ -44,12 +51,37 @@
             justify-content: space-between;
             align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.4);
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
         .header h1 {
             color: #1e3a8a;
             font-size: 2em;
             font-weight: 800;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
         }
         
         .stats-grid {
@@ -238,14 +270,72 @@
             }
         }
     </style>
+  <script src="back-button.js"></script>
 </head>
 <body>
+    <!-- Sidebar -->
+    <div class="admin-layout">
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <span>🏪</span>
+                    <span>Do'kon CRM</span>
+                </div>
+                <div class="sidebar-subtitle">Professional Boshqaruv Tizimi</div>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="menu-section-title">Dashboard</div>
+                    <a href="admin.html" class="menu-item active"><span class="menu-item-icon">🏠</span><span>Asosiy Panel</span></a>
+                    <a href="admin-simple.html" class="menu-item"><span class="menu-item-icon">🎯</span><span>Oson Panel</span></a>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-section-title">Tahlil</div>
+                    <a href="admin-analytics-pro.html" class="menu-item"><span class="menu-item-icon">📈</span><span>Pro Analytics</span></a>
+                    <a href="admin-reports.html" class="menu-item"><span class="menu-item-icon">📋</span><span>Hisobotlar</span></a>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-section-title">Boshqaruv</div>
+                    <a href="admin-branches.html" class="menu-item"><span class="menu-item-icon">🏢</span><span>Filiallar</span></a>
+                    <a href="admin-cashiers.html" class="menu-item"><span class="menu-item-icon">👥</span><span>Kassirlar</span></a>
+                    <a href="admin-handovers.html" class="menu-item"><span class="menu-item-icon">💵</span><span>Kirimlar</span></a>
+                    <a href="warehouse-select.html" class="menu-item"><span class="menu-item-icon">🏭</span><span>Ombor</span></a>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-section-title">Kassa</div>
+                    <a href="cashier-login-enhanced.html" class="menu-item"><span class="menu-item-icon">💼</span><span>Kassir Panel</span></a>
+                </div>
+            </nav>
+            <div class="sidebar-user">
+                <div class="user-info">
+                    <div class="user-avatar">A</div>
+                    <div><div class="user-name">Admin</div><div class="user-role">Administrator</div></div>
+                </div>
+            </div>
+            <div class="sidebar-logout">
+                <button class="logout-btn" onclick="logout()">🚪 Chiqish</button>
+            </div>
+        </aside>
+        <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        <main class="admin-main">
     <div class="container">
         <div class="header">
             <h1>🔧 Admin Dashboard</h1>
-            <div>
-                <a href="/" class="btn btn-primary">🏠 Asosiy Sahifa</a>
-                <button class="btn btn-success" onclick="location.reload()">🔄 Yangilash</button>
+            <div class="header-nav" style="display: none;">
+                <button class="nav-btn" onclick="location.href='admin-analytics-pro.html'" style="background: linear-gradient(135deg, #f59e0b, #d97706);">📊 Pro Analytics</button>
+                <button class="nav-btn" onclick="location.href='cashier-login-enhanced.html'" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">💼 Kassir Panel</button>
+                <button class="nav-btn" onclick="location.href='admin-simple.html'" style="background: linear-gradient(135deg, #10b981, #047857);">🎯 Oson Panel</button>
+                <button class="nav-btn" onclick="location.href='admin-reports.html'">📋 Hisobotlar</button>
+                <button class="nav-btn" onclick="location.href='admin-dashboard-pro.html'">📊 Pro Dashboard</button>
+                <button class="nav-btn" onclick="location.href='admin-analytics.html'">📈 Analytics</button>
+                <button class="nav-btn" onclick="location.href='warehouse-select.html'">🏭 Ombor</button>
+                <button class="nav-btn" onclick="location.href='admin-branches.html'">🏢 Filiallar</button>
+                <button class="nav-btn" onclick="location.href='admin-cashiers.html'">👥 Kassirlar</button>
+                <button class="nav-btn" onclick="location.href='admin-handovers.html'">💰 Kirimlar</button>
+                <button class="nav-btn" onclick="location.href='admin-settings.html'">⚙️ Sozlamalar</button>
+                <button class="nav-btn" onclick="location.href='admin-security.html'" style="background: linear-gradient(135deg, #dc2626, #991b1b);">🔐 Xavfsizlik</button>
+                <button class="nav-btn" onclick="location.reload()">🔄 Yangilash</button>
             </div>
         </div>
         
@@ -266,6 +356,55 @@
                 <div class="stat-number" id="todaySales">-</div>
                 <div class="stat-label">Bugungi Savdolar</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalBranches">-</div>
+                <div class="stat-label">Filiallar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalCashiers">-</div>
+                <div class="stat-label">Kassirlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalProducts">-</div>
+                <div class="stat-label">Mahsulotlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayRevenue">-</div>
+                <div class="stat-label">Bugungi Daromad</div>
+            </div>
+        </div>
+        
+        <!-- Filiallar bo'yicha bugungi savdolar -->
+        <div class="section">
+            <h3>🏢 Filiallar bo'yicha bugungi savdolar</h3>
+            <div id="branchSalesToday"></div>
+        </div>
+        
+        <!-- Eng ko'p sotiladigan mahsulotlar -->
+        <div class="section">
+            <h3>🔥 Eng ko'p sotiladigan mahsulotlar (bugun)</h3>
+            <div id="topProducts"></div>
+        </div>
+        
+        <!-- Kassirlar reytingi -->
+        <div class="section">
+            <h3>👥 Kassirlar reytingi (bugun)</h3>
+            <div id="cashierRanking"></div>
+        </div>
+        
+        <!-- Bugungi savdolar jadvali -->
+        <div class="section">
+            <h3>📋 Bugungi barcha savdolar</h3>
+            <div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <select id="filterBranch" onchange="filterSales()" style="padding: 10px 16px; border-radius: 8px; border: 2px solid #e5e7eb; font-weight: 600;">
+                    <option value="">Barcha filiallar</option>
+                </select>
+                <select id="filterCashier" onchange="filterSales()" style="padding: 10px 16px; border-radius: 8px; border: 2px solid #e5e7eb; font-weight: 600;">
+                    <option value="">Barcha kassirlar</option>
+                </select>
+                <input type="text" id="searchProduct" placeholder="🔍 Mahsulot qidirish..." onkeyup="filterSales()" style="padding: 10px 16px; border-radius: 8px; border: 2px solid #e5e7eb; flex: 1; min-width: 200px;">
+            </div>
+            <div id="todaySalesTable"></div>
         </div>
         
         <div class="section">
@@ -285,11 +424,16 @@
         </div>
     </div>
     
+    <script src="accounting-professional.js"></script>
     <script>
         // Login tekshiruvi
         if (localStorage.getItem('isLoggedIn') !== 'true') {
             window.location.href = '/login.html';
         }
+        
+        let allSales = [];
+        let branches = [];
+        let cashiers = [];
         
         // Chiqish funksiyasi
         function logout() {
@@ -312,10 +456,386 @@
                     document.getElementById('totalDebt').textContent = '$' + data.stats.totalDebt.toLocaleString('en-US', {minimumFractionDigits: 2});
                     document.getElementById('todaySales').textContent = data.stats.todaySales;
                 }
+                
+                // Filiallar
+                const branchesRes = await fetch('/api/branches');
+                const branchesData = await branchesRes.json();
+                if (branchesData.success) {
+                    branches = branchesData.branches;
+                    document.getElementById('totalBranches').textContent = branches.length;
+                    
+                    // Filiallar filteriga qo'shish
+                    const filterBranch = document.getElementById('filterBranch');
+                    branches.forEach(b => {
+                        const option = document.createElement('option');
+                        option.value = b.branchId;
+                        option.textContent = b.name;
+                        filterBranch.appendChild(option);
+                    });
+                }
+                
+                // Kassirlar
+                const cashiersRes = await fetch('/api/cashiers');
+                const cashiersData = await cashiersRes.json();
+                if (cashiersData.success) {
+                    cashiers = cashiersData.cashiers;
+                    document.getElementById('totalCashiers').textContent = cashiers.length;
+                    
+                    // Kassirlar filteriga qo'shish
+                    const filterCashier = document.getElementById('filterCashier');
+                    cashiers.forEach(c => {
+                        const option = document.createElement('option');
+                        option.value = c.cashierId;
+                        option.textContent = c.name;
+                        filterCashier.appendChild(option);
+                    });
+                }
+                
+                // Mahsulotlar
+                const productsRes = await fetch('/api/warehouse/products');
+                const productsData = await productsRes.json();
+                if (productsData.success) {
+                    document.getElementById('totalProducts').textContent = productsData.products.length;
+                }
+                
+                // Bugungi savdolar
+                await loadTodaySales();
+                
             } catch (error) {
                 console.error('Statistika yuklashda xato:', error);
                 alert('❌ Statistika yuklashda xatolik!\n\nServer ishlamayotgan bo\'lishi mumkin.');
             }
+        }
+        
+        // Bugungi savdolarni yuklash
+        async function loadTodaySales() {
+            try {
+                const response = await fetch('/api/all-cashier-sales');
+                const data = await response.json();
+                
+                if (!data.success) return;
+                
+                const today = new Date().toLocaleDateString('uz-UZ');
+                allSales = data.sales.filter(s => s.date === today);
+                
+                // Bugungi daromad
+                const todayRevenue = allSales.reduce((sum, s) => sum + (s.totalPaidUSD || 0), 0);
+                document.getElementById('todayRevenue').textContent = accounting.formatMoney(todayRevenue, 'USD');
+                
+                // Filiallar bo'yicha savdolar
+                renderBranchSales();
+                
+                // Eng ko'p sotiladigan mahsulotlar
+                renderTopProducts();
+                
+                // Kassirlar reytingi
+                renderCashierRanking();
+                
+                // Savdolar jadvali
+                renderSalesTable();
+                
+            } catch (error) {
+                console.error('Savdolar yuklash xatosi:', error);
+            }
+        }
+        
+        // Filiallar bo'yicha savdolar
+        function renderBranchSales() {
+            const salesByBranch = {};
+            
+            branches.forEach(branch => {
+                salesByBranch[branch.branchId] = {
+                    name: branch.name,
+                    sales: [],
+                    totalAmount: 0,
+                    totalPaid: 0,
+                    count: 0
+                };
+            });
+            
+            allSales.forEach(sale => {
+                if (salesByBranch[sale.branchId]) {
+                    salesByBranch[sale.branchId].sales.push(sale);
+                    salesByBranch[sale.branchId].totalAmount += sale.price || 0;
+                    salesByBranch[sale.branchId].totalPaid += sale.totalPaidUSD || 0;
+                    salesByBranch[sale.branchId].count++;
+                }
+            });
+            
+            const container = document.getElementById('branchSalesToday');
+            
+            const activeBranches = Object.values(salesByBranch).filter(b => b.count > 0);
+            
+            if (activeBranches.length === 0) {
+                container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">Bugun savdo yo\'q</p>';
+                return;
+            }
+            
+            // Eng ko'p savdo qilgan filialdan boshlab saralash
+            activeBranches.sort((a, b) => b.totalPaid - a.totalPaid);
+            
+            container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+                    ${activeBranches.map((branch, index) => {
+                        const rankColor = index === 0 ? '#f59e0b' : index === 1 ? '#9ca3af' : index === 2 ? '#cd7f32' : '#6b7280';
+                        const rankIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '📍';
+                        
+                        return `
+                            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); padding: 20px; border-radius: 12px; border-left: 4px solid ${rankColor}; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                    <div>
+                                        <div style="font-size: 24px; margin-bottom: 4px;">${rankIcon}</div>
+                                        <h4 style="margin: 0; color: #111827; font-size: 18px; font-weight: 700;">${branch.name}</h4>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <p style="margin: 0; font-size: 24px; font-weight: 800; color: #059669;">
+                                            ${accounting.formatMoney(branch.totalPaid, 'USD')}
+                                        </p>
+                                        <p style="margin: 4px 0 0 0; font-size: 12px; color: #6b7280;">
+                                            ${branch.count} ta savdo
+                                        </p>
+                                    </div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                                    <div>
+                                        <p style="margin: 0; font-size: 11px; color: #6b7280;">Jami summa</p>
+                                        <p style="margin: 4px 0 0 0; font-size: 14px; font-weight: 700; color: #111827;">
+                                            ${accounting.formatMoney(branch.totalAmount, 'USD')}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p style="margin: 0; font-size: 11px; color: #6b7280;">O'rtacha chek</p>
+                                        <p style="margin: 4px 0 0 0; font-size: 14px; font-weight: 700; color: #111827;">
+                                            ${accounting.formatMoney(branch.totalAmount / branch.count, 'USD')}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+        
+        // Eng ko'p sotiladigan mahsulotlar
+        function renderTopProducts() {
+            const productSales = {};
+            
+            allSales.forEach(sale => {
+                const product = sale.product;
+                if (!productSales[product]) {
+                    productSales[product] = {
+                        name: product,
+                        count: 0,
+                        totalAmount: 0,
+                        totalPaid: 0
+                    };
+                }
+                productSales[product].count++;
+                productSales[product].totalAmount += sale.price || 0;
+                productSales[product].totalPaid += sale.totalPaidUSD || 0;
+            });
+            
+            const topProducts = Object.values(productSales)
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 10);
+            
+            const container = document.getElementById('topProducts');
+            
+            if (topProducts.length === 0) {
+                container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">Bugun savdo yo\'q</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div style="display: grid; gap: 12px;">
+                    ${topProducts.map((product, index) => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: #f9fafb; border-radius: 10px; border-left: 4px solid #3b82f6;">
+                            <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                                <div style="font-size: 24px; font-weight: 900; color: #3b82f6; min-width: 32px;">
+                                    ${index + 1}
+                                </div>
+                                <div style="flex: 1;">
+                                    <p style="margin: 0; font-weight: 700; color: #111827; font-size: 16px;">
+                                        📦 ${product.name}
+                                    </p>
+                                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #6b7280;">
+                                        ${product.count} ta sotildi
+                                    </p>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <p style="margin: 0; font-size: 18px; font-weight: 800; color: #059669;">
+                                    ${accounting.formatMoney(product.totalPaid, 'USD')}
+                                </p>
+                                <p style="margin: 4px 0 0 0; font-size: 12px; color: #6b7280;">
+                                    O'rtacha: ${accounting.formatMoney(product.totalAmount / product.count, 'USD')}
+                                </p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        // Kassirlar reytingi
+        function renderCashierRanking() {
+            const cashierSales = {};
+            
+            allSales.forEach(sale => {
+                const cashierId = sale.cashierId;
+                if (!cashierSales[cashierId]) {
+                    cashierSales[cashierId] = {
+                        name: sale.cashierName,
+                        count: 0,
+                        totalAmount: 0,
+                        totalPaid: 0
+                    };
+                }
+                cashierSales[cashierId].count++;
+                cashierSales[cashierId].totalAmount += sale.price || 0;
+                cashierSales[cashierId].totalPaid += sale.totalPaidUSD || 0;
+            });
+            
+            const ranking = Object.values(cashierSales)
+                .sort((a, b) => b.totalPaid - a.totalPaid);
+            
+            const container = document.getElementById('cashierRanking');
+            
+            if (ranking.length === 0) {
+                container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">Bugun savdo yo\'q</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div style="display: grid; gap: 12px;">
+                    ${ranking.map((cashier, index) => {
+                        const rankColor = index === 0 ? '#f59e0b' : index === 1 ? '#9ca3af' : index === 2 ? '#cd7f32' : '#6b7280';
+                        const rankIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+                        
+                        return `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: white; border-radius: 10px; border-left: 4px solid ${rankColor}; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                                    <div style="font-size: 28px; min-width: 40px; text-align: center;">
+                                        ${rankIcon}
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <p style="margin: 0; font-weight: 700; color: #111827; font-size: 16px;">
+                                            👤 ${cashier.name}
+                                        </p>
+                                        <p style="margin: 4px 0 0 0; font-size: 13px; color: #6b7280;">
+                                            ${cashier.count} ta savdo • O'rtacha: ${accounting.formatMoney(cashier.totalAmount / cashier.count, 'USD')}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <p style="margin: 0; font-size: 20px; font-weight: 800; color: #059669;">
+                                        ${accounting.formatMoney(cashier.totalPaid, 'USD')}
+                                    </p>
+                                    <p style="margin: 4px 0 0 0; font-size: 12px; color: #6b7280;">
+                                        Jami: ${accounting.formatMoney(cashier.totalAmount, 'USD')}
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+        
+        // Savdolar jadvalini render qilish
+        function renderSalesTable(filteredSales = null) {
+            const sales = filteredSales || allSales;
+            const container = document.getElementById('todaySalesTable');
+            
+            if (sales.length === 0) {
+                container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">Savdolar topilmadi</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden;">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;">
+                                <th style="padding: 14px; text-align: left; font-weight: 700;">Vaqt</th>
+                                <th style="padding: 14px; text-align: left; font-weight: 700;">Filial</th>
+                                <th style="padding: 14px; text-align: left; font-weight: 700;">Kassir</th>
+                                <th style="padding: 14px; text-align: left; font-weight: 700;">Mijoz</th>
+                                <th style="padding: 14px; text-align: left; font-weight: 700;">Mahsulot</th>
+                                <th style="padding: 14px; text-align: right; font-weight: 700;">Narx</th>
+                                <th style="padding: 14px; text-align: right; font-weight: 700;">To'langan</th>
+                                <th style="padding: 14px; text-align: right; font-weight: 700;">Qarz</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${sales.map((sale, index) => {
+                                const debt = (sale.price || 0) - (sale.totalPaidUSD || 0);
+                                const bgColor = index % 2 === 0 ? '#f9fafb' : 'white';
+                                
+                                return `
+                                    <tr style="background: ${bgColor}; border-bottom: 1px solid #e5e7eb;">
+                                        <td style="padding: 12px; font-size: 13px; color: #6b7280;">${sale.time}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #111827;">${sale.branchName || '-'}</td>
+                                        <td style="padding: 12px; font-size: 13px; color: #6b7280;">${sale.cashierName}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #111827;">${sale.customerName}</td>
+                                        <td style="padding: 12px; font-size: 13px; color: #6b7280;">${sale.product}</td>
+                                        <td style="padding: 12px; text-align: right; font-size: 14px; font-weight: 700; color: #111827;">
+                                            ${accounting.formatMoney(sale.price, 'USD')}
+                                        </td>
+                                        <td style="padding: 12px; text-align: right; font-size: 14px; font-weight: 700; color: #059669;">
+                                            ${accounting.formatMoney(sale.totalPaidUSD || 0, 'USD')}
+                                        </td>
+                                        <td style="padding: 12px; text-align: right; font-size: 14px; font-weight: 700; color: ${debt > 0 ? '#dc2626' : '#6b7280'};">
+                                            ${debt > 0 ? accounting.formatMoney(debt, 'USD') : '-'}
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, #1e3a8a, #1e40af); color: white; font-weight: 700;">
+                                <td colspan="5" style="padding: 14px; text-align: right;">JAMI:</td>
+                                <td style="padding: 14px; text-align: right; font-size: 16px;">
+                                    ${accounting.formatMoney(sales.reduce((sum, s) => sum + (s.price || 0), 0), 'USD')}
+                                </td>
+                                <td style="padding: 14px; text-align: right; font-size: 16px;">
+                                    ${accounting.formatMoney(sales.reduce((sum, s) => sum + (s.totalPaidUSD || 0), 0), 'USD')}
+                                </td>
+                                <td style="padding: 14px; text-align: right; font-size: 16px;">
+                                    ${accounting.formatMoney(sales.reduce((sum, s) => sum + ((s.price || 0) - (s.totalPaidUSD || 0)), 0), 'USD')}
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+        }
+        
+        // Savdolarni filtrlash
+        function filterSales() {
+            const branchId = document.getElementById('filterBranch').value;
+            const cashierId = document.getElementById('filterCashier').value;
+            const searchText = document.getElementById('searchProduct').value.toLowerCase();
+            
+            let filtered = allSales;
+            
+            if (branchId) {
+                filtered = filtered.filter(s => s.branchId == branchId);
+            }
+            
+            if (cashierId) {
+                filtered = filtered.filter(s => s.cashierId == cashierId);
+            }
+            
+            if (searchText) {
+                filtered = filtered.filter(s => 
+                    s.product.toLowerCase().includes(searchText) ||
+                    s.customerName.toLowerCase().includes(searchText)
+                );
+            }
+            
+            renderSalesTable(filtered);
         }
         
         // Backup yaratish
@@ -367,6 +887,21 @@
         
         // Sahifa yuklanganda
         document.addEventListener('DOMContentLoaded', loadStats);
+        
+        // Sidebar functions
+        function toggleSidebar() {
+            document.getElementById('adminSidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+        
+        function logout() {
+            if (confirm('Tizimdan chiqmoqchimisiz?')) {
+                window.location.href = 'admin-login.html';
+            }
+        }
     </script>
+    <script src="mobile-enhancements.js"></script>
+        </main>
+    </div>
 </body>
 </html>

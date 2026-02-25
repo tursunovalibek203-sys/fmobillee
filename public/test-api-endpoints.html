@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Test</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+    }
+    .test-section {
+      background: #252526;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #007acc;
+    }
+    .test-section h2 {
+      color: #4ec9b0;
+      margin-top: 0;
+    }
+    button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background: #005a9e;
+    }
+    .result {
+      background: #1e1e1e;
+      padding: 15px;
+      margin-top: 10px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .success { color: #4ec9b0; }
+    .error { color: #f48771; }
+    .warning { color: #dcdcaa; }
+  </style>
+</head>
+<body>
+  <h1>🔧 API Endpoints Test</h1>
+
+  <div class="test-section">
+    <h2>📦 Mahsulotlar (Products)</h2>
+    <button onclick="testEndpoint('/api/products', 'products')">GET /api/products</button>
+    <button onclick="testEndpoint('/api/products?branchId=1', 'products-branch')">GET /api/products?branchId=1</button>
+    <button onclick="testEndpoint('/api/products/low-stock', 'products-low')">GET /api/products/low-stock</button>
+    <div id="products" class="result"></div>
+    <div id="products-branch" class="result" style="display:none;"></div>
+    <div id="products-low" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>💰 Kassir Savdolar (Cashier Sales)</h2>
+    <button onclick="testEndpoint('/api/cashier-sales?cashierId=1', 'cashier-sales')">GET /api/cashier-sales?cashierId=1</button>
+    <button onclick="testEndpoint('/api/cashier-sales?cashierId=1&limit=5', 'cashier-sales-limit')">GET /api/cashier-sales (limit 5)</button>
+    <button onclick="testEndpoint('/api/all-cashier-sales', 'all-sales')">GET /api/all-cashier-sales</button>
+    <div id="cashier-sales" class="result"></div>
+    <div id="cashier-sales-limit" class="result" style="display:none;"></div>
+    <div id="all-sales" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>👥 Mijozlar (Customers)</h2>
+    <button onclick="testEndpoint('/api/customers', 'customers')">GET /api/customers</button>
+    <button onclick="testEndpoint('/api/customers?branchId=1', 'customers-branch')">GET /api/customers?branchId=1</button>
+    <div id="customers" class="result"></div>
+    <div id="customers-branch" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>📤 Kirim Berishlar (Handovers)</h2>
+    <button onclick="testEndpoint('/api/cashier-handovers?cashierId=1', 'handovers')">GET /api/cashier-handovers?cashierId=1</button>
+    <button onclick="testEndpoint('/api/all-handovers', 'all-handovers')">GET /api/all-handovers</button>
+    <div id="handovers" class="result"></div>
+    <div id="all-handovers" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>🏢 Filiallar (Branches)</h2>
+    <button onclick="testEndpoint('/api/branches', 'branches')">GET /api/branches</button>
+    <div id="branches" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>👤 Kassirlar (Cashiers)</h2>
+    <button onclick="testEndpoint('/api/cashiers', 'cashiers')">GET /api/cashiers</button>
+    <div id="cashiers" class="result"></div>
+  </div>
+
+  <script>
+    async function testEndpoint(url, resultId) {
+      const resultDiv = document.getElementById(resultId);
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<span class="warning">⏳ Loading...</span>';
+      
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultDiv.innerHTML = `<span class="success">✅ Success (${response.status})</span>\n\n` + 
+            JSON.stringify(data, null, 2);
+        } else {
+          resultDiv.innerHTML = `<span class="error">❌ Error (${response.status})</span>\n\n` + 
+            JSON.stringify(data, null, 2);
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<span class="error">❌ Network Error</span>\n\n${error.message}`;
+      }
+    }
+
+    // Auto test on load
+    window.addEventListener('load', () => {
+      console.log('🚀 API Test sahifasi yuklandi');
+    });
+  </script>
+</body>
+</html>

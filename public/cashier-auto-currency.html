@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>💱 Kassir - Avtomatik Valyuta Konvertatsiyasi</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .currency-settings {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .exchange-rate-display {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .rate-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+        
+        .rate-input {
+            width: 120px;
+            padding: 8px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 24px;
+        }
+        
+        .sale-form {
+            background: white;
+            padding: 28px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: #374151;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .currency-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .currency-btn {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .currency-btn:hover {
+            border-color: #667eea;
+            background: #f9fafb;
+        }
+        
+        .currency-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .price-display {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border: 2px solid #bae6fd;
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .price-row:last-child {
+            margin-bottom: 0;
+            padding-top: 12px;
+            border-top: 2px solid #bae6fd;
+        }
+        
+        .price-label {
+            font-weight: 600;
+            color: #0c4a6e;
+        }
+        
+        .price-value {
+            font-size: 20px;
+            font-weight: 900;
+            color: #0369a1;
+        }
+        
+        .price-value.total {
+            font-size: 28px;
+            color: #0c4a6e;
+        }
+        
+        .conversion-display {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 12px;
+            border: 2px solid #fbbf24;
+        }
+        
+        .conversion-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .conversion-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .conversion-label {
+            font-weight: 600;
+            color: #78350f;
+            font-size: 14px;
+        }
+        
+        .conversion-value {
+            font-weight: 900;
+            color: #92400e;
+            font-size: 16px;
+        }
+        
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .recent-sales {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #374151;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sale-item {
+            padding: 16px;
+            border-radius: 12px;
+            background: #f9fafb;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .sale-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .sale-customer {
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .sale-amount {
+            font-weight: 900;
+            color: #059669;
+            font-size: 18px;
+        }
+        
+        .sale-details {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+        
+        .currency-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 11px;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1 style="margin: 0; font-size: 32px; font-weight: 900;">💱 Kassir - Avtomatik Valyuta</h1>
+                <p style="margin: 8px 0 0 0; opacity: 0.9;" id="cashierInfo">Kassir: Loading...</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" onclick="window.location.href='cashier-enhanced.html'">
+                    ← Orqaga
+                </button>
+                <button class="btn btn-secondary" onclick="logout()" style="background: rgba(239, 68, 68, 0.2); color: white;">
+                    🚪 Chiqish
+                </button>
+            </div>
+        </div>
+
+        <!-- Currency Settings -->
+        <div class="currency-settings">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 18px; font-weight: 900;">⚙️ Valyuta Kursi Sozlamalari</h3>
+                <button class="btn btn-secondary" onclick="updateExchangeRate()" style="padding: 8px 16px; font-size: 14px;">
+                    🔄 Yangilash
+                </button>
+            </div>
+            <div class="exchange-rate-display">
+                <div class="rate-item">
+                    <span>1 USD =</span>
+                    <input type="number" class="rate-input" id="usdRate" value="12650" onchange="saveExchangeRate()">
+                    <span>UZS</span>
+                </div>
+                <div class="rate-item">
+                    <span>1 EUR =</span>
+                    <input type="number" class="rate-input" id="eurRate" value="13800" onchange="saveExchangeRate()">
+                    <span>UZS</span>
+                </div>
+                <div class="rate-item">
+                    <span>1 RUB =</span>
+                    <input type="number" class="rate-input" id="rubRate" value="135" onchange="saveExchangeRate()">
+                    <span>UZS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Sale Form -->
+            <div class="sale-form">
+                <div class="form-title">
+                    🛒 Yangi Savdo
+                </div>
+
+                <form id="saleForm" onsubmit="handleSale(event)">
+                    <div class="form-group">
+                        <label>👤 Mijoz</label>
+                        <input type="text" id="customerName" placeholder="Mijoz ismi" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📦 Mahsulot</label>
+                        <input type="text" id="productName" placeholder="Mahsulot nomi" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🔢 Miqdor</label>
+                        <input type="number" id="quantity" placeholder="Miqdor" value="1" min="1" required oninput="calculateTotal()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>💰 Valyuta Tanlang</label>
+                        <div class="currency-selector">
+                            <button type="button" class="currency-btn active" onclick="selectCurrency('UZS')">
+                                🇺🇿 UZS
+                            </button>
+                            <button type="button" class="currency-btn" onclick="selectCurrency('USD')">
+                                💵 USD
+                            </button>
+                            <button type="button" class="currency-btn" onclick="selectCurrency('EUR')">
+                                💶 EUR
+                            </button>
+                            <button type="button" class="currency-btn" onclick="selectCurrency('RUB')">
+                                💷 RUB
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label id="priceLabel">💵 Narx (UZS)</label>
+                        <input type="number" id="price" placeholder="Narx" required oninput="calculateTotal()">
+                    </div>
+
+                    <!-- Price Display -->
+                    <div class="price-display">
+                        <div class="price-row">
+                            <span class="price-label">Birlik narxi:</span>
+                            <span class="price-value" id="displayUnitPrice">0 UZS</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">Miqdor:</span>
+                            <span class="price-value" id="displayQuantity">0</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">Jami:</span>
+                            <span class="price-value total" id="displayTotal">0 UZS</span>
+                        </div>
+                    </div>
+
+                    <!-- Conversion Display -->
+                    <div class="conversion-display" id="conversionDisplay" style="display: none;">
+                        <div style="font-weight: 700; color: #78350f; margin-bottom: 12px; font-size: 14px;">
+                            📊 Boshqa Valyutalarda:
+                        </div>
+                        <div class="conversion-row">
+                            <span class="conversion-label">💵 USD:</span>
+                            <span class="conversion-value" id="convertedUSD">$0.00</span>
+                        </div>
+                        <div class="conversion-row">
+                            <span class="conversion-label">💶 EUR:</span>
+                            <span class="conversion-value" id="convertedEUR">€0.00</span>
+                        </div>
+                        <div class="conversion-row">
+                            <span class="conversion-label">💷 RUB:</span>
+                            <span class="conversion-value" id="convertedRUB">₽0.00</span>
+                        </div>
+                        <div class="conversion-row">
+                            <span class="conversion-label">🇺🇿 UZS:</span>
+                            <span class="conversion-value" id="convertedUZS">0 so'm</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
+                        ✅ Savdoni Saqlash
+                    </button>
+                </form>
+            </div>
+
+            <!-- Recent Sales -->
+            <div class="recent-sales">
+                <div class="section-title">
+                    📋 So'nggi Savdolar
+                </div>
+                <div id="recentSalesList">
+                    <!-- Sales will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="cashier-auto-currency.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

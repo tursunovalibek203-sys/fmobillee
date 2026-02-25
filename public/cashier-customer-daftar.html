@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>📒 Mijoz Daftari - Kassir</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%) !important;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="card header-card" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9) !important;">
+      <div class="header-content">
+        <div>
+          <h1 id="customerNameTitle">📒 Mijoz Daftari</h1>
+          <p class="subtitle" id="customerInfo"></p>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="settings-btn" onclick="goBack()">
+            <span>←</span>
+            <span>Orqaga</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Debt Card -->
+    <div id="debtCard" class="debt-card no-debt">
+      <div class="debt-main">
+        <div>
+          <p class="label" id="debtLabel">✅ Balans</p>
+          <p class="amount" id="debtAmount">$0.00</p>
+        </div>
+        <div class="debt-status" id="debtStatus"></div>
+      </div>
+      <div class="info" id="debtInfo">
+        <span>Jami: <span id="customerTotal">$0</span></span>
+        <span>To'langan: <span id="customerPaid">$0</span></span>
+      </div>
+    </div>
+
+    <!-- Payment Form -->
+    <div class="payment-card">
+      <h2>💵 To'lov qabul qilish</h2>
+      <div class="payment-row">
+        <input type="number" id="paymentAmount" placeholder="To'lov miqdori ($)" step="0.01" min="0">
+        <button class="payment-btn" onclick="addPayment()">
+          <span>💳</span>
+          To'lov qabul qilish
+        </button>
+      </div>
+    </div>
+
+    <!-- Sale Form -->
+    <div class="form-card">
+      <h2>➕ Yangi savdo</h2>
+      
+      <!-- IMEI Search -->
+      <div style="margin-bottom: 16px;">
+        <input type="text" id="imeiSearch" placeholder="🔍 IMEI yoki mahsulot qidirish..." 
+               style="width: 100%; padding: 14px 16px; border: 2px solid #8b5cf6; border-radius: 12px; font-size: 14px; font-weight: 500;"
+               oninput="searchProductByIMEI(this.value)">
+        <div id="imeiSearchResults" style="margin-top: 8px;"></div>
+      </div>
+      
+      <input type="text" id="productInput" placeholder="Mahsulot nomi" readonly style="background: #f3f4f6;">
+      <input type="text" id="selectedIMEI" placeholder="IMEI" readonly style="background: #f3f4f6; display: none;">
+      
+      <div class="row">
+        <input type="number" id="priceInput" placeholder="Narxi ($)" step="0.01" min="0" required>
+        <input type="number" id="paidInput" placeholder="Berilgan pul ($)" step="0.01" min="0" required>
+      </div>
+      
+      <button class="submit-btn" onclick="addSale()">
+        <span>➕</span>
+        Savdo qo'shish
+      </button>
+    </div>
+
+    <!-- Records -->
+    <div class="records-card">
+      <h2>📋 Tarix (<span id="recordsCount">0</span>)</h2>
+      <div id="recordsList"><p class="empty">Hali yozuv yo'q</p></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin + '/api';
+    const urlParams = new URLSearchParams(window.location.search);
+    const customerId = urlParams.get('customerId');
+    
+    let customerData = null;
+    let cashierData = null;
+    let allSales = [];
+    let selectedItemId = null;
+    
+    // Init
+    async function init() {
+      // Kassir login tekshiruvi
+      if (localStorage.getItem('cashierLoggedIn') !== 'true') {
+        window.location.href = '/cashier-login.html';
+        return;
+      }
+      
+      if (!customerId) {
+        alert('Mijoz ID topilmadi!');
+        goBack();
+        return;
+      }
+      
+      const cashierId = localStorage.getItem('cashierId');
+      await loadCashierData(cashierId);
+      await loadCustomer();
+      await loadSales();
+    }
+    
+    // Load cashier data
+    async function loadCashierData(cashierId) {
+      try {
+        const response = await fetch(`${API_URL}/cashiers/${cashierId}`);
+        const data = await response.json();
+        
+        if (data.success && data.cashier) {
+          cashierData = data.cashier;
+        }
+      } catch (error) {
+        console.error('Kassir ma\'lumotlari yuklash xato:', error);
+      }
+    }
+    
+    // Load customer
+    async function loadCustomer() {
+      try {
+        const response = await fetch(`${API_URL}/customers/search/${customerId}`);
+        const data = await response.json();
+        
+        if (data.success && data.customer) {
+          customerData = data.customer;
+          document.getElementById('customerNameTitle').textContent = `📒 ${customerData.name}`;
+          document.getElementById('customerInfo').textContent = `ID: ${customerData.customerId} | ${customerData.phone || 'Telefon yo\'q'}`;
+          updateDebtCard();
+        } else {
+          alert('Mijoz topilmadi!');
+          goBack();
+        }
+      } catch (error) {
+        console.error('Mijoz yuklash xato:', error);
+        alert('Xatolik yuz berdi!');
+        goBack();
+      }
+    }
+    
+    // Load sales
+    async function loadSales() {
+      try {
+        const response = await fetch(`${API_URL}/cashier-sales?customerId=${customerId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          allSales = data.sales || [];
+          displaySales();
+          updateDebtCard();
+        }
+      } catch (error) {
+        console.error('Savdolar yuklash xato:', error);
+      }
+    }
+    
+    // Update debt card
+    function updateDebtCard() {
+      const totalPrice = allSales.filter(s => s.type === 'sale').reduce((sum, s) => sum + s.price, 0);
+      const totalPaid = allSales.reduce((sum, s) => sum + s.paidUSD, 0);
+      const debt = totalPrice - totalPaid;
+      
+      const debtCard = document.getElementById('debtCard');
+      const debtLabel = document.getElementById('debtLabel');
+      const debtAmount = document.getElementById('debtAmount');
+      
+      if (debt > 0) {
+        debtCard.className = 'debt-card has-debt';
+        debtLabel.textContent = '⚠️ Qarz';
+        debtAmount.textContent = formatMoney(debt);
+      } else {
+        debtCard.className = 'debt-card no-debt';
+        debtLabel.textContent = '✅ Balans';
+        debtAmount.textContent = formatMoney(Math.abs(debt));
+      }
+      
+      document.getElementById('customerTotal').textContent = formatMoney(totalPrice);
+      document.getElementById('customerPaid').textContent = formatMoney(totalPaid);
+    }
+    
+    // Display sales
+    function displaySales() {
+      const recordsList = document.getElementById('recordsList');
+      document.getElementById('recordsCount').textContent = allSales.length;
+      
+      if (allSales.length === 0) {
+        recordsList.innerHTML = '<p class="empty">Hali yozuv yo\'q</p>';
+        return;
+      }
+      
+      recordsList.innerHTML = allSales.map(sale => {
+        const isSale = sale.type === 'sale';
+        const icon = isSale ? '🛒' : '💵';
+        const title = isSale ? sale.product : 'To\'lov';
+        const debt = isSale ? sale.price - sale.paidUSD : 0;
+        
+        return `
+          <div class="record-item ${isSale ? 'sale' : 'payment'}">
+            <div class="record-header">
+              <div>
+                <span class="record-icon">${icon}</span>
+                <span class="record-title">${title}</span>
+              </div>
+              <div class="record-date">${sale.date} ${sale.time}</div>
+            </div>
+            <div class="record-details">
+              ${isSale ? `
+                <div class="detail-row">
+                  <span>Narxi:</span>
+                  <span class="detail-value">${formatMoney(sale.price)}</span>
+                </div>
+                <div class="detail-row">
+                  <span>To'landi:</span>
+                  <span class="detail-value">${formatMoney(sale.paidUSD)}</span>
+                </div>
+                ${debt > 0 ? `
+                  <div class="detail-row">
+                    <span>Qarz:</span>
+                    <span class="detail-value debt">${formatMoney(debt)}</span>
+                  </div>
+                ` : ''}
+              ` : `
+                <div class="detail-row">
+                  <span>To'lov:</span>
+                  <span class="detail-value">${formatMoney(sale.paidUSD)}</span>
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // Search product by IMEI
+    let searchTimeout;
+    async function searchProductByIMEI(query) {
+      clearTimeout(searchTimeout);
+      
+      const resultsDiv = document.getElementById('imeiSearchResults');
+      
+      if (!query || query.length < 3) {
+        resultsDiv.style.display = 'none';
+        return;
+      }
+      
+      searchTimeout = setTimeout(async () => {
+        try {
+          const response = await fetch(`${API_URL}/warehouse/search-imei/${query}`);
+          const data = await response.json();
+          
+          if (data.success && data.item) {
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
+              <div style="padding: 12px; background: white; border: 2px solid #8b5cf6; border-radius: 10px; cursor: pointer;"
+                   onclick="selectProduct('${data.item._id}', '${data.item.productName}', '${data.item.imei}', ${data.item.sellPrice})">
+                <div style="font-weight: 600; color: #111827;">${data.item.productName}</div>
+                <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">IMEI: ${data.item.imei}</div>
+                <div style="font-size: 14px; color: #059669; font-weight: 700; margin-top: 4px;">${formatMoney(data.item.sellPrice)}</div>
+              </div>
+            `;
+          } else {
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
+              <div style="padding: 12px; background: #fee2e2; border-radius: 10px; color: #991b1b;">
+                ❌ Mahsulot topilmadi
+              </div>
+            `;
+          }
+        } catch (error) {
+          console.error('IMEI qidirish xato:', error);
+        }
+      }, 300);
+    }
+    
+    // Select product
+    function selectProduct(itemId, productName, imei, price) {
+      selectedItemId = itemId;
+      document.getElementById('productInput').value = productName;
+      document.getElementById('selectedIMEI').value = imei;
+      document.getElementById('priceInput').value = price;
+      document.getElementById('paidInput').value = price;
+      document.getElementById('imeiSearchResults').style.display = 'none';
+      document.getElementById('imeiSearch').value = imei;
+    }
+    
+    // Add sale
+    async function addSale() {
+      const product = document.getElementById('productInput').value.trim();
+      const price = parseFloat(document.getElementById('priceInput').value);
+      const paid = parseFloat(document.getElementById('paidInput').value);
+      
+      if (!product || !price || price <= 0) {
+        alert('Mahsulot va narxni to\'g\'ri kiriting!');
+        return;
+      }
+      
+      if (paid < 0) {
+        alert('To\'lov miqdori manfiy bo\'lishi mumkin emas!');
+        return;
+      }
+      
+      if (!selectedItemId) {
+        alert('Iltimos, ombordan mahsulot tanlang!');
+        return;
+      }
+      
+      try {
+        const saleId = Date.now();
+        const now = new Date();
+        const date = now.toLocaleDateString('uz-UZ');
+        const time = now.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
+        
+        // Savdo qo'shish
+        const response = await fetch(`${API_URL}/cashier-sales`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            saleId,
+            cashierId: cashierData.cashierId,
+            cashierName: cashierData.name,
+            branchId: cashierData.branchId,
+            customerId: parseInt(customerId),
+            customerName: customerData.name,
+            product,
+            price,
+            paidUSD: paid,
+            date,
+            time,
+            type: 'sale',
+            imei: document.getElementById('selectedIMEI').value
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          // IMEI ni sotilgan deb belgilash
+          if (selectedItemId) {
+            await fetch(`${API_URL}/warehouse/sell-item`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                itemId: selectedItemId,
+                sellPrice: price,
+                customerName: customerData.name,
+                cashierId: cashierData.cashierId
+              })
+            });
+          }
+          
+          alert('✅ Savdo qo\'shildi!');
+          
+          // Formani tozalash
+          document.getElementById('productInput').value = '';
+          document.getElementById('priceInput').value = '';
+          document.getElementById('paidInput').value = '';
+          document.getElementById('imeiSearch').value = '';
+          selectedItemId = null;
+          
+          await loadSales();
+          await loadCustomer();
+        } else {
+          alert('❌ Xatolik: ' + data.error);
+        }
+      } catch (error) {
+        console.error('Savdo qo\'shish xato:', error);
+        alert('❌ Server bilan aloqa yo\'q!');
+      }
+    }
+    
+    // Add payment
+    async function addPayment() {
+      const amount = parseFloat(document.getElementById('paymentAmount').value);
+      
+      if (!amount || amount <= 0) {
+        alert('To\'lov miqdorini kiriting!');
+        return;
+      }
+      
+      try {
+        const saleId = Date.now();
+        const now = new Date();
+        const date = now.toLocaleDateString('uz-UZ');
+        const time = now.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
+        
+        const response = await fetch(`${API_URL}/cashier-sales`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            saleId,
+            cashierId: cashierData.cashierId,
+            cashierName: cashierData.name,
+            branchId: cashierData.branchId,
+            customerId: parseInt(customerId),
+            customerName: customerData.name,
+            product: 'To\'lov',
+            price: 0,
+            paidUSD: amount,
+            date,
+            time,
+            type: 'payment'
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          alert('✅ To\'lov qabul qilindi!');
+          document.getElementById('paymentAmount').value = '';
+          await loadSales();
+          await loadCustomer();
+        } else {
+          alert('❌ Xatolik: ' + data.error);
+        }
+      } catch (error) {
+        console.error('To\'lov qo\'shish xato:', error);
+        alert('❌ Server bilan aloqa yo\'q!');
+      }
+    }
+    
+    // Format money
+    function formatMoney(amount) {
+      const num = parseFloat(amount);
+      if (isNaN(num)) return '$0.00';
+      return '$' + num.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+    
+    function goBack() {
+      window.location.href = '/cashier-customers.html';
+    }
+    
+    // Start
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

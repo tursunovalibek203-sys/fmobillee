@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Savdolar Tarixi - Kassir</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-professional.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%);
+        }
+
+        .history-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .history-header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .history-table {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #ec4899, #db2777);
+            color: white;
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: 80px 2fr 1.5fr 1fr 1fr 1fr 100px;
+            gap: 12px;
+            font-weight: 700;
+        }
+
+        .table-row {
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: 80px 2fr 1.5fr 1fr 1fr 1fr 100px;
+            gap: 12px;
+            border-bottom: 1px solid #f3f4f6;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .table-row:hover {
+            background: #fce7f3;
+        }
+
+        .type-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .type-sale {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .type-payment {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        @media (max-width: 768px) {
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header, .table-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="history-container">
+        <!-- Header -->
+        <div class="history-header">
+            <div>
+                <h1 style="margin: 0; color: white; font-size: 32px; font-weight: 900;">📋 Savdolar Tarixi</h1>
+                <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9);" id="cashierName"></p>
+            </div>
+            <button class="settings-btn" onclick="window.location.href='cashier-dashboard.html'" style="background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.3);">
+                <span>←</span>
+                <span>Orqaga</span>
+            </button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="filter-grid">
+                <input type="date" id="dateFrom" 
+                       style="padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-weight: 600;">
+                
+                <input type="date" id="dateTo" 
+                       style="padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-weight: 600;">
+                
+                <input type="text" id="searchInput" placeholder="🔍 Mijoz yoki mahsulot..." 
+                       style="padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px;"
+                       oninput="filterHistory()">
+                
+                <select id="typeFilter" onchange="filterHistory()" 
+                        style="padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-weight: 600;">
+                    <option value="">Barcha turlar</option>
+                    <option value="sale">🛒 Savdolar</option>
+                    <option value="payment">💰 To'lovlar</option>
+                </select>
+                
+                <button onclick="loadHistory()" 
+                        style="padding: 12px 24px; background: linear-gradient(135deg, #ec4899, #db2777); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer;">
+                    🔄 Yangilash
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+            <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); padding: 20px; border-radius: 16px; text-align: center; color: white;">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Jami savdolar</div>
+                <div style="font-size: 28px; font-weight: 900;" id="totalCount">0</div>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); padding: 20px; border-radius: 16px; text-align: center; color: white;">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Jami summa</div>
+                <div style="font-size: 28px; font-weight: 900;" id="totalAmount">$0.00</div>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); padding: 20px; border-radius: 16px; text-align: center; color: white;">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">O'rtacha chek</div>
+                <div style="font-size: 28px; font-weight: 900;" id="avgCheck">$0.00</div>
+            </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="history-table">
+            <div class="table-header">
+                <div>Tur</div>
+                <div>Mijoz</div>
+                <div>Mahsulot</div>
+                <div>Narx</div>
+                <div>To'lov</div>
+                <div>Sana</div>
+                <div>Vaqt</div>
+            </div>
+            <div id="historyTableBody">
+                <div style="padding: 40px; text-align: center; color: #6b7280;">
+                    Yuklanmoqda...
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 20px;">
+            <button onclick="previousPage()" id="prevBtn" style="padding: 10px 20px; background: white; border: 2px solid #e5e7eb; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                ← Oldingi
+            </button>
+            <span style="color: white; font-weight: 700; font-size: 16px;" id="pageInfo">1 / 1</span>
+            <button onclick="nextPage()" id="nextBtn" style="padding: 10px 20px; background: white; border: 2px solid #e5e7eb; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                Keyingi →
+            </button>
+        </div>
+    </div>
+
+    <script src="cashier-history.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Professional Ombor - IMEI Tizimi</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style-professional.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .warehouse-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-box {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: all 0.3s;
+    }
+    
+    .stat-box:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .stat-number {
+      font-size: 32px;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    
+    .product-card-pro {
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #f1f5f9;
+    }
+    
+    .product-card-pro::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-primary);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+    
+    .product-card-pro:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .product-card-pro:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+      border-color: #e2e8f0;
+    }
+    
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+    
+    .product-name-pro {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+    
+    .product-category {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .product-badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .badge-in-stock {
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      color: #065f46;
+    }
+    
+    .badge-low-stock {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #92400e;
+    }
+    
+    .badge-out-stock {
+      background: linear-gradient(135deg, #fee2e2, #fecaca);
+      color: #991b1b;
+    }
+    
+    .product-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+    
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .detail-label {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .detail-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    
+    .imei-section {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .imei-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .imei-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .imei-count {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
+    }
+    
+    .imei-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    
+    .imei-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: white;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'Courier New', monospace;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .imei-number {
+      font-weight: 600;
+      color: #0f172a;
+    }
+    
+    .imei-status {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    
+    .imei-available {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .imei-sold {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .product-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    
+    .action-btn {
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .btn-edit {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+    }
+    
+    .btn-stock {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+    }
+    
+    .btn-imei {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: white;
+    }
+    
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .add-btn-float {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      font-size: 32px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s;
+      z-index: 100;
+    }
+    
+    .add-btn-float:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+    }
+    
+    .search-filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      padding: 14px 20px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+    
+    .search-box:focus {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+    }
+    
+    .filter-select {
+      padding: 14px 20px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s;
+      font-weight: 600;
+      cursor: pointer;
+      background: white;
+    }
+    
+    .filter-select:focus {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+    }
+    
+    /* IMEI Modal Styles */
+    .imei-input-group {
+      margin-bottom: 16px;
+    }
+    
+    .imei-input-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    
+    .imei-input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.3s;
+    }
+    
+    .imei-input:focus {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+    }
+    
+    .imei-validation {
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    
+    .validation-success {
+      color: #059669;
+    }
+    
+    .validation-error {
+      color: #dc2626;
+    }
+    
+    .imei-list-modal {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 16px;
+    }
+    
+    .imei-item-modal {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .delete-imei-btn {
+      padding: 6px 12px;
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .delete-imei-btn:hover {
+      background: #dc2626;
+      color: white;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="card header-card">
+      <div class="header-content">
+        <div>
+          <h1>🏭 Professional Ombor</h1>
+          <p class="subtitle">IMEI Tizimi bilan</p>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="settings-btn" onclick="goBack()">
+            <span>←</span>
+            <span>Orqaga</span>
+          </button>
+          <button class="settings-btn" onclick="location.reload()">
+            <span>🔄</span>
+            <span>Yangilash</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="warehouse-stats">
+      <div class="stat-box">
+        <div class="stat-number" id="totalProducts">0</div>
+        <div class="stat-label">Jami Mahsulotlar</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="totalValue">$0</div>
+        <div class="stat-label">Jami Qiymat</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="totalStock">0</div>
+        <div class="stat-label">Jami Dona</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="totalIMEI">0</div>
+        <div class="stat-label">Jami IMEI</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="lowStockCount">0</div>
+        <div class="stat-label">Kam Qolgan</div>
+      </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="search-filter-bar">
+      <input type="text" class="search-box" id="searchInput" placeholder="🔍 Mahsulot, IMEI yoki barcode qidirish..." oninput="filterProducts()">
+      <select class="filter-select" id="categoryFilter" onchange="filterProducts()">
+        <option value="">Barcha kategoriyalar</option>
+        <option value="Telefon">📱 Telefon</option>
+        <option value="Noutbuk">💻 Noutbuk</option>
+        <option value="Planshet">📲 Planshet</option>
+        <option value="Aksessuar">🎧 Aksessuar</option>
+        <option value="Boshqa">📦 Boshqa</option>
+      </select>
+      <select class="filter-select" id="stockFilter" onchange="filterProducts()">
+        <option value="">Barcha holat</option>
+        <option value="in-stock">✅ Omborda</option>
+        <option value="low-stock">⚠️ Kam qolgan</option>
+        <option value="out-stock">❌ Tugagan</option>
+      </select>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="productsGrid">
+      <p class="empty">Mahsulotlar yuklanmoqda...</p>
+    </div>
+
+    <!-- Add Product Button -->
+    <button class="add-btn-float" onclick="openAddProductModal()" title="Yangi mahsulot">+</button>
+  </div>
+
+  <!-- Add/Edit Product Modal -->
+  <div id="productModal" class="modal">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h2 id="modalTitle">➕ Yangi Mahsulot</h2>
+        <button class="modal-close" onclick="closeProductModal()">×</button>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group">
+          <label>Mahsulot nomi *</label>
+          <input type="text" id="productName" placeholder="Masalan: iPhone 15 Pro Max" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Kategoriya *</label>
+          <select id="productCategory" required>
+            <option value="">Tanlang</option>
+            <option value="Telefon">📱 Telefon</option>
+            <option value="Noutbuk">💻 Noutbuk</option>
+            <option value="Planshet">📲 Planshet</option>
+            <option value="Aksessuar">🎧 Aksessuar</option>
+            <option value="Boshqa">📦 Boshqa</option>
+          </select>
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+        <div class="form-group">
+          <label>Sotib olish narxi ($) *</label>
+          <input type="number" id="buyPrice" placeholder="0.00" step="0.01" min="0" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Sotish narxi ($) *</label>
+          <input type="number" id="sellPrice" placeholder="0.00" step="0.01" min="0" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Miqdor *</label>
+          <input type="number" id="productStock" placeholder="0" min="0" required>
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group">
+          <label>Barcode</label>
+          <input type="text" id="productBarcode" placeholder="Barcode (ixtiyoriy)">
+        </div>
+        
+        <div class="form-group">
+          <label>O'lchov birligi</label>
+          <input type="text" id="productUnit" placeholder="dona, kg, litr..." value="dona">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Tavsif</label>
+        <textarea id="productDescription" rows="3" placeholder="Mahsulot haqida qo'shimcha ma'lumot..."></textarea>
+      </div>
+      
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeProductModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="saveProduct()">
+          <span>✓</span>
+          Saqlash
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMEI Management Modal -->
+  <div id="imeiModal" class="modal">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h2 id="imeiModalTitle">📱 IMEI Boshqaruvi</h2>
+        <button class="modal-close" onclick="closeIMEIModal()">×</button>
+      </div>
+      
+      <div style="background: #f0f9ff; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+        <p style="margin: 0; font-size: 14px; color: #1e40af; font-weight: 600;">
+          <strong id="imeiProductName"></strong>
+        </p>
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: #6b7280;">
+          Jami IMEI: <strong id="imeiTotalCount">0</strong> ta
+        </p>
+      </div>
+      
+      <div class="imei-input-group">
+        <label>Yangi IMEI qo'shish</label>
+        <input type="text" id="newIMEI" class="imei-input" placeholder="15 raqamli IMEI kiriting" maxlength="15" oninput="validateIMEI(this.value)">
+        <div id="imeiValidation" class="imei-validation"></div>
+      </div>
+      
+      <button class="confirm-btn" onclick="addIMEI()" style="width: 100%; margin-bottom: 20px;">
+        <span>➕</span>
+        IMEI Qo'shish
+      </button>
+      
+      <div class="imei-list-modal" id="imeiListModal">
+        <p class="empty">IMEI yo'q</p>
+      </div>
+      
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeIMEIModal()">Yopish</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="accounting-professional.js"></script>
+  <script src="warehouse-professional.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

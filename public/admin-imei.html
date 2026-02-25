@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IMEI Boshqaruvi</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 1.8em;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-back {
+            background: #6b7280;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #374151;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            flex: 1;
+        }
+        
+        .imei-item {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .imei-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .imei-code {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #111827;
+        }
+        
+        .imei-status {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .status-available {
+            background: #d1fae5;
+            color: #059669;
+        }
+        
+        .status-sold {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .imei-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .detail-item {
+            font-size: 0.9em;
+        }
+        
+        .detail-label {
+            color: #6b7280;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.4em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 IMEI Boshqaruvi</h1>
+            <button class="btn btn-back" onclick="location.href='admin-simple.html'">← Orqaga</button>
+        </div>
+        
+        <!-- Statistika -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalIMEI">0</div>
+                <div class="stat-label">Jami IMEI</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="availableIMEI">0</div>
+                <div class="stat-label">Mavjud</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="soldIMEI">0</div>
+                <div class="stat-label">Sotilgan</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalValue">$0</div>
+                <div class="stat-label">Jami Qiymat</div>
+            </div>
+        </div>
+        
+        <!-- IMEI qo'shish -->
+        <div class="section">
+            <h3>➕ Yangi IMEI</h3>
+            <form id="imeiForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Mahsulot ID *</label>
+                        <input type="number" id="productId" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Filial ID *</label>
+                        <input type="number" id="branchId" required>
+                    </div>
+                    <div class="form-group">
+                        <label>IMEI *</label>
+                        <input type="text" id="imei" placeholder="15 raqamli IMEI" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Sotib olish narxi (USD) *</label>
+                        <input type="number" id="buyPrice" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Sotish narxi (USD) *</label>
+                        <input type="number" id="sellPrice" step="0.01" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn">💾 Saqlash</button>
+            </form>
+        </div>
+        
+        <!-- IMEI qidirish -->
+        <div class="section">
+            <h3>🔍 IMEI Qidirish</h3>
+            <div class="search-box">
+                <input type="text" id="searchIMEI" placeholder="IMEI kodni kiriting...">
+                <button class="btn" onclick="searchIMEI()">🔍 Qidirish</button>
+            </div>
+            <div id="searchResult"></div>
+        </div>
+        
+        <!-- IMEI ro'yxati -->
+        <div class="section">
+            <h3>📋 IMEI Ro'yxati</h3>
+            <div class="form-row" style="margin-bottom: 15px;">
+                <div class="form-group">
+                    <label>Mahsulot ID bo'yicha filter</label>
+                    <input type="number" id="filterProduct" placeholder="Mahsulot ID">
+                </div>
+                <div class="form-group">
+                    <label>Filial ID bo'yicha filter</label>
+                    <input type="number" id="filterBranch" placeholder="Filial ID">
+                </div>
+                <div class="form-group">
+                    <label>Holat bo'yicha filter</label>
+                    <select id="filterStatus">
+                        <option value="">Barchasi</option>
+                        <option value="available">Mavjud</option>
+                        <option value="sold">Sotilgan</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn" onclick="loadIMEIList()">🔄 Yangilash</button>
+            <div id="imeiList">
+                <div class="no-data">Yuklanmoqda...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Login tekshiruvi
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = '/login.html';
+        }
+        
+        // Statistikani yuklash
+        async function loadStats() {
+            try {
+                // Bu yerda IMEI statistika API chaqiriladi
+                // Hozircha test ma'lumotlar
+                document.getElementById('totalIMEI').textContent = '0';
+                document.getElementById('availableIMEI').textContent = '0';
+                document.getElementById('soldIMEI').textContent = '0';
+                document.getElementById('totalValue').textContent = '$0';
+            } catch (error) {
+                console.error('Statistika yuklash xatosi:', error);
+            }
+        }
+        
+        // IMEI qo'shish
+        document.getElementById('imeiForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                productId: parseInt(document.getElementById('productId').value),
+                branchId: parseInt(document.getElementById('branchId').value),
+                imei: document.getElementById('imei').value,
+                buyPrice: parseFloat(document.getElementById('buyPrice').value),
+                sellPrice: parseFloat(document.getElementById('sellPrice').value)
+            };
+            
+            try {
+                const response = await fetch('/api/warehouse/product-items', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ IMEI muvaffaqiyatli qo\'shildi!');
+                    document.getElementById('imeiForm').reset();
+                    loadStats();
+                    loadIMEIList();
+                } else {
+                    alert('❌ Xatolik: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Server bilan aloqa yo\'q!');
+            }
+        });
+        
+        // IMEI qidirish
+        async function searchIMEI() {
+            const imei = document.getElementById('searchIMEI').value.trim();
+            const resultDiv = document.getElementById('searchResult');
+            
+            if (!imei) {
+                alert('❌ IMEI kodni kiriting!');
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="no-data">Qidirilmoqda...</div>';
+            
+            try {
+                const response = await fetch(`/api/warehouse/search-imei/${imei}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const item = result.item;
+                    resultDiv.innerHTML = `
+                        <div class="imei-item">
+                            <div class="imei-header">
+                                <div class="imei-code">📱 ${item.imei}</div>
+                                <div class="imei-status ${item.status === 'available' ? 'status-available' : 'status-sold'}">
+                                    ${item.status === 'available' ? 'Mavjud' : 'Sotilgan'}
+                                </div>
+                            </div>
+                            <div class="imei-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Mahsulot ID:</span>
+                                    <span class="detail-value">${item.productId}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Filial ID:</span>
+                                    <span class="detail-value">${item.branchId}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Sotib olish:</span>
+                                    <span class="detail-value">$${item.buyPrice}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Sotish:</span>
+                                    <span class="detail-value">$${item.sellPrice}</span>
+                                </div>
+                                ${item.soldTo ? `
+                                    <div class="detail-item">
+                                        <span class="detail-label">Kimga:</span>
+                                        <span class="detail-value">${item.soldTo}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="no-data">
+                            <div style="font-size: 3em; margin-bottom: 10px;">😕</div>
+                            <h3>IMEI topilmadi</h3>
+                            <p>"${imei}" IMEI kodi mavjud emas</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="no-data">
+                        <div style="font-size: 3em; margin-bottom: 10px;">❌</div>
+                        <h3>Xatolik yuz berdi</h3>
+                        <p>Server bilan aloqa yo'q</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // IMEI ro'yxatini yuklash
+        async function loadIMEIList() {
+            const listDiv = document.getElementById('imeiList');
+            listDiv.innerHTML = '<div class="no-data">Yuklanmoqda...</div>';
+            
+            try {
+                // Bu yerda filter parametrlarini olish
+                const productId = document.getElementById('filterProduct').value;
+                const branchId = document.getElementById('filterBranch').value;
+                const status = document.getElementById('filterStatus').value;
+                
+                let url = '/api/warehouse/all-items';
+                const params = new URLSearchParams();
+                
+                if (productId) params.append('productId', productId);
+                if (branchId) params.append('branchId', branchId);
+                if (status) params.append('status', status);
+                
+                if (params.toString()) {
+                    url += '?' + params.toString();
+                }
+                
+                const response = await fetch(url);
+                const result = await response.json();
+                
+                if (result.success && result.items.length > 0) {
+                    listDiv.innerHTML = result.items.map(item => `
+                        <div class="imei-item">
+                            <div class="imei-header">
+                                <div class="imei-code">📱 ${item.imei}</div>
+                                <div class="imei-status ${item.status === 'available' ? 'status-available' : 'status-sold'}">
+                                    ${item.status === 'available' ? 'Mavjud' : 'Sotilgan'}
+                                </div>
+                            </div>
+                            <div class="imei-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Mahsulot:</span>
+                                    <span class="detail-value">${item.productId}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Filial:</span>
+                                    <span class="detail-value">${item.branchId}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Sotib olish:</span>
+                                    <span class="detail-value">$${item.buyPrice}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Sotish:</span>
+                                    <span class="detail-value">$${item.sellPrice}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Qo'shilgan:</span>
+                                    <span class="detail-value">${new Date(item.createdAt).toLocaleDateString('uz-UZ')}</span>
+                                </div>
+                                ${item.soldTo ? `
+                                    <div class="detail-item">
+                                        <span class="detail-label">Kimga sotilgan:</span>
+                                        <span class="detail-value">${item.soldTo}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    listDiv.innerHTML = `
+                        <div class="no-data">
+                            <div style="font-size: 3em; margin-bottom: 10px;">📱</div>
+                            <h3>IMEI yo'q</h3>
+                            <p>Hozircha IMEI kodlar qo'shilmagan</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                listDiv.innerHTML = `
+                    <div class="no-data">
+                        <div style="font-size: 3em; margin-bottom: 10px;">❌</div>
+                        <h3>Xatolik yuz berdi</h3>
+                        <p>Ma'lumotlarni yuklab bo'lmadi</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Sahifa yuklanganda
+        loadStats();
+        loadIMEIList();
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

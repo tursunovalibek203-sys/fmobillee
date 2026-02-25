@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📊 Savdolar Tarixi - Yaxshilangan</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .filters-panel {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .filter-group label {
+            font-weight: 700;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .filter-group input, .filter-group select {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .filter-group input:focus, .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .history-table {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: 80px 2fr 2fr 1fr 1fr 1fr 1fr 100px;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .table-row {
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: 80px 2fr 2fr 1fr 1fr 1fr 1fr 100px;
+            gap: 12px;
+            border-bottom: 1px solid #f3f4f6;
+            align-items: center;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .table-row:hover {
+            background: #f8fafc;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .type-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+        }
+        
+        .type-sale {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .type-payment {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .type-debt {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .pagination button {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background: #f3f4f6;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .export-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 1024px) {
+            .filters-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .table-header, .table-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .table-header > div, .table-row > div {
+                padding: 4px 0;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1 style="margin: 0; font-size: 32px; font-weight: 900;">📊 Savdolar Tarixi</h1>
+                <p style="margin: 8px 0 0 0; opacity: 0.9;" id="cashierInfo">Kassir: Loading...</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" onclick="window.location.href='cashier-enhanced.html'">
+                    ← Orqaga
+                </button>
+                <button class="btn btn-secondary" onclick="refreshData()">
+                    🔄 Yangilash
+                </button>
+            </div>
+        </div>
+
+        <!-- Export Panel -->
+        <div class="export-panel">
+            <h3 style="margin-bottom: 16px; color: #374151;">📤 Export qilish</h3>
+            <div class="export-buttons">
+                <button class="btn btn-primary" onclick="exportToExcel()">
+                    📊 Excel
+                </button>
+                <button class="btn btn-secondary" onclick="exportToCSV()">
+                    📄 CSV
+                </button>
+                <button class="btn btn-secondary" onclick="exportToPDF()">
+                    📋 PDF
+                </button>
+                <button class="btn btn-secondary" onclick="printReport()">
+                    🖨️ Chop etish
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters Panel -->
+        <div class="filters-panel">
+            <h3 style="margin-bottom: 20px; color: #374151;">🔍 Filtrlar</h3>
+            
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>Boshlanish sanasi</label>
+                    <input type="date" id="dateFrom">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Tugash sanasi</label>
+                    <input type="date" id="dateTo">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Mijoz qidirish</label>
+                    <input type="text" id="customerSearch" placeholder="Mijoz nomi...">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Mahsulot qidirish</label>
+                    <input type="text" id="productSearch" placeholder="Mahsulot nomi...">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Savdo turi</label>
+                    <select id="typeFilter">
+                        <option value="">Barcha turlar</option>
+                        <option value="sale">🛒 Savdolar</option>
+                        <option value="payment">💰 To'lovlar</option>
+                        <option value="debt">📋 Qarzlar</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Minimal summa</label>
+                    <input type="number" id="minAmount" placeholder="0.00" step="0.01">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Maksimal summa</label>
+                    <input type="number" id="maxAmount" placeholder="1000.00" step="0.01">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Valyuta</label>
+                    <select id="currencyFilter">
+                        <option value="">Barcha valyutalar</option>
+                        <option value="USD">USD</option>
+                        <option value="UZS">UZS</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="applyFilters()">
+                    🔍 Qidirish
+                </button>
+                <button class="btn btn-secondary" onclick="clearFilters()">
+                    🗑️ Tozalash
+                </button>
+                <button class="btn btn-secondary" onclick="setQuickFilter('today')">
+                    📅 Bugun
+                </button>
+                <button class="btn btn-secondary" onclick="setQuickFilter('week')">
+                    📅 Bu hafta
+                </button>
+                <button class="btn btn-secondary" onclick="setQuickFilter('month')">
+                    📅 Bu oy
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Jami savdolar</div>
+                <div style="font-size: 28px; font-weight: 900;" id="totalSales">0</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Jami summa</div>
+                <div style="font-size: 28px; font-weight: 900;" id="totalAmount">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">O'rtacha chek</div>
+                <div style="font-size: 28px; font-weight: 900;" id="avgAmount">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Eng katta chek</div>
+                <div style="font-size: 28px; font-weight: 900;" id="maxAmount">$0.00</div>
+            </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="history-table">
+            <div class="table-header">
+                <div>Tur</div>
+                <div>Mijoz</div>
+                <div>Mahsulot</div>
+                <div>Narx</div>
+                <div>To'lov</div>
+                <div>Qarz</div>
+                <div>Sana</div>
+                <div>Vaqt</div>
+            </div>
+            <div id="historyTableBody">
+                <div style="padding: 40px; text-align: center; color: #6b7280;">
+                    Ma'lumotlar yuklanmoqda...
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button onclick="previousPage()" id="prevBtn">← Oldingi</button>
+            <span style="color: white; font-weight: 700; font-size: 16px;" id="pageInfo">1 / 1</span>
+            <button onclick="nextPage()" id="nextBtn">Keyingi →</button>
+        </div>
+    </div>
+
+    <script src="cashier-history-enhanced.js"></script>
+    <script src="mobile-enhancements.js"></script>
+    <script src="cashier-sidebar-loader.js"></script>
+</body>
+</html>

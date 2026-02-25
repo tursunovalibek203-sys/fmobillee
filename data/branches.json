@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "name": "Markaziy Filial",
+    "address": "Toshkent, Amir Temur ko'chasi",
+    "phone": "+998901234567",
+    "status": "active",
+    "createdAt": "2026-02-23T18:46:57.258Z"
+  }
+]

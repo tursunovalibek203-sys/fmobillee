@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 To'liq Integratsiya Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .step-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+        }
+        
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .step-btn {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+        
+        .step-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .step-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .result.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .result.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .result.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .flow-diagram {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .flow-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .flow-icon {
+            font-size: 24px;
+        }
+        
+        .flow-text {
+            flex: 1;
+        }
+        
+        .flow-status {
+            font-size: 20px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 To'liq Integratsiya Demo</h1>
+            <p>Admin mahsulot qo'shadi → Kassir sotadi → Ombor yangilanadi → Hisobotlar</p>
+        </div>
+        
+        <div class="steps-grid">
+            <!-- Step 1: Admin Mahsulot Qo'shadi -->
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Admin Mahsulot Qo'shadi</div>
+                </div>
+                <button class="step-btn" onclick="step1_addProduct()">
+                    📦 Mahsulot Qo'shish
+                </button>
+                <div id="step1Result"></div>
+            </div>
+            
+            <!-- Step 2: Ombor Holatini Ko'rish -->
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Ombor Holati</div>
+                </div>
+                <button class="step-btn" onclick="step2_checkStock()">
+                    📊 Stokni Tekshirish
+                </button>
+                <div id="step2Result"></div>
+            </div>
+            
+            <!-- Step 3: Mijoz Yaratish -->
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Mijoz Yaratish</div>
+                </div>
+                <button class="step-btn" onclick="step3_addCustomer()">
+                    👥 Mijoz Qo'shish
+                </button>
+                <div id="step3Result"></div>
+            </div>
+            
+            <!-- Step 4: Kassir Savdo Qiladi -->
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Kassir Savdo Qiladi</div>
+                </div>
+                <button class="step-btn" onclick="step4_makeSale()" id="saleBtn" disabled>
+                    💰 Savdo Qilish
+                </button>
+                <div id="step4Result"></div>
+            </div>
+            
+            <!-- Step 5: Ombor Yangilandi -->
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Ombor Yangilandi</div>
+                </div>
+                <button class="step-btn" onclick="step5_checkStockAfter()">
+                    🔄 Yangi Stokni Ko'rish
+                </button>
+                <div id="step5Result"></div>
+            </div>
+            
+            <!-- Step 6: Hisobotlar -->
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Hisobotlar</div>
+                </div>
+                <button class="step-btn" onclick="step6_viewReports()">
+                    📈 Hisobotlarni Ko'rish
+                </button>
+                <div id="step6Result"></div>
+            </div>
+        </div>
+        
+        <!-- Flow Diagram -->
+        <div class="flow-diagram">
+            <h2 style="margin-bottom: 20px; color: #374151;">📊 Jarayon Oqimi</h2>
+            <div class="flow-item" id="flow1">
+                <div class="flow-icon">📦</div>
+                <div class="flow-text">
+                    <strong>Admin mahsulot qo'shadi</strong><br>
+                    <small>Mahsulot MongoDB'ga saqlanadi</small>
+                </div>
+                <div class="flow-status">⏳</div>
+            </div>
+            <div class="flow-item" id="flow2">
+                <div class="flow-icon">📊</div>
+                <div class="flow-text">
+                    <strong>Ombor holatini ko'rish</strong><br>
+                    <small>Stok miqdori tekshiriladi</small>
+                </div>
+                <div class="flow-status">⏳</div>
+            </div>
+            <div class="flow-item" id="flow3">
+                <div class="flow-icon">👥</div>
+                <div class="flow-text">
+                    <strong>Mijoz yaratiladi</strong><br>
+                    <small>Mijoz ma'lumotlari saqlanadi</small>
+                </div>
+                <div class="flow-status">⏳</div>
+            </div>
+            <div class="flow-item" id="flow4">
+                <div class="flow-icon">💰</div>
+                <div class="flow-text">
+                    <strong>Kassir savdo qiladi</strong><br>
+                    <small>Savdo saqlanadi, qarz hisoblanadi</small>
+                </div>
+                <div class="flow-status">⏳</div>
+            </div>
+            <div class="flow-item" id="flow5">
+                <div class="flow-icon">🔄</div>
+                <div class="flow-text">
+                    <strong>Ombor avtomatik yangilanadi</strong><br>
+                    <small>Stok kamayadi</small>
+                </div>
+                <div class="flow-status">⏳</div>
+            </div>
+            <div class="flow-item" id="flow6">
+                <div class="flow-icon">📈</div>
+                <div class="flow-text">
+                    <strong>Hisobotlar ko'rinadi</strong><br>
+                    <small>Statistika va tahlillar</small>
+                </div>
+                <div class="flow-status">⏳</div>
+            </div>
+        </div>
+        
+        <!-- Summary -->
+        <div class="flow-diagram">
+            <h2 style="margin-bottom: 20px; color: #374151;">📊 Umumiy Natijalar</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-value" id="totalProducts">0</div>
+                    <div class="summary-label">Mahsulotlar</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" id="totalCustomers">0</div>
+                    <div class="summary-label">Mijozlar</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" id="totalSales">0</div>
+                    <div class="summary-label">Savdolar</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" id="totalRevenue">$0</div>
+                    <div class="summary-label">Daromad</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let testData = {
+            productId: null,
+            customerId: null,
+            saleId: null,
+            stockBefore: 0,
+            stockAfter: 0
+        };
+        
+        function showResult(elementId, message, type = 'info') {
+            const el = document.getElementById(elementId);
+            el.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+        
+        function updateFlow(flowId, status) {
+            const el = document.getElementById(flowId);
+            const statusEl = el.querySelector('.flow-status');
+            statusEl.textContent = status === 'success' ? '✅' : status === 'error' ? '❌' : '⏳';
+        }
+        
+        async function step1_addProduct() {
+            try {
+                const response = await fetch('/api/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Demo iPhone 15 Pro',
+                        category: 'Telefonlar',
+                        buyPrice: 1000,
+                        sellPrice: 1200,
+                        stock: 10,
+                        branchId: 1
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    testData.productId = data.product.productId;
+                    showResult('step1Result', 
+                        `✅ Mahsulot qo'shildi!<br>` +
+                        `ID: ${data.product.productId}<br>` +
+                        `Nomi: ${data.product.name}<br>` +
+                        `Narx: $${data.product.sellPrice}<br>` +
+                        `Stok: ${data.product.stock} dona`, 
+                        'success');
+                    updateFlow('flow1', 'success');
+                    document.getElementById('totalProducts').textContent = '1';
+                } else {
+                    showResult('step1Result', `❌ Xato: ${data.error}`, 'error');
+                    updateFlow('flow1', 'error');
+                }
+            } catch (error) {
+                showResult('step1Result', `❌ Xato: ${error.message}`, 'error');
+                updateFlow('flow1', 'error');
+            }
+        }
+        
+        async function step2_checkStock() {
+            try {
+                const response = await fetch('/api/products');
+                const data = await response.json();
+                
+                if (data.products) {
+                    const product = data.products.find(p => p.productId === testData.productId);
+                    if (product) {
+                        testData.stockBefore = product.stock;
+                        showResult('step2Result', 
+                            `✅ Ombor holati:<br>` +
+                            `Mahsulot: ${product.name}<br>` +
+                            `Stok: ${product.stock} dona<br>` +
+                            `Narx: $${product.sellPrice}`, 
+                            'success');
+                        updateFlow('flow2', 'success');
+                    } else {
+                        showResult('step2Result', `⚠️ Mahsulot topilmadi. Avval mahsulot qo'shing!`, 'info');
+                    }
+                } else {
+                    showResult('step2Result', `❌ Xato: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('step2Result', `❌ Xato: ${error.message}`, 'error');
+            }
+        }
+        
+        async function step3_addCustomer() {
+            try {
+                const response = await fetch('/api/customers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Demo Mijoz',
+                        phone: '+998901234567',
+                        branchId: 1
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    testData.customerId = data.customer.customerId;
+                    showResult('step3Result', 
+                        `✅ Mijoz yaratildi!<br>` +
+                        `ID: ${data.customer.customerId}<br>` +
+                        `Ism: ${data.customer.name}<br>` +
+                        `Telefon: ${data.customer.phone}`, 
+                        'success');
+                    updateFlow('flow3', 'success');
+                    document.getElementById('saleBtn').disabled = false;
+                    document.getElementById('totalCustomers').textContent = '1';
+                } else {
+                    showResult('step3Result', `❌ Xato: ${data.error}`, 'error');
+                    updateFlow('flow3', 'error');
+                }
+            } catch (error) {
+                showResult('step3Result', `❌ Xato: ${error.message}`, 'error');
+                updateFlow('flow3', 'error');
+            }
+        }
+        
+        async function step4_makeSale() {
+            try {
+                const saleId = Date.now();
+                const response = await fetch('/api/sales', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        saleId: saleId,
+                        customerId: testData.customerId,
+                        customerName: 'Demo Mijoz',
+                        product: 'Demo iPhone 15 Pro (2 dona)',
+                        price: 2400,
+                        paid: 1000,
+                        date: new Date().toLocaleDateString('uz-UZ'),
+                        time: new Date().toLocaleTimeString('uz-UZ'),
+                        type: 'sale'
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    testData.saleId = saleId;
+                    const debt = 2400 - 1000;
+                    showResult('step4Result', 
+                        `✅ Savdo amalga oshirildi!<br>` +
+                        `Savdo ID: ${saleId}<br>` +
+                        `Mahsulot: Demo iPhone 15 Pro<br>` +
+                        `Miqdor: 2 dona<br>` +
+                        `Narx: $2400<br>` +
+                        `To'lov: $1000<br>` +
+                        `Qarz: $${debt}`, 
+                        'success');
+                    updateFlow('flow4', 'success');
+                    document.getElementById('totalSales').textContent = '1';
+                    document.getElementById('totalRevenue').textContent = '$2400';
+                } else {
+                    showResult('step4Result', `❌ Xato: ${data.error}`, 'error');
+                    updateFlow('flow4', 'error');
+                }
+            } catch (error) {
+                showResult('step4Result', `❌ Xato: ${error.message}`, 'error');
+                updateFlow('flow4', 'error');
+            }
+        }
+        
+        async function step5_checkStockAfter() {
+            try {
+                const response = await fetch('/api/products');
+                const data = await response.json();
+                
+                if (data.products) {
+                    const product = data.products.find(p => p.productId === testData.productId);
+                    if (product) {
+                        testData.stockAfter = product.stock;
+                        const sold = testData.stockBefore - testData.stockAfter;
+                        showResult('step5Result', 
+                            `✅ Ombor yangilandi!<br>` +
+                            `Stok (oldin): ${testData.stockBefore} dona<br>` +
+                            `Stok (keyin): ${testData.stockAfter} dona<br>` +
+                            `Sotildi: ${sold} dona<br>` +
+                            `${sold === 2 ? '✅ To\'g\'ri!' : '❌ Noto\'g\'ri!'}`, 
+                            sold === 2 ? 'success' : 'error');
+                        updateFlow('flow5', sold === 2 ? 'success' : 'error');
+                    } else {
+                        showResult('step5Result', `⚠️ Mahsulot topilmadi`, 'info');
+                    }
+                }
+            } catch (error) {
+                showResult('step5Result', `❌ Xato: ${error.message}`, 'error');
+            }
+        }
+        
+        async function step6_viewReports() {
+            try {
+                const response = await fetch('/api/reports/dashboard');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('step6Result', 
+                        `✅ Hisobotlar:<br>` +
+                        `Jami savdolar: ${data.stats.totalSales} ta<br>` +
+                        `Jami daromad: $${data.stats.totalRevenue}<br>` +
+                        `Jami mijozlar: ${data.stats.totalCustomers} ta<br>` +
+                        `Jami mahsulotlar: ${data.stats.totalProducts} ta`, 
+                        'success');
+                    updateFlow('flow6', 'success');
+                } else {
+                    showResult('step6Result', `❌ Xato: ${data.error}`, 'error');
+                    updateFlow('flow6', 'error');
+                }
+            } catch (error) {
+                showResult('step6Result', `❌ Xato: ${error.message}`, 'error');
+                updateFlow('flow6', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

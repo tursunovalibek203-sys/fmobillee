@@ -62,7 +62,6 @@
    ```
 
 ## 8-QADAM: Ruxsat Berish (Muhim!)
-
 1. **Google Sheets faylida "Share" tugmasini bosing**
 2. **Yuklab olingan JSON faylni oching**
 3. **JSON fayldan "client_email" ni topib nusxalang** (masalan: `dokon-sheets-service@your-project.iam.gserviceaccount.com`)

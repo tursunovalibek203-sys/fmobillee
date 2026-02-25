@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📊 Executive Dashboard - Tadbirkor</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+            padding: 20px;
+            color: white;
+            position: fixed;
+            width: 260px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .logo-icon {
+            font-size: 2.5em;
+        }
+        
+        .logo-text h2 {
+            font-size: 1.3em;
+        }
+        
+        .logo-text p {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+        
+        .menu-item {
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .menu-icon {
+            font-size: 1.3em;
+            width: 25px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+        }
+        
+        .header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left h1 {
+            font-size: 2em;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+        
+        .header-left p {
+            color: #6b7280;
+        }
+        
+        .header-right {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .header-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .kpi-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-1), var(--color-2));
+        }
+        
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .kpi-icon {
+            font-size: 2.5em;
+            opacity: 0.9;
+        }
+        
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        
+        .trend-up {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .trend-down {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .kpi-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+        
+        .kpi-label {
+            color: #6b7280;
+            font-size: 0.95em;
+        }
+        
+        .kpi-footer {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f3f4f6;
+            font-size: 0.85em;
+            color: #6b7280;
+        }
+        
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .chart-filter {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        /* Tables */
+        .table-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background: #f9fafb;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .table tr:hover {
+            background: #f9fafb;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -260px;
+                z-index: 9999;
+                transition: left 0.3s;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header-right {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .header-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Color schemes */
+        .kpi-revenue { --color-1: #10b981; --color-2: #059669; }
+        .kpi-profit { --color-1: #3b82f6; --color-2: #2563eb; }
+        .kpi-customers { --color-1: #8b5cf6; --color-2: #7c3aed; }
+        .kpi-orders { --color-1: #f59e0b; --color-2: #d97706; }
+        .kpi-roi { --color-1: #ef4444; --color-2: #dc2626; }
+        .kpi-growth { --color-1: #06b6d4; --color-2: #0891b2; }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">📊</span>
+                <div class="logo-text">
+                    <h2>Executive</h2>
+                    <p>Dashboard</p>
+                </div>
+            </div>
+            
+            <a href="#overview" class="menu-item active">
+                <span class="menu-icon">📊</span>
+                <span>Overview</span>
+            </a>
+            <a href="#sales" class="menu-item">
+                <span class="menu-icon">💰</span>
+                <span>Savdolar</span>
+            </a>
+            <a href="#finance" class="menu-item">
+                <span class="menu-icon">💼</span>
+                <span>Moliya</span>
+            </a>
+            <a href="#inventory" class="menu-item">
+                <span class="menu-icon">📦</span>
+                <span>Ombor</span>
+            </a>
+            <a href="#customers" class="menu-item">
+                <span class="menu-icon">👥</span>
+                <span>Mijozlar</span>
+            </a>
+            <a href="#employees" class="menu-item">
+                <span class="menu-icon">👤</span>
+                <span>Xodimlar</span>
+            </a>
+            <a href="#analytics" class="menu-item">
+                <span class="menu-icon">📈</span>
+                <span>Tahlil</span>
+            </a>
+            <a href="#reports" class="menu-item">
+                <span class="menu-icon">📋</span>
+                <span>Hisobotlar</span>
+            </a>
+            <a href="dashboard-selector.html" class="menu-item">
+                <span class="menu-icon">🏠</span>
+                <span>Bosh Sahifa</span>
+            </a>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <h1>📊 Executive Dashboard</h1>
+                    <p id="currentDate"></p>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn btn-secondary" onclick="refreshData()">
+                        🔄 Yangilash
+                    </button>
+                    <button class="header-btn btn-primary" onclick="exportReport()">
+                        📥 Export
+                    </button>
+                </div>
+            </div>
+            
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card kpi-revenue">
+                    <div class="kpi-header">
+                        <span class="kpi-icon">💰</span>
+                        <span class="kpi-trend trend-up">↑ 12.5%</span>
+                    </div>
+                    <div class="kpi-value" id="totalRevenue">$0</div>
+                    <div class="kpi-label">Jami Daromad</div>
+                    <div class="kpi-footer">
+                        Oxirgi 30 kun: <strong id="last30Revenue">$0</strong>
+                    </div>
+                </div>
+                
+                <div class="kpi-card kpi-profit">
+                    <div class="kpi-header">
+                        <span class="kpi-icon">📈</span>
+                        <span class="kpi-trend trend-up">↑ 8.3%</span>
+                    </div>
+                    <div class="kpi-value" id="totalProfit">$0</div>
+                    <div class="kpi-label">Sof Foyda</div>
+                    <div class="kpi-footer">
+                        Margin: <strong id="profitMargin">0%</strong>
+                    </div>
+                </div>
+                
+                <div class="kpi-card kpi-customers">
+                    <div class="kpi-header">
+                        <span class="kpi-icon">👥</span>
+                        <span class="kpi-trend trend-up">↑ 15.2%</span>
+                    </div>
+                    <div class="kpi-value" id="totalCustomers">0</div>
+                    <div class="kpi-label">Jami Mijozlar</div>
+                    <div class="kpi-footer">
+                        Yangi: <strong id="newCustomers">0</strong>
+                    </div>
+                </div>
+                
+                <div class="kpi-card kpi-orders">
+                    <div class="kpi-header">
+                        <span class="kpi-icon">🛒</span>
+                        <span class="kpi-trend trend-up">↑ 6.7%</span>
+                    </div>
+                    <div class="kpi-value" id="totalOrders">0</div>
+                    <div class="kpi-label">Jami Buyurtmalar</div>
+                    <div class="kpi-footer">
+                        O'rtacha: <strong id="avgOrderValue">$0</strong>
+                    </div>
+                </div>
+                
+                <div class="kpi-card kpi-roi">
+                    <div class="kpi-header">
+                        <span class="kpi-icon">💎</span>
+                        <span class="kpi-trend trend-up">↑ 18.9%</span>
+                    </div>
+                    <div class="kpi-value" id="roi">0%</div>
+                    <div class="kpi-label">ROI</div>
+                    <div class="kpi-footer">
+                        Investitsiya: <strong id="investment">$0</strong>
+                    </div>
+                </div>
+                
+                <div class="kpi-card kpi-growth">
+                    <div class="kpi-header">
+                        <span class="kpi-icon">🚀</span>
+                        <span class="kpi-trend trend-up">↑ 22.1%</span>
+                    </div>
+                    <div class="kpi-value" id="growth">0%</div>
+                    <div class="kpi-label">O'sish Sur'ati</div>
+                    <div class="kpi-footer">
+                        YoY: <strong id="yoyGrowth">0%</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Savdo Dinamikasi</h3>
+                        <select class="chart-filter" onchange="updateSalesChart(this.value)">
+                            <option value="7">7 kun</option>
+                            <option value="30" selected>30 kun</option>
+                            <option value="90">90 kun</option>
+                        </select>
+                    </div>
+                    <canvas id="salesChart"></canvas>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Daromad vs Xarajat</h3>
+                        <select class="chart-filter">
+                            <option value="month">Oylik</option>
+                            <option value="quarter">Choraklik</option>
+                            <option value="year">Yillik</option>
+                        </select>
+                    </div>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Top Mahsulotlar</h3>
+                        <select class="chart-filter">
+                            <option value="revenue">Daromad</option>
+                            <option value="quantity">Miqdor</option>
+                            <option value="profit">Foyda</option>
+                        </select>
+                    </div>
+                    <canvas id="productsChart"></canvas>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Mijozlar Segmentatsiyasi</h3>
+                        <select class="chart-filter">
+                            <option value="rfm">RFM</option>
+                            <option value="value">Qiymat</option>
+                            <option value="frequency">Chastota</option>
+                        </select>
+                    </div>
+                    <canvas id="customersChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Top Performers Table -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3 class="chart-title">🏆 Top Kassirlar</h3>
+                    <button class="header-btn btn-secondary">Batafsil</button>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Kassir</th>
+                            <th>Savdolar</th>
+                            <th>Daromad</th>
+                            <th>O'rtacha Check</th>
+                            <th>Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topCashiersTable">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 30px;">
+                                Yuklanmoqda...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script src="mobile-enhancements.js"></script>
+    <script>
+        // Current date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('uz-UZ', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Load data
+        async function loadDashboardData() {
+            try {
+                // Simulate API calls
+                document.getElementById('totalRevenue').textContent = '$125,430';
+                document.getElementById('last30Revenue').textContent = '$98,250';
+                document.getElementById('totalProfit').textContent = '$45,680';
+                document.getElementById('profitMargin').textContent = '36.4%';
+                document.getElementById('totalCustomers').textContent = '1,247';
+                document.getElementById('newCustomers').textContent = '156';
+                document.getElementById('totalOrders').textContent = '3,892';
+                document.getElementById('avgOrderValue').textContent = '$32.25';
+                document.getElementById('roi').textContent = '245%';
+                document.getElementById('investment').textContent = '$50,000';
+                document.getElementById('growth').textContent = '22.1%';
+                document.getElementById('yoyGrowth').textContent = '18.5%';
+                
+                // Load charts
+                loadSalesChart();
+                loadRevenueChart();
+                loadProductsChart();
+                loadCustomersChart();
+                loadTopCashiers();
+                
+            } catch (error) {
+                console.error('Ma\'lumotlarni yuklashda xato:', error);
+            }
+        }
+        
+        // Sales Chart
+        function loadSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1-kun', '5-kun', '10-kun', '15-kun', '20-kun', '25-kun', '30-kun'],
+                    datasets: [{
+                        label: 'Savdolar',
+                        data: [3200, 4100, 3800, 5200, 4800, 6100, 5800],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+        
+        // Revenue Chart
+        function loadRevenueChart() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyun'],
+                    datasets: [{
+                        label: 'Daromad',
+                        data: [45000, 52000, 48000, 61000, 58000, 67000],
+                        backgroundColor: '#10b981'
+                    }, {
+                        label: 'Xarajat',
+                        data: [28000, 31000, 29000, 35000, 33000, 38000],
+                        backgroundColor: '#ef4444'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+        
+        // Products Chart
+        function loadProductsChart() {
+            const ctx = document.getElementById('productsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['iPhone 14', 'Samsung S23', 'AirPods', 'iPad', 'Boshqalar'],
+                    datasets: [{
+                        data: [35, 25, 15, 12, 13],
+                        backgroundColor: ['#667eea', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+        
+        // Customers Chart
+        function loadCustomersChart() {
+            const ctx = document.getElementById('customersChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['VIP', 'Regular', 'New', 'Inactive'],
+                    datasets: [{
+                        data: [15, 45, 25, 15],
+                        backgroundColor: ['#8b5cf6', '#3b82f6', '#10b981', '#6b7280']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+        
+        // Top Cashiers
+        function loadTopCashiers() {
+            const table = document.getElementById('topCashiersTable');
+            const cashiers = [
+                { name: 'Alisher Karimov', sales: 245, revenue: '$15,680', avg: '$64', perf: 98 },
+                { name: 'Dilnoza Rahimova', sales: 198, revenue: '$12,450', avg: '$63', perf: 95 },
+                { name: 'Bobur Tursunov', sales: 176, revenue: '$11,230', avg: '$64', perf: 92 },
+                { name: 'Madina Azimova', sales: 165, revenue: '$10,890', avg: '$66', perf: 90 },
+                { name: 'Sardor Umarov', sales: 152, revenue: '$9,780', avg: '$64', perf: 88 }
+            ];
+            
+            table.innerHTML = cashiers.map((c, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td><strong>${c.name}</strong></td>
+                    <td>${c.sales}</td>
+                    <td><strong>${c.revenue}</strong></td>
+                    <td>${c.avg}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                                <div style="width: ${c.perf}%; height: 100%; background: linear-gradient(90deg, #10b981, #059669);"></div>
+                            </div>
+                            <span style="font-weight: 600; color: #10b981;">${c.perf}%</span>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // Refresh data
+        function refreshData() {
+            showToast('Ma\'lumotlar yangilanmoqda...', 'info');
+            setTimeout(() => {
+                loadDashboardData();
+                showToast('Muvaffaqiyatli yangilandi!', 'success');
+            }, 1000);
+        }
+        
+        // Export report
+        function exportReport() {
+            showToast('Hisobot yuklab olinmoqda...', 'info');
+            setTimeout(() => {
+                showToast('Hisobot muvaffaqiyatli yuklandi!', 'success');
+            }, 1500);
+        }
+        
+        // Initialize
+        loadDashboardData();
+        
+        console.log('📊 Executive Dashboard loaded');
+    </script>
+</body>
+</html>

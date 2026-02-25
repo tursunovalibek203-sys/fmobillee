@@ -1,0 +1,602 @@
+﻿<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Do'kon Boshqaruvi - Professional</title>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="description" content="Professional do'kon boshqaruv tizimi - mijozlar, savdolar va qarzlarni boshqarish">
+  <meta name="keywords" content="do'kon, boshqaruv, mijozlar, savdo, qarz, telegram bot">
+  <meta name="author" content="Do'kon Pro">
+  <meta name="theme-color" content="#1d4ed8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Do'kon Pro">
+  <meta name="msapplication-TileColor" content="#1d4ed8">
+  <meta name="msapplication-config" content="/browserconfig.xml">
+  
+  <!-- Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏪%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏪%3C/text%3E%3C/svg%3E">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Ko'k professional orqa fon - to'g'ri balans */
+    body {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 20%, #1d4ed8 40%, #1e40af 60%, #1e3a8a 80%, #1e3a8a 100%) !important;
+      position: relative;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(96, 165, 250, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(37, 99, 235, 0.2) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .container {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Ko'k soyalar */
+    .card {
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2) !important;
+      border: 1px solid rgba(255, 255, 255, 0.6) !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    .card:hover {
+      box-shadow: 0 12px 48px rgba(59, 130, 246, 0.3) !important;
+    }
+    
+    /* Header gradient - oqroq */
+    .header-card {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%) !important;
+      box-shadow: 0 20px 60px rgba(59, 130, 246, 0.3) !important;
+    }
+    
+    /* Currency preview */
+    .currency-preview {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 18px;
+      text-align: center;
+      font-size: 32px;
+      font-weight: 900;
+      margin-top: 12px;
+      box-shadow: 0 12px 32px rgba(37, 99, 235, 0.3);
+      letter-spacing: -0.5px;
+    }
+    
+    .settings-section select {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 14px;
+      font-size: 15px;
+      margin-bottom: 16px;
+      outline: none;
+      transition: all 0.3s;
+      font-weight: 500;
+      background: white;
+      cursor: pointer;
+      color: #111827;
+    }
+    
+    .settings-section select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+  </style>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Main Page -->
+  <div id="mainPage" class="main-page">
+    <div class="container">
+      <!-- Header -->
+      <div class="card header-card">
+        <div class="header-content">
+          <div>
+            <h1>🏪 Do'kon Boshqaruvi</h1>
+            <p class="subtitle" id="todayDate"></p>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <a href="/admin.html" class="settings-btn" style="text-decoration: none;">
+              <span>🔧</span>
+              <span>Admin Panel</span>
+            </a>
+            <button class="settings-btn" onclick="openSettingsModal()">
+              <span>⚙️</span>
+              <span>Sozlamalar</span>
+            </button>
+            <button class="settings-btn" onclick="logout()" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.2);">
+              <span>🚪</span>
+              <span>Chiqish</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-icon">💰</div>
+          <div class="stat-content">
+            <p class="stat-label">Bugungi savdo</p>
+            <p class="stat-value" id="todayTotal">0 so'm</p>
+            <p class="stat-sub">To'langan: <span id="todayPaid">0 so'm</span></p>
+          </div>
+        </div>
+
+        <div class="stat-card red">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-content">
+            <p class="stat-label">Jami qarz</p>
+            <p class="stat-value" id="totalDebt">0 so'm</p>
+            <p class="stat-sub"><span id="debtorsCount">0</span> qarzdor</p>
+          </div>
+        </div>
+
+        <div class="stat-card green">
+          <div class="stat-icon">👥</div>
+          <div class="stat-content">
+            <p class="stat-label">Jami mijozlar</p>
+            <p class="stat-value" id="totalCustomers">0</p>
+            <p class="stat-sub">Faol: <span id="activeCustomers">0</span></p>
+          </div>
+        </div>
+
+        <div class="stat-card purple">
+          <div class="stat-icon">📊</div>
+          <div class="stat-content">
+            <p class="stat-label">Excel fayllar</p>
+            <p class="stat-value" id="excelFilesCount">0</p>
+            <p class="stat-sub">Avtomatik yaratilgan</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Excel & Quick Actions -->
+      <div class="actions-row">
+        <div class="export-section">
+          <h2>📊 Excel Ma'lumotlar</h2>
+          <div class="export-buttons">
+            <button class="export-btn excel" onclick="viewExcelFiles()">
+              <span>📁</span>
+              Excel fayllarni ko'rish
+            </button>
+            <button class="export-btn import" onclick="createBackup()">
+              <span>💾</span>
+              Backup yaratish
+            </button>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <h2>⚡ Tez harakatlar</h2>
+          <div class="quick-btns">
+            <button class="quick-btn" onclick="openAddModal()">
+              <span>👤</span>
+              Yangi mijoz
+            </button>
+            <button class="quick-btn" onclick="sendAllReminders()">
+              <span>✈️</span>
+              Barcha eslatma
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Layout -->
+      <div class="main-layout">
+        <!-- Left Panel - Today's Sales -->
+        <div class="left-panel">
+          <div class="sales-list">
+            <div class="section-header">
+              <h2>📋 Bugungi savdolar</h2>
+              <span class="badge" id="todaySalesCount">0</span>
+            </div>
+            <div id="todaySalesList" class="sales-items">
+              <p class="empty">Bugun savdo yo'q</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel - Customers -->
+        <div class="right-panel">
+          <div class="customers-section">
+            <div class="section-header">
+              <h2>👥 Mijozlar</h2>
+              <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterCustomers('all')">Barchasi</button>
+                <button class="filter-tab" onclick="filterCustomers('debt')">Qarzdorlar</button>
+                <button class="filter-tab" onclick="filterCustomers('blocked')">Bloklangan</button>
+              </div>
+            </div>
+            
+            <input type="text" class="search-input" placeholder="🔍 Mijoz qidirish (ism, telefon, ID)..." id="searchInput" oninput="renderCustomers()" autocomplete="off">
+            
+            <div class="customers-grid" id="customersGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Detail Page (Daftar) -->
+  <div id="daftarPage" class="daftar-page">
+    <div class="container">
+      <div class="card">
+        <div class="daftar-header">
+          <div class="daftar-title">
+            <button class="back-btn" onclick="goBack()">
+              <span>←</span>
+            </button>
+            <div>
+              <h1>📒 <span id="customerNameTitle"></span></h1>
+              <p class="subtitle" id="daftarDate"></p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="telegram-btn-large" onclick="openEditCustomerFromDaftar()" title="Mijozni tahrirlash" style="background: #f59e0b;">
+              <span>✏️</span>
+            </button>
+            <button class="telegram-btn-large" onclick="sendReminderFromDaftar()" title="Telegram eslatma">
+              <span>✈️</span>
+            </button>
+            <button class="telegram-btn-large" onclick="openCustomMessageFromDaftar()" title="Xabar yuborish" style="background: #28a745;">
+              <span>💬</span>
+            </button>
+            <button class="delete-customer-btn" onclick="deleteCustomer()" title="Mijozni o'chirish">
+              <span>🗑️</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debt Card -->
+      <div id="debtCard" class="debt-card no-debt">
+        <div class="debt-main">
+          <div>
+            <p class="label" id="debtLabel">✅ Balans</p>
+            <p class="amount" id="debtAmount">0 so'm</p>
+          </div>
+          <div class="debt-status" id="debtStatus"></div>
+        </div>
+        <div class="info" id="debtInfo">
+          <span>Jami: <span id="customerTotal">0 so'm</span></span>
+          <span>To'langan: <span id="customerPaid">0 so'm</span></span>
+        </div>
+      </div>
+
+      <!-- Payment Form -->
+      <div class="payment-card">
+        <h2>💵 To'lov qabul qilish</h2>
+        <div class="payment-row">
+          <input type="number" id="paymentAmount" placeholder="To'lov miqdori (so'm)">
+          <button class="payment-btn" onclick="addPayment()">
+            <span>💳</span>
+            To'lov qabul qilish
+          </button>
+        </div>
+      </div>
+
+      <!-- Sale Form -->
+      <div class="form-card">
+        <h2 id="formTitle">➕ Yangi savdo</h2>
+        <input type="text" id="productInput" placeholder="Mahsulot nomi">
+        <div class="row">
+          <input type="number" id="priceInput" placeholder="Narxi (so'm)">
+          <input type="number" id="paidInput" placeholder="Berilgan pul (so'm)">
+        </div>
+        <button class="submit-btn" id="submitBtn" onclick="addSale()">
+          <span>➕</span>
+          Savdo qo'shish
+        </button>
+      </div>
+
+      <!-- Records -->
+      <div class="records-card">
+        <h2>📋 Tarix (<span id="recordsCount">0</span>)</h2>
+        <div id="recordsList"><p class="empty">Hali yozuv yo'q</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h2>⚙️ Tizim sozlamalari</h2>
+        <button class="modal-close" onclick="closeSettingsModal()">×</button>
+      </div>
+      
+      <div class="settings-section">
+        <h3>💰 Valyuta sozlamalari</h3>
+        <div class="setting-item">
+          <label>Valyuta turi:</label>
+          <select id="currencyType" onchange="updateCurrencyPreview()">
+            <option value="USD">🇺🇸 Dollar (USD)</option>
+            <option value="UZS">🇺🇿 So'm (UZS)</option>
+            <option value="EUR">🇪🇺 Yevro (EUR)</option>
+            <option value="RUB">🇷🇺 Rubl (RUB)</option>
+          </select>
+        </div>
+        
+        <div class="setting-item">
+          <label>Valyuta belgisi pozitsiyasi:</label>
+          <select id="currencyPosition">
+            <option value="before">Oldinda ($100.00)</option>
+            <option value="after">Orqada (100.00 so'm)</option>
+          </select>
+        </div>
+        
+        <div class="setting-item">
+          <label>Namuna:</label>
+          <div class="currency-preview" id="currencyPreview">$1,234.56</div>
+        </div>
+      </div>
+      
+      <div class="settings-section">
+        <h3>📅 Eslatma sozlamalari</h3>
+        <div class="setting-item">
+          <label>Necha kundan keyin eslatma yuborish:</label>
+          <div class="input-group">
+            <input type="number" id="reminderDays" value="7" min="1" max="30">
+            <span class="setting-hint">kun</span>
+          </div>
+        </div>
+        
+        <div class="setting-item">
+          <label>Eslatma yuborish vaqti:</label>
+          <div class="input-group">
+            <input type="time" id="reminderTime" value="09:00">
+            <span class="setting-hint">soat</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>🚫 Bloklash sozlamalari</h3>
+        <div class="setting-item">
+          <label>Necha kundan keyin bloklash:</label>
+          <div class="input-group">
+            <input type="number" id="blockDays" value="10" min="1" max="90">
+            <span class="setting-hint">kun</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>✉️ Qo'shimcha eslatmalar</h3>
+        <div class="setting-item checkbox">
+          <input type="checkbox" id="reminder3days" checked>
+          <label for="reminder3days">3-kun eslatma yuborish</label>
+        </div>
+        <div class="setting-item checkbox">
+          <input type="checkbox" id="reminder5days" checked>
+          <label for="reminder5days">5-kun eslatma yuborish</label>
+        </div>
+        <div class="setting-item checkbox">
+          <input type="checkbox" id="reminder7days" checked>
+          <label for="reminder7days">7-kun eslatma yuborish</label>
+        </div>
+      </div>
+      
+      <div class="settings-section">
+        <h3>🎨 Ko'rinish sozlamalari</h3>
+        <div class="setting-item">
+          <label>Sahifa tili:</label>
+          <select id="languageSetting">
+            <option value="uz">🇺🇿 O'zbekcha</option>
+            <option value="ru">🇷🇺 Русский</option>
+            <option value="en">🇬🇧 English</option>
+          </select>
+        </div>
+        
+        <div class="setting-item">
+          <label>Rang sxemasi:</label>
+          <select id="themeSetting">
+            <option value="blue">🔵 Ko'k (Standart)</option>
+            <option value="green">🟢 Yashil</option>
+            <option value="purple">🟣 Binafsha</option>
+            <option value="orange">🟠 To'q sariq</option>
+          </select>
+        </div>
+        
+        <div class="setting-item checkbox">
+          <input type="checkbox" id="soundEnabled" checked>
+          <label for="soundEnabled">🔔 Ovozli bildirishnomalar</label>
+        </div>
+      </div>
+      
+      <div class="settings-section">
+        <h3>📊 Ma'lumotlar sozlamalari</h3>
+        <div class="setting-item">
+          <label>Avtomatik backup:</label>
+          <select id="autoBackup">
+            <option value="daily">Har kuni</option>
+            <option value="weekly">Har hafta</option>
+            <option value="monthly">Har oy</option>
+            <option value="never">O'chirish</option>
+          </select>
+        </div>
+        
+        <div class="setting-item checkbox">
+          <input type="checkbox" id="autoExcelExport" checked>
+          <label for="autoExcelExport">📊 Avtomatik Excel export</label>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeSettingsModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="saveSettings()">
+          <span>✓</span>
+          Saqlash
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Customer Modal -->
+  <div id="editCustomerModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>✏️ Mijozni tahrirlash</h2>
+        <button class="modal-close" onclick="closeEditCustomerModal()">×</button>
+      </div>
+      <input type="text" id="editCustomerName" placeholder="Mijoz ismi *" required>
+      <input type="tel" id="editCustomerPhone" placeholder="Telefon: +998901234567">
+      <input type="text" id="editCustomerChatId" placeholder="Telegram Chat ID">
+      <p class="hint-text">
+        💡 Ma'lumotlarni yangilang
+      </p>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeEditCustomerModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="saveEditCustomer()">
+          <span>✓</span>
+          Saqlash
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Sale Modal -->
+  <div id="editSaleModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>✏️ Savdoni tahrirlash</h2>
+        <button class="modal-close" onclick="closeEditSaleModal()">×</button>
+      </div>
+      <input type="text" id="editSaleProduct" placeholder="Mahsulot nomi" required>
+      <div class="row">
+        <input type="number" id="editSalePrice" placeholder="Narxi ($)" step="0.01" min="0">
+        <input type="number" id="editSalePaid" placeholder="To'langan ($)" step="0.01" min="0">
+      </div>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeEditSaleModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="saveEditSale()">
+          <span>✓</span>
+          Saqlash
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Customer Modal -->
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>👤 Yangi mijoz</h2>
+        <button class="modal-close" onclick="closeAddModal()">×</button>
+      </div>
+      <input type="text" id="newCustomerInput" placeholder="Mijoz ismi *">
+      <input type="tel" id="newCustomerPhone" placeholder="Telefon: +998901234567">
+      <input type="text" id="newCustomerChatId" placeholder="Telegram Chat ID">
+      <p class="hint-text">
+        💡 Chat ID olish: Botga /start yuboring
+      </p>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeAddModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="addCustomer()">
+          <span>✓</span>
+          Qo'shish
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reminder Modal -->
+  <div id="reminderModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>✈️ Telegram eslatma</h2>
+        <button class="modal-close" onclick="closeReminderModal()">×</button>
+      </div>
+      <p class="modal-info">
+        <strong id="reminderCustomerName"></strong> ga qarz to'lash eslatmasi yuboriladi.
+      </p>
+      <div class="reminder-preview">
+        <p class="preview-label">Qarz miqdori:</p>
+        <p class="preview-amount" id="reminderDebtAmount"></p>
+      </div>
+      <textarea id="reminderMessage" rows="10" placeholder="Xabar matni..."></textarea>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeReminderModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="sendReminder()">
+          <span>✈️</span>
+          Yuborish
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Message Modal -->
+  <div id="customMessageModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>💬 Mijozga xabar yuborish</h2>
+        <button class="modal-close" onclick="closeCustomMessageModal()">×</button>
+      </div>
+      <p class="modal-info">
+        <strong id="customMessageCustomerName"></strong> ga xabar yuboriladi.
+      </p>
+      <div class="form-group">
+        <label for="customMessageText">Xabar matni:</label>
+        <textarea id="customMessageText" rows="8" placeholder="Xabar matnini kiriting..."></textarea>
+      </div>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeCustomMessageModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="sendCustomMessage()">
+          <span>📤</span>
+          Yuborish
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Login tekshiruvi
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+      window.location.href = '/login.html';
+    }
+    
+    // 24 soatdan keyin avtomatik chiqish
+    const loginTime = localStorage.getItem('loginTime');
+    if (loginTime) {
+      const currentTime = new Date().getTime();
+      const timeDiff = currentTime - parseInt(loginTime);
+      const hoursDiff = timeDiff / (1000 * 60 * 60);
+      
+      if (hoursDiff > 24) {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('loginTime');
+        window.location.href = '/login.html';
+      }
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+  <script src="script.js" defer></script>
+</body>
+</html>

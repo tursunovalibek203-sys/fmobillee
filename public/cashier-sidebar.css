@@ -1,0 +1,142 @@
+/* Kassir Sidebar Styles */
+.cashier-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    background: white;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.cashier-sidebar .sidebar-header {
+    padding: 20px 0;
+    border-bottom: 2px solid #f0f0f0;
+    margin-bottom: 20px;
+}
+
+.cashier-sidebar .sidebar-header h2 {
+    color: #667eea;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.cashier-sidebar .sidebar-header p {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.cashier-sidebar .sidebar-header small {
+    color: #999;
+    font-size: 11px;
+}
+
+.cashier-sidebar .sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cashier-sidebar .sidebar-menu .menu-section {
+    color: #999;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 15px 15px 8px 15px;
+    margin-top: 10px;
+}
+
+.cashier-sidebar .sidebar-menu .menu-section:first-child {
+    margin-top: 0;
+}
+
+.cashier-sidebar .sidebar-menu li {
+    margin-bottom: 5px;
+}
+
+.cashier-sidebar .sidebar-menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.cashier-sidebar .sidebar-menu a:hover {
+    background: #f8f9ff;
+    color: #667eea;
+}
+
+.cashier-sidebar .sidebar-menu a.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.cashier-sidebar .sidebar-menu a span {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+/* Main content with sidebar */
+.cashier-main-content {
+    margin-left: 280px;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cashier-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+    }
+
+    .cashier-sidebar.show {
+        transform: translateX(0);
+    }
+
+    .cashier-main-content {
+        margin-left: 0;
+    }
+
+    /* Hamburger button */
+    .sidebar-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1001;
+        background: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        cursor: pointer;
+        font-size: 20px;
+    }
+}
+
+/* Scrollbar styling */
+.cashier-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cashier-sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.cashier-sidebar::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 3px;
+}
+
+.cashier-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #5568d3;
+}

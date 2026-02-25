@@ -1,0 +1,85 @@
+╔════════════════════════════════════════════════════════╗
+║     🔧 DNS NI TUZATISH - BUYRUQLAR                    ║
+╚════════════════════════════════════════════════════════╝
+
+QADAMMA QADAM:
+
+1️⃣  CMD ni Administrator sifatida oching:
+   - Windows tugmasini bosing
+   - "cmd" deb yozing
+   - O'ng tugma → "Run as Administrator"
+
+2️⃣  Quyidagi buyruqlarni nusxalab, CMD ga joylashtiring:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+netsh interface ip set dns "Wi-Fi" static 8.8.8.8
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+netsh interface ip add dns "Wi-Fi" 8.8.4.4 index=2
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ipconfig /flushdns
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ipconfig /registerdns
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3️⃣  Tekshirish:
+
+ipconfig /all | findstr "DNS"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Kutilayotgan natija:
+   DNS Servers . . . . . . . . . . . : 8.8.8.8
+                                       8.8.4.4
+
+4️⃣  Kompyuterni restart qiling
+
+5️⃣  Restart qilgandan keyin test qiling:
+
+node check-laptop-network.js
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AGAR XATO BO'LSA:
+
+Agar "Wi-Fi" nomi noto'g'ri bo'lsa, to'g'ri nomni topish uchun:
+
+netsh interface show interface
+
+Keyin to'g'ri nom bilan qayta urinib ko'ring.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MUQOBIL: Qo'lda o'zgartirish
+
+Agar buyruqlar ishlamasa:
+
+1. Settings → Network & Internet → Wi-Fi
+2. Hardware properties
+3. Edit (IP settings)
+4. Manual → IPv4 → On
+5. DNS:
+   - Primary: 8.8.8.8
+   - Secondary: 8.8.4.4
+6. Save
+7. Restart
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+KEYINGI QADAM:
+
+DNS o'zgartirilgandan keyin:
+
+1. node check-laptop-network.js
+2. MongoDB Atlas da IP whitelist qo'shing (0.0.0.0/0)
+3. node test-mongodb-final.js
+4. npm start
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

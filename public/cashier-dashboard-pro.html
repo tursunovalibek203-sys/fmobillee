@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📊 Kassir Dashboard - Professional</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .main-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .time-filter {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .time-btn {
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .time-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .performance-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .activity-feed {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .action-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .action-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        
+        .action-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .action-desc {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .performance-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1 style="margin: 0; font-size: 32px; font-weight: 900;">📊 Kassir Dashboard</h1>
+                <p style="margin: 8px 0 0 0; opacity: 0.9;" id="cashierInfo">Kassir: Loading...</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" onclick="window.location.href='cashier-enhanced.html'">
+                    💼 Kassa Panel
+                </button>
+                <button class="btn btn-secondary" onclick="refreshDashboard()">
+                    🔄 Yangilash
+                </button>
+                <button class="btn btn-secondary" onclick="logout()">
+                    🚪 Chiqish
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Stats -->
+        <div class="main-stats">
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Bugungi savdolar</div>
+                <div style="font-size: 32px; font-weight: 900;" id="todaySales">0</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="todayProgress" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Bugungi daromad</div>
+                <div style="font-size: 32px; font-weight: 900;" id="todayRevenue">$0</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="revenueProgress" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Haftalik o'rtacha</div>
+                <div style="font-size: 32px; font-weight: 900;" id="weeklyAvg">$0</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="weeklyProgress" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Samaradorlik</div>
+                <div style="font-size: 32px; font-weight: 900;" id="efficiency">0%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="efficiencyProgress" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions-grid">
+            <div class="action-card" onclick="quickSale()">
+                <div class="action-icon">⚡</div>
+                <div class="action-title">Tezkor Savdo</div>
+                <div class="action-desc">Bir klikda savdo</div>
+            </div>
+            <div class="action-card" onclick="openCustomerSearch()">
+                <div class="action-icon">🔍</div>
+                <div class="action-title">Mijoz Qidirish</div>
+                <div class="action-desc">Mijozlarni toping</div>
+            </div>
+            <div class="action-card" onclick="openReports()">
+                <div class="action-icon">📋</div>
+                <div class="action-title">Hisobotlar</div>
+                <div class="action-desc">Batafsil tahlil</div>
+            </div>
+            <div class="action-card" onclick="openSettings()">
+                <div class="action-icon">⚙️</div>
+                <div class="action-title">Sozlamalar</div>
+                <div class="action-desc">Shaxsiy sozlamalar</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Sales Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">📈 Savdolar Dinamikasi</div>
+                    <div class="time-filter">
+                        <button class="time-btn active" onclick="setTimeFilter('day')">Kun</button>
+                        <button class="time-btn" onclick="setTimeFilter('week')">Hafta</button>
+                        <button class="time-btn" onclick="setTimeFilter('month')">Oy</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Revenue Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">💰 Daromad Tahlili</div>
+                    <div class="time-filter">
+                        <button class="time-btn active" onclick="setRevenueFilter('day')">Kun</button>
+                        <button class="time-btn" onclick="setRevenueFilter('week')">Hafta</button>
+                        <button class="time-btn" onclick="setRevenueFilter('month')">Oy</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Products -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">🏆 Top Mahsulotlar</div>
+                </div>
+                <div id="topProductsList">
+                    <div style="text-align: center; color: #6b7280; padding: 40px;">
+                        Ma'lumotlar yuklanmoqda...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Grid -->
+        <div class="performance-grid">
+            <!-- Performance Metrics -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">🎯 Ishlash Ko'rsatkichlari</div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div style="text-align: center; padding: 20px; background: #f9fafb; border-radius: 12px;">
+                        <div style="font-size: 24px; font-weight: 900; color: #059669;" id="avgSaleTime">0s</div>
+                        <div style="font-size: 14px; color: #6b7280;">O'rtacha savdo vaqti</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background: #f9fafb; border-radius: 12px;">
+                        <div style="font-size: 24px; font-weight: 900; color: #dc2626;" id="errorRate">0%</div>
+                        <div style="font-size: 14px; color: #6b7280;">Xato darajasi</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background: #f9fafb; border-radius: 12px;">
+                        <div style="font-size: 24px; font-weight: 900; color: #2563eb;" id="customerSatisfaction">0%</div>
+                        <div style="font-size: 14px; color: #6b7280;">Mijoz mamnuniyati</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="activity-feed">
+                <div class="chart-header">
+                    <div class="chart-title">📱 So'nggi Faoliyat</div>
+                </div>
+                <div id="activityFeed">
+                    <div style="text-align: center; color: #6b7280; padding: 40px;">
+                        Faoliyat yuklanmoqda...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="cashier-dashboard-pro.js"></script>
+    <script src="mobile-enhancements.js"></script>
+    <script src="cashier-sidebar-loader.js"></script>
+</body>
+</html>

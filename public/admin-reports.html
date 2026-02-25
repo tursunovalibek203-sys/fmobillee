@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Hisobotlar va Statistika</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab:hover {
+            transform: translateY(-2px);
+        }
+
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-container h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .date-filter input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Hisobotlar va Statistika</h1>
+            <button class="btn" onclick="window.location.href='admin-dashboard.html'">🏠 Bosh Sahifa</button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('daily')">📅 Kunlik</button>
+            <button class="tab" onclick="showTab('weekly')">📆 Haftalik</button>
+            <button class="tab" onclick="showTab('monthly')">📊 Oylik</button>
+            <button class="tab" onclick="showTab('yearly')">📈 Yillik</button>
+        </div>
+
+        <!-- KUNLIK HISOBOT -->
+        <div id="daily" class="content active">
+            <div class="date-filter">
+                <input type="date" id="dailyDate" value="">
+                <button class="btn" onclick="loadDailyReport()">🔍 Ko'rish</button>
+                <button class="btn" onclick="exportReport('daily')">📥 Excel</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">💰</div>
+                    <div class="value" id="dailyRevenue">$0</div>
+                    <div class="label">Bugungi Daromad</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🛒</div>
+                    <div class="value" id="dailySales">0</div>
+                    <div class="label">Bugungi Savdolar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">👥</div>
+                    <div class="value" id="dailyCustomers">0</div>
+                    <div class="label">Mijozlar Soni</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📦</div>
+                    <div class="value" id="dailyProducts">0</div>
+                    <div class="label">Sotilgan Mahsulotlar</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h3>🏆 Eng Ko'p Sotilgan Mahsulotlar</h3>
+                <table id="dailyTopProducts">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Mahsulot</th>
+                            <th>Soni</th>
+                            <th>Summa</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- HAFTALIK HISOBOT -->
+        <div id="weekly" class="content">
+            <div class="date-filter">
+                <input type="week" id="weeklyDate" value="">
+                <button class="btn" onclick="loadWeeklyReport()">🔍 Ko'rish</button>
+                <button class="btn" onclick="exportReport('weekly')">📥 Excel</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">💰</div>
+                    <div class="value" id="weeklyRevenue">$0</div>
+                    <div class="label">Haftalik Daromad</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🛒</div>
+                    <div class="value" id="weeklySales">0</div>
+                    <div class="label">Haftalik Savdolar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📈</div>
+                    <div class="value" id="weeklyGrowth">0%</div>
+                    <div class="label">O'sish</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">💵</div>
+                    <div class="value" id="weeklyAverage">$0</div>
+                    <div class="label">O'rtacha Kunlik</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>📊 Haftalik Savdolar Grafigi</h3>
+                <canvas id="weeklyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- OYLIK HISOBOT -->
+        <div id="monthly" class="content">
+            <div class="date-filter">
+                <input type="month" id="monthlyDate" value="">
+                <button class="btn" onclick="loadMonthlyReport()">🔍 Ko'rish</button>
+                <button class="btn" onclick="exportReport('monthly')">📥 Excel</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">💰</div>
+                    <div class="value" id="monthlyRevenue">$0</div>
+                    <div class="label">Oylik Daromad</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🛒</div>
+                    <div class="value" id="monthlySales">0</div>
+                    <div class="label">Oylik Savdolar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">💸</div>
+                    <div class="value" id="monthlyExpenses">$0</div>
+                    <div class="label">Xarajatlar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">💵</div>
+                    <div class="value" id="monthlyProfit">$0</div>
+                    <div class="label">Sof Foyda</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>📊 Oylik Savdolar Grafigi</h3>
+                <canvas id="monthlyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- YILLIK HISOBOT -->
+        <div id="yearly" class="content">
+            <div class="date-filter">
+                <input type="number" id="yearlyDate" value="" placeholder="Yil" min="2020" max="2030">
+                <button class="btn" onclick="loadYearlyReport()">🔍 Ko'rish</button>
+                <button class="btn" onclick="exportReport('yearly')">📥 Excel</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">💰</div>
+                    <div class="value" id="yearlyRevenue">$0</div>
+                    <div class="label">Yillik Daromad</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🛒</div>
+                    <div class="value" id="yearlySales">0</div>
+                    <div class="label">Yillik Savdolar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📈</div>
+                    <div class="value" id="yearlyGrowth">0%</div>
+                    <div class="label">Yillik O'sish</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🏆</div>
+                    <div class="value" id="bestMonth">-</div>
+                    <div class="label">Eng Yaxshi Oy</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>📊 Yillik Savdolar Grafigi</h3>
+                <canvas id="yearlyChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="admin-reports.js"></script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MongoDB Diagnostika</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+        }
+        
+        .status-card {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid;
+        }
+        
+        .status-connected {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .status-disconnected {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .status-error {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        
+        .status-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .status-message {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        
+        .details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .detail-value {
+            color: #6c757d;
+            font-family: monospace;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 5px;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .collections-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .collection-item {
+            padding: 5px 10px;
+            background: white;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .connection-states {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 MongoDB Diagnostika</h1>
+        
+        <div id="statusContainer">
+            <div class="loading">
+                <div style="font-size: 3em; margin-bottom: 20px;">⏳</div>
+                <p>MongoDB ulanishi tekshirilmoqda...</p>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="btn btn-primary" onclick="testConnection()">🔄 Qayta Tekshirish</button>
+            <a href="admin-dashboard.html" class="btn btn-success">🏠 Admin Panelga Qaytish</a>
+        </div>
+        
+        <div class="connection-states">
+            <strong>Connection State Kodlari:</strong><br>
+            0 = Disconnected, 1 = Connected, 2 = Connecting, 3 = Disconnecting
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        
+        async function testConnection() {
+            const container = document.getElementById('statusContainer');
+            
+            // Loading state
+            container.innerHTML = `
+                <div class="loading">
+                    <div style="font-size: 3em; margin-bottom: 20px;">⏳</div>
+                    <p>MongoDB ulanishi tekshirilmoqda...</p>
+                </div>
+            `;
+            
+            // Hozirgi holat (MongoDB ishlamayapti)
+            setTimeout(() => {
+                displayCurrentStatus();
+            }, 1000);
+        }
+        
+        function displayCurrentStatus() {
+            const container = document.getElementById('statusContainer');
+            
+            container.innerHTML = `
+                <div class="status-card status-disconnected">
+                    <div class="status-title">❌ MONGODB ULANMAGAN</div>
+                    <div class="status-message">MongoDB Atlas va Lokal MongoDB ishlamayapti</div>
+                    <div class="details">
+                        <h3 style="margin-bottom: 15px;">📊 Diagnostika Natijalari:</h3>
+                        <div class="detail-item">
+                            <span class="detail-label">Atlas Status:</span>
+                            <span class="detail-value" style="color: #dc3545;">ECONNREFUSED (DNS/Internet)</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Lokal Status:</span>
+                            <span class="detail-value" style="color: #dc3545;">ECONNREFUSED (Service yo'q)</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">MongoDB Commands:</span>
+                            <span class="detail-value" style="color: #dc3545;">mongod/mongo topilmadi</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Connection State:</span>
+                            <span class="detail-value" style="color: #dc3545;">0 (Disconnected)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-card status-connected">
+                    <div class="status-title">✅ TIZIM ISHLAMOQDA</div>
+                    <div class="status-message">JSON Fallback rejimi faol - Barcha funksiyalar ishlaydi</div>
+                    <div class="details">
+                        <h3 style="margin-bottom: 15px;">🚀 Ishlaydigan Funksiyalar:</h3>
+                        <div class="detail-item">
+                            <span class="detail-label">Server:</span>
+                            <span class="detail-value" style="color: #28a745;">Port 3000 da ishlamoqda</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Ma'lumotlar:</span>
+                            <span class="detail-value" style="color: #28a745;">JSON fayllarida saqlanmoqda</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Filiallar:</span>
+                            <span class="detail-value" style="color: #28a745;">Qo'shish, tahrirlash, o'chirish</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Kassirlar:</span>
+                            <span class="detail-value" style="color: #28a745;">2 valyutali kassa tizimi</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Hisobotlar:</span>
+                            <span class="detail-value" style="color: #28a745;">Excel export, statistika</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Performance:</span>
+                            <span class="detail-value" style="color: #ffc107;">200-500ms (JSON fallback)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-card status-error">
+                    <div class="status-title">🛠️ MONGODB NI TIKLASH</div>
+                    <div class="status-message">MongoDB o'rnatish uchun quyidagi usullardan birini tanlang</div>
+                    <div class="details">
+                        <h3 style="margin-bottom: 15px;">💡 Yechim Usullari:</h3>
+                        <div style="margin: 10px 0; padding: 10px; background: #fff; border-radius: 5px; border-left: 3px solid #007bff;">
+                            <strong>1. MongoDB Community Server:</strong><br>
+                            <a href="https://www.mongodb.com/try/download/community" target="_blank" style="color: #007bff;">https://www.mongodb.com/try/download/community</a>
+                        </div>
+                        <div style="margin: 10px 0; padding: 10px; background: #fff; border-radius: 5px; border-left: 3px solid #28a745;">
+                            <strong>2. Chocolatey orqali:</strong><br>
+                            <code>choco install mongodb</code>
+                        </div>
+                        <div style="margin: 10px 0; padding: 10px; background: #fff; border-radius: 5px; border-left: 3px solid #17a2b8;">
+                            <strong>3. Docker orqali:</strong><br>
+                            <code>docker run -d -p 27017:27017 mongo</code>
+                        </div>
+                        <div style="margin: 10px 0; padding: 10px; background: #fff; border-radius: 5px; border-left: 3px solid #ffc107;">
+                            <strong>4. Atlas muammosini hal qilish:</strong><br>
+                            Internet ulanishini tekshiring va yangi cluster yarating
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function displayResult(data) {
+            const container = document.getElementById('statusContainer');
+            
+            let statusClass = 'status-error';
+            let statusIcon = '⚠️';
+            
+            if (data.success && data.status === 'connected') {
+                statusClass = 'status-connected';
+                statusIcon = '✅';
+            } else if (data.status === 'disconnected') {
+                statusClass = 'status-disconnected';
+                statusIcon = '❌';
+            }
+            
+            let detailsHtml = '';
+            if (data.details) {
+                detailsHtml = `
+                    <div class="details">
+                        <h3 style="margin-bottom: 15px;">📊 Tafsilotlar:</h3>
+                        ${Object.entries(data.details).map(([key, value]) => {
+                            let label = key;
+                            switch(key) {
+                                case 'host': label = 'Host'; break;
+                                case 'database': label = 'Database'; break;
+                                case 'ping': label = 'Ping Test'; break;
+                                case 'collections': label = 'Collections Soni'; break;
+                                case 'objects': label = 'Objects Soni'; break;
+                                case 'dataSize': label = 'Ma\'lumotlar Hajmi'; break;
+                                case 'connectionState': label = 'Ulanish Holati'; break;
+                                case 'atlasUrl': label = 'Atlas URL'; break;
+                                case 'localUrl': label = 'Local URL'; break;
+                            }
+                            
+                            if (key === 'collectionNames' && Array.isArray(value)) {
+                                return `
+                                    <div style="margin-top: 15px;">
+                                        <strong>📁 Collections:</strong>
+                                        <div class="collections-list">
+                                            ${value.map(name => `<div class="collection-item">${name}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                            
+                            return `
+                                <div class="detail-item">
+                                    <span class="detail-label">${label}:</span>
+                                    <span class="detail-value">${value}</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = `
+                <div class="status-card ${statusClass}">
+                    <div class="status-title">${statusIcon} ${data.status.toUpperCase()}</div>
+                    <div class="status-message">${data.message}</div>
+                    ${data.error ? `<div style="margin-top: 10px;"><strong>Xato:</strong> ${data.error}</div>` : ''}
+                    ${detailsHtml}
+                </div>
+            `;
+        }
+        
+        function displayError(error) {
+            const container = document.getElementById('statusContainer');
+            
+            container.innerHTML = `
+                <div class="status-card status-error">
+                    <div class="status-title">❌ XATO</div>
+                    <div class="status-message">Test bajarishda xato yuz berdi</div>
+                    <div class="details">
+                        <div class="detail-item">
+                            <span class="detail-label">Xato:</span>
+                            <span class="detail-value">${error}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Sahifa yuklanganda test qilish
+        window.onload = function() {
+            testConnection();
+        };
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

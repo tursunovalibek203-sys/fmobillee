@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Filiallar Boshqaruvi</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+        }
+        
+        .add-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .branches-list {
+            margin-top: 30px;
+        }
+        
+        .branch-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .branch-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .branch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .branch-name {
+            font-size: 1.5em;
+            color: #667eea;
+            font-weight: 700;
+        }
+        
+        .branch-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .branch-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .branch-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 Filiallar Boshqaruvi</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalBranches">0</div>
+                <div class="stat-label">Jami Filiallar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeBranches">0</div>
+                <div class="stat-label">Faol Filiallar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalCashiers">0</div>
+                <div class="stat-label">Jami Kassirlar</div>
+            </div>
+        </div>
+        
+        <div class="add-section">
+            <h2 style="margin-bottom: 20px; color: #667eea;">➕ Yangi Filial Qo'shish</h2>
+            <div class="form-group">
+                <label>Filial Nomi *</label>
+                <input type="text" id="branchName" placeholder="Masalan: Chilonzor Filiali">
+            </div>
+            <div class="form-group">
+                <label>Manzil</label>
+                <input type="text" id="branchAddress" placeholder="Masalan: Chilonzor 12-kvartal">
+            </div>
+            <div class="form-group">
+                <label>Telefon</label>
+                <input type="text" id="branchPhone" placeholder="+998 90 123 45 67">
+            </div>
+            <div class="form-group">
+                <label>Menejer</label>
+                <input type="text" id="branchManager" placeholder="Menejer ismi">
+            </div>
+            <button class="btn btn-primary" onclick="addBranch()">Filial Qo'shish</button>
+        </div>
+        
+        <div class="branches-list" id="branchesList"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        
+        async function loadBranches() {
+            try {
+                const response = await fetch(`${API_URL}/branches`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayBranches(data.branches);
+                    updateStats(data.branches);
+                }
+            } catch (error) {
+                console.error('Xato:', error);
+                alert('Filiallarni yuklashda xato!');
+            }
+        }
+        
+        function displayBranches(branches) {
+            const container = document.getElementById('branchesList');
+            
+            if (branches.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">Hozircha filiallar yo\'q</p>';
+                return;
+            }
+            
+            container.innerHTML = branches.map(branch => `
+                <div class="branch-card">
+                    <div class="branch-header">
+                        <div class="branch-name">${branch.name}</div>
+                        <div class="branch-status ${branch.isActive ? 'status-active' : 'status-inactive'}">
+                            ${branch.isActive ? 'Faol' : 'Faolsiz'}
+                        </div>
+                    </div>
+                    <div class="branch-info">
+                        <div class="info-item">
+                            <div class="info-label">ID</div>
+                            <div class="info-value">#${branch.branchId}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Manzil</div>
+                            <div class="info-value">${branch.address || 'Kiritilmagan'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Telefon</div>
+                            <div class="info-value">${branch.phone || 'Kiritilmagan'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Menejer</div>
+                            <div class="info-value">${branch.manager || 'Kiritilmagan'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Jami Savdolar</div>
+                            <div class="info-value">$${branch.totalRevenue?.toFixed(2) || '0.00'}</div>
+                        </div>
+                    </div>
+                    <div class="branch-actions">
+                        <button class="btn btn-primary" onclick="viewBranchDetails(${branch.branchId})">
+                            📊 Batafsil
+                        </button>
+                        ${branch.isActive ? 
+                            `<button class="btn btn-danger" onclick="deactivateBranch(${branch.branchId})">
+                                ❌ Faolsizlantirish
+                            </button>` : 
+                            `<button class="btn btn-primary" onclick="activateBranch(${branch.branchId})">
+                                ✅ Faollashtirish
+                            </button>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function updateStats(branches) {
+            document.getElementById('totalBranches').textContent = branches.length;
+            document.getElementById('activeBranches').textContent = branches.filter(b => b.isActive).length;
+            
+            // Kassirlar sonini olish
+            try {
+                const response = await fetch(`${API_URL}/cashiers`);
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('totalCashiers').textContent = data.cashiers.length;
+                }
+            } catch (error) {
+                console.error('Kassirlar sonini olishda xato:', error);
+            }
+        }
+        
+        async function addBranch() {
+            const name = document.getElementById('branchName').value.trim();
+            const address = document.getElementById('branchAddress').value.trim();
+            const phone = document.getElementById('branchPhone').value.trim();
+            const manager = document.getElementById('branchManager').value.trim();
+            
+            if (!name) {
+                alert('Filial nomini kiriting!');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/branches`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, address, phone, manager })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Filial muvaffaqiyatli qo\'shildi!');
+                    document.getElementById('branchName').value = '';
+                    document.getElementById('branchAddress').value = '';
+                    document.getElementById('branchPhone').value = '';
+                    document.getElementById('branchManager').value = '';
+                    loadBranches();
+                } else {
+                    alert('❌ Xato: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Xato:', error);
+                alert('Filial qo\'shishda xato!');
+            }
+        }
+        
+        function viewBranchDetails(branchId) {
+            window.location.href = `admin-branch-details.html?id=${branchId}`;
+        }
+        
+        async function deactivateBranch(branchId) {
+            if (!confirm('Bu filialni faolsizlantirishni xohlaysizmi?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/branches/${branchId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isActive: false })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Filial faolsizlantirildi');
+                    loadBranches();
+                } else {
+                    alert('❌ Xato: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Xato:', error);
+                alert('Xato yuz berdi!');
+            }
+        }
+        
+        async function activateBranch(branchId) {
+            try {
+                const response = await fetch(`${API_URL}/branches/${branchId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isActive: true })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Filial faollashtirildi');
+                    loadBranches();
+                } else {
+                    alert('❌ Xato: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Xato:', error);
+                alert('Xato yuz berdi!');
+            }
+        }
+        
+        // Sahifa yuklanganda
+        loadBranches();
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

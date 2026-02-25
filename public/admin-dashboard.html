@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .card-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .card-description {
+            color: #666;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+        
+        .card-stats {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .card-branches { border-left: 5px solid #667eea; }
+        .card-cashiers { border-left: 5px solid #f5576c; }
+        .card-handovers { border-left: 5px solid #4facfe; }
+        .card-warehouse { border-left: 5px solid #43e97b; }
+        .card-sales { border-left: 5px solid #fa709a; }
+        .card-customers { border-left: 5px solid #feca57; }
+        
+        .quick-actions {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .quick-actions h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .action-btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            color: white;
+        }
+        
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .btn-success { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .btn-danger { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .btn-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* 📱 TELEFON UCHUN MAXSUS SOZLAMALAR */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            .header {
+                padding: 15px;
+                border-radius: 12px;
+                margin-bottom: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5em !important;
+            }
+            
+            .subtitle {
+                font-size: 0.9em;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .dashboard-card {
+                padding: 20px;
+                border-radius: 12px;
+            }
+            
+            .card-icon {
+                font-size: 2.5em;
+                margin-bottom: 10px;
+            }
+            
+            .card-title {
+                font-size: 1.3em;
+            }
+            
+            .card-description {
+                font-size: 0.9em;
+            }
+            
+            .card-stats {
+                margin-top: 15px;
+                padding-top: 15px;
+            }
+            
+            .stat-value {
+                font-size: 1.5em;
+            }
+            
+            .stat-label {
+                font-size: 0.8em;
+            }
+            
+            .quick-actions {
+                padding: 20px;
+                border-radius: 12px;
+            }
+            
+            .quick-actions h2 {
+                font-size: 1.3em;
+                margin-bottom: 15px;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .action-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.2em !important;
+            }
+            
+            .card-icon {
+                font-size: 2em;
+            }
+            
+            .card-title {
+                font-size: 1.1em;
+            }
+            
+            .stat-value {
+                font-size: 1.3em;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Admin Dashboard</h1>
+            <p class="subtitle">Barcha tizimni bir joydan boshqaring</p>
+        </div>
+        
+        <div class="dashboard-grid">
+            <a href="admin-branches.html" class="dashboard-card card-branches">
+                <div class="card-icon">🏢</div>
+                <div class="card-title">Filiallar</div>
+                <div class="card-description">
+                    Barcha filiallarni boshqaring, yangi filial qo'shing va statistikani ko'ring
+                </div>
+                <div class="card-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalBranches">0</div>
+                        <div class="stat-label">Jami</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="activeBranches">0</div>
+                        <div class="stat-label">Faol</div>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="admin-cashiers.html" class="dashboard-card card-cashiers">
+                <div class="card-icon">👤</div>
+                <div class="card-title">Kassirlar</div>
+                <div class="card-description">
+                    Kassirlarni boshqaring, yangi kassir qo'shing va balanslarni kuzating
+                </div>
+                <div class="card-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalCashiers">0</div>
+                        <div class="stat-label">Jami</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="activeCashiers">0</div>
+                        <div class="stat-label">Faol</div>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="admin-handovers.html" class="dashboard-card card-handovers">
+                <div class="card-icon">💰</div>
+                <div class="card-title">Kirim Topshirishlar</div>
+                <div class="card-description">
+                    Kassirlarning kirim topshirishlarini ko'ring va tahlil qiling
+                </div>
+                <div class="card-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalHandovers">0</div>
+                        <div class="stat-label">Jami</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="todayHandovers">0</div>
+                        <div class="stat-label">Bugun</div>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="warehouse-pro.html" class="dashboard-card card-warehouse">
+                <div class="card-icon">📦</div>
+                <div class="card-title">Ombor</div>
+                <div class="card-description">
+                    Mahsulotlarni boshqaring, ombor holatini kuzating
+                </div>
+                <div class="card-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalProducts">0</div>
+                        <div class="stat-label">Mahsulotlar</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="lowStock">0</div>
+                        <div class="stat-label">Kam qolgan</div>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="admin-branches-sales.html" class="dashboard-card card-sales">
+                <div class="card-icon">📊</div>
+                <div class="card-title">Filiallar Savdolari</div>
+                <div class="card-description">
+                    Har bir filialning bugungi, haftalik va oylik savdolarini ko'ring
+                </div>
+                <div class="card-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalSales">0</div>
+                        <div class="stat-label">Jami</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="todaySales">0</div>
+                        <div class="stat-label">Bugun</div>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="index.html" class="dashboard-card card-customers">
+                <div class="card-icon">👥</div>
+                <div class="card-title">Mijozlar</div>
+                <div class="card-description">
+                    Mijozlarni boshqaring va qarzlarni kuzating
+                </div>
+                <div class="card-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalCustomers">0</div>
+                        <div class="stat-label">Jami</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="debtCustomers">0</div>
+                        <div class="stat-label">Qarzda</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="quick-actions">
+            <h2>⚡ Tezkor Harakatlar</h2>
+            <div class="action-buttons">
+                <a href="admin-branches.html" class="action-btn btn-primary">➕ Yangi Filial</a>
+                <a href="admin-cashiers.html" class="action-btn btn-primary">➕ Yangi Kassir</a>
+                <a href="warehouse-pro.html" class="action-btn btn-success">➕ Yangi Mahsulot</a>
+                <a href="index.html" class="action-btn btn-success">➕ Yangi Mijoz</a>
+                <a href="analytics.html" class="action-btn btn-info">📈 Hisobotlar</a>
+                <a href="/api/backup/create" class="action-btn btn-danger">💾 Backup Yaratish</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        
+        async function loadStats() {
+            try {
+                // Filiallar
+                const branchesRes = await fetch(`${API_URL}/branches`);
+                const branchesData = await branchesRes.json();
+                if (branchesData.success) {
+                    document.getElementById('totalBranches').textContent = branchesData.branches.length;
+                    document.getElementById('activeBranches').textContent = 
+                        branchesData.branches.filter(b => b.isActive).length;
+                }
+                
+                // Kassirlar
+                const cashiersRes = await fetch(`${API_URL}/cashiers`);
+                const cashiersData = await cashiersRes.json();
+                if (cashiersData.success) {
+                    document.getElementById('totalCashiers').textContent = cashiersData.cashiers.length;
+                    document.getElementById('activeCashiers').textContent = 
+                        cashiersData.cashiers.filter(c => c.isActive).length;
+                }
+                
+                // Kirimlar
+                const handoversRes = await fetch(`${API_URL}/all-handovers`);
+                const handoversData = await handoversRes.json();
+                if (handoversData.success) {
+                    document.getElementById('totalHandovers').textContent = handoversData.handovers.length;
+                    
+                    const today = new Date().toLocaleDateString('uz-UZ');
+                    const todayHandovers = handoversData.handovers.filter(h => h.date === today);
+                    document.getElementById('todayHandovers').textContent = todayHandovers.length;
+                }
+                
+                // Mahsulotlar
+                const productsRes = await fetch(`${API_URL}/products`);
+                const productsData = await productsRes.json();
+                if (productsData.success) {
+                    document.getElementById('totalProducts').textContent = productsData.products.length;
+                }
+                
+                const lowStockRes = await fetch(`${API_URL}/products/low-stock`);
+                const lowStockData = await lowStockRes.json();
+                if (lowStockData.success) {
+                    document.getElementById('lowStock').textContent = lowStockData.products.length;
+                }
+                
+                // Savdolar
+                const salesRes = await fetch(`${API_URL}/all-cashier-sales`);
+                const salesData = await salesRes.json();
+                if (salesData.success) {
+                    document.getElementById('totalSales').textContent = salesData.sales.length;
+                    
+                    const today2 = new Date().toLocaleDateString('uz-UZ');
+                    const todaySales = salesData.sales.filter(s => s.date === today2);
+                    document.getElementById('todaySales').textContent = todaySales.length;
+                }
+                
+                // Mijozlar
+                const customersRes = await fetch(`${API_URL}/customers`);
+                const customersData = await customersRes.json();
+                if (customersData.success) {
+                    document.getElementById('totalCustomers').textContent = customersData.customers.length;
+                    document.getElementById('debtCustomers').textContent = 
+                        customersData.customers.filter(c => c.totalDebt > 0).length;
+                }
+                
+            } catch (error) {
+                console.error('Statistikani yuklashda xato:', error);
+            }
+        }
+        
+        // Sahifa yuklanganda
+        loadStats();
+        
+        // Har 30 sekundda yangilash
+        setInterval(loadStats, 30000);
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

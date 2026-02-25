@@ -2,15 +2,16 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Do'kon Boshqaruvi - Professional</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
   
   <!-- PWA Meta Tags -->
   <meta name="description" content="Professional do'kon boshqaruv tizimi - mijozlar, savdolar va qarzlarni boshqarish">
   <meta name="keywords" content="do'kon, boshqaruv, mijozlar, savdo, qarz, telegram bot">
   <meta name="author" content="Do'kon Pro">
   <meta name="theme-color" content="#1d4ed8">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Do'kon Pro">
   <meta name="msapplication-TileColor" content="#1d4ed8">
@@ -24,90 +25,15 @@
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏪%3C/text%3E%3C/svg%3E">
   
   <!-- Styles -->
+  <link rel="stylesheet" href="design-system.css">
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Ko'k professional orqa fon - to'g'ri balans */
-    body {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 20%, #1d4ed8 40%, #1e40af 60%, #1e3a8a 80%, #1e3a8a 100%) !important;
-      position: relative;
-    }
-    
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: 
-        radial-gradient(circle at 20% 50%, rgba(96, 165, 250, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.25) 0%, transparent 50%),
-        radial-gradient(circle at 40% 20%, rgba(37, 99, 235, 0.2) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    
-    .container {
-      position: relative;
-      z-index: 1;
-    }
-    
-    /* Ko'k soyalar */
-    .card {
-      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2) !important;
-      border: 1px solid rgba(255, 255, 255, 0.6) !important;
-      background: rgba(255, 255, 255, 0.95) !important;
-    }
-    
-    .card:hover {
-      box-shadow: 0 12px 48px rgba(59, 130, 246, 0.3) !important;
-    }
-    
-    /* Header gradient - oqroq */
-    .header-card {
-      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%) !important;
-      box-shadow: 0 20px 60px rgba(59, 130, 246, 0.3) !important;
-    }
-    
-    /* Currency preview */
-    .currency-preview {
-      background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
-      color: white;
-      padding: 24px;
-      border-radius: 18px;
-      text-align: center;
-      font-size: 32px;
-      font-weight: 900;
-      margin-top: 12px;
-      box-shadow: 0 12px 32px rgba(37, 99, 235, 0.3);
-      letter-spacing: -0.5px;
-    }
-    
-    .settings-section select {
-      width: 100%;
-      padding: 16px 20px;
-      border: 2px solid #e5e7eb;
-      border-radius: 14px;
-      font-size: 15px;
-      margin-bottom: 16px;
-      outline: none;
-      transition: all 0.3s;
-      font-weight: 500;
-      background: white;
-      cursor: pointer;
-      color: #111827;
-    }
-    
-    .settings-section select:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-    }
-  </style>
+  <link rel="stylesheet" href="style-professional.css">
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="back-button.js"></script>
 </head>
 <body>
   <!-- Main Page -->
@@ -195,6 +121,14 @@
         <div class="quick-actions">
           <h2>⚡ Tez harakatlar</h2>
           <div class="quick-btns">
+            <button class="quick-btn" onclick="openCashierSystem()">
+              <span>💼</span>
+              Kassir Panel
+            </button>
+            <button class="quick-btn" onclick="openWarehousePage()">
+              <span>🏭</span>
+              Ombor
+            </button>
             <button class="quick-btn" onclick="openAddModal()">
               <span>👤</span>
               Yangi mijoz
@@ -289,21 +223,56 @@
         </div>
       </div>
 
-      <!-- Payment Form -->
+      <!-- Payment Form - Dollar Only -->
       <div class="payment-card">
         <h2>💵 To'lov qabul qilish</h2>
-        <div class="payment-row">
-          <input type="number" id="paymentAmount" placeholder="To'lov miqdori (so'm)">
-          <button class="payment-btn" onclick="addPayment()">
-            <span>💳</span>
-            To'lov qabul qilish
-          </button>
+        
+        <!-- Kassadagi balans -->
+        <div style="background: rgba(255, 255, 255, 0.15); padding: 16px; border-radius: 12px; margin-bottom: 16px; backdrop-filter: blur(10px);">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div>
+              <p style="margin: 0 0 6px 0; font-size: 12px; opacity: 0.9; font-weight: 600;">💵 Kassadagi Dollar</p>
+              <p style="margin: 0; font-size: 24px; font-weight: 900;" id="cashBalanceUSD">$0.00</p>
+            </div>
+            <div>
+              <p style="margin: 0 0 6px 0; font-size: 12px; opacity: 0.9; font-weight: 600;">💰 So'm (Dollar qiymati)</p>
+              <p style="margin: 0; font-size: 24px; font-weight: 900;" id="cashBalanceUZSinUSD">$0.00</p>
+              <p style="margin: 4px 0 0 0; font-size: 11px; opacity: 0.8;" id="cashBalanceUZSAmount">0 so'm</p>
+            </div>
+          </div>
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.2); text-align: center;">
+            <p style="margin: 0 0 4px 0; font-size: 12px; opacity: 0.9; font-weight: 600;">📊 Jami Balans</p>
+            <p style="margin: 0; font-size: 28px; font-weight: 900;" id="totalCashBalance">$0.00</p>
+          </div>
         </div>
+        
+        <!-- To'lov input -->
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; margin-bottom: 8px; font-size: 14px; opacity: 0.95; font-weight: 600;">
+            💵 To'lov miqdori (Dollar)
+          </label>
+          <input type="number" id="paymentAmount" placeholder="0.00" step="0.01" min="0"
+                 style="width: 100%; padding: 16px 20px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; font-size: 18px; background: rgba(255, 255, 255, 0.1); color: white; outline: none; backdrop-filter: blur(10px); font-weight: 700;">
+        </div>
+        
+        <button class="payment-btn" onclick="addPayment()" style="width: 100%;">
+          <span>💳</span>
+          To'lov qabul qilish
+        </button>
       </div>
 
       <!-- Sale Form -->
       <div class="form-card">
         <h2 id="formTitle">➕ Yangi savdo</h2>
+        
+        <!-- IMEI input - ombordan mahsulot tanlash -->
+        <div style="margin-bottom: 16px;">
+          <input type="text" id="imeiInput" placeholder="🔍 IMEI yoki Barcode kiriting (ombordan tanlash)" 
+                 style="width: 100%; padding: 14px 16px; border: 2px solid #3b82f6; border-radius: 12px; font-size: 14px; font-weight: 500;"
+                 oninput="searchProductByIMEI(this.value)">
+          <div id="imeiSearchResults" style="margin-top: 8px; display: none;"></div>
+        </div>
+        
         <input type="text" id="productInput" placeholder="Mahsulot nomi">
         <div class="row">
           <input type="number" id="priceInput" placeholder="Narxi (so'm)">
@@ -576,6 +545,9 @@
   </div>
 
   <!-- Scripts -->
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="/script.js"></script>
   <script>
     // Login tekshiruvi
     if (localStorage.getItem('isLoggedIn') !== 'true') {
@@ -595,8 +567,11 @@
         window.location.href = '/login.html';
       }
     }
+    
+    // Debug: API URL ni tekshirish
+    console.log('🌐 Window location:', window.location.origin);
+    console.log('📍 API URL bo\'ladi:', window.location.origin + '/api');
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
-  <script src="script.js" defer></script>
+    <script src="mobile-enhancements.js"></script>
 </body>
 </html>

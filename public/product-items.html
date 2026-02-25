@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>IMEI Kodlar - Mahsulot Donalari</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%) !important;
+    }
+    
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    
+    .item-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+      position: relative;
+    }
+    
+    .item-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .item-imei {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 12px;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .item-status {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    
+    .status-available {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .status-sold {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .status-reserved {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .item-info {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 6px 0;
+    }
+    
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    
+    .item-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 13px;
+    }
+    
+    .btn-sell {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-sell:hover {
+      background: #059669;
+    }
+    
+    .btn-delete {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .btn-delete:hover {
+      background: #dc2626;
+    }
+    
+    .add-item-btn {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      font-size: 32px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+      transition: all 0.3s;
+      z-index: 100;
+    }
+    
+    .add-item-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="card header-card" style="background: linear-gradient(135deg, #10b981, #059669) !important;">
+      <div class="header-content">
+        <div>
+          <h1 id="productTitle">📱 Mahsulot Donalari</h1>
+          <p class="subtitle" id="productInfo"></p>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="settings-btn" onclick="goBack()">
+            <span>←</span>
+            <span>Orqaga</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <div class="stat-icon">📦</div>
+        <div class="stat-content">
+          <p class="stat-label">Jami donalar</p>
+          <p class="stat-value" id="totalItems">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card blue">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+          <p class="stat-label">Mavjud</p>
+          <p class="stat-value" id="availableItems">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card red">
+        <div class="stat-icon">💰</div>
+        <div class="stat-content">
+          <p class="stat-label">Sotilgan</p>
+          <p class="stat-value" id="soldItems">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-icon">🔒</div>
+        <div class="stat-content">
+          <p class="stat-label">Band qilingan</p>
+          <p class="stat-value" id="reservedItems">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <input type="text" class="search-input" placeholder="🔍 IMEI qidirish..." id="searchInput" oninput="searchItems()" style="flex: 1;">
+      </div>
+      
+      <div class="filter-section">
+        <button class="filter-btn active" onclick="filterItems('all')">Barchasi</button>
+        <button class="filter-btn" onclick="filterItems('available')">Mavjud</button>
+        <button class="filter-btn" onclick="filterItems('sold')">Sotilgan</button>
+        <button class="filter-btn" onclick="filterItems('reserved')">Band qilingan</button>
+      </div>
+    </div>
+
+    <!-- Items Grid -->
+    <div class="items-grid" id="itemsGrid">
+      <p class="empty">Yuklanmoqda...</p>
+    </div>
+  </div>
+
+  <!-- Add Item Button -->
+  <button class="add-item-btn" onclick="openAddItemModal()" title="Yangi IMEI qo'shish">+</button>
+
+  <!-- Add Item Modal -->
+  <div id="addItemModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>➕ Yangi IMEI Qo'shish</h2>
+        <button class="modal-close" onclick="closeAddItemModal()">×</button>
+      </div>
+      
+      <div class="form-group">
+        <label>IMEI / Serial Number *</label>
+        <input type="text" id="itemIMEI" placeholder="123456789012345" required>
+      </div>
+      
+      <div class="row">
+        <div class="form-group">
+          <label>Kelgan narxi *</label>
+          <input type="number" id="itemBuyPrice" placeholder="0" step="0.01" min="0" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Sotish narxi *</label>
+          <input type="number" id="itemSellPrice" placeholder="0" step="0.01" min="0" required>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Izoh</label>
+        <textarea id="itemNotes" rows="3" placeholder="Qo'shimcha ma'lumot..."></textarea>
+      </div>
+      
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeAddItemModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="saveItem()">
+          <span>✓</span>
+          Saqlash
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sell Item Modal -->
+  <div id="sellItemModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>💰 Mahsulot Sotish</h2>
+        <button class="modal-close" onclick="closeSellItemModal()">×</button>
+      </div>
+      
+      <div class="form-group">
+        <label>IMEI</label>
+        <input type="text" id="sellItemIMEI" readonly style="background: #f3f4f6;">
+      </div>
+      
+      <div class="form-group">
+        <label>Sotish narxi</label>
+        <input type="number" id="sellItemPrice" step="0.01" min="0" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Mijoz (ixtiyoriy)</label>
+        <input type="text" id="sellCustomerName" placeholder="Mijoz ismi">
+      </div>
+      
+      <div class="form-group">
+        <label>Izoh</label>
+        <textarea id="sellNotes" rows="3" placeholder="Qo'shimcha ma'lumot..."></textarea>
+      </div>
+      
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeSellItemModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="confirmSell()">
+          <span>💰</span>
+          Sotish
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin + '/api';
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('productId');
+    
+    let allItems = [];
+    let filteredItems = [];
+    let currentFilter = 'all';
+    let selectedItemId = null;
+    
+    // Init
+    async function init() {
+      if (!productId) {
+        alert('Mahsulot ID topilmadi!');
+        window.location.href = '/warehouse.html';
+        return;
+      }
+      
+      await loadProduct();
+      await loadItems();
+    }
+    
+    // Load product info
+    async function loadProduct() {
+      try {
+        const response = await fetch(`${API_URL}/warehouse/products/${productId}`);
+        const data = await response.json();
+        
+        if (data.success && data.product) {
+          document.getElementById('productTitle').textContent = `📱 ${data.product.name}`;
+          document.getElementById('productInfo').textContent = `Sotish narxi: $${data.product.sellPrice} | Jami: ${data.product.stock} dona`;
+        }
+      } catch (error) {
+        console.error('Mahsulot yuklash xato:', error);
+      }
+    }
+    
+    // Load items
+    async function loadItems() {
+      try {
+        const response = await fetch(`${API_URL}/warehouse/product-items/${productId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          allItems = data.items || [];
+          filterItems(currentFilter);
+          updateStats();
+        }
+      } catch (error) {
+        console.error('IMEI lar yuklash xato:', error);
+        document.getElementById('itemsGrid').innerHTML = '<p class="empty">Xatolik yuz berdi</p>';
+      }
+    }
+    
+    // Update stats
+    function updateStats() {
+      const total = allItems.length;
+      const available = allItems.filter(i => i.status === 'available').length;
+      const sold = allItems.filter(i => i.status === 'sold').length;
+      const reserved = allItems.filter(i => i.status === 'reserved').length;
+      
+      document.getElementById('totalItems').textContent = total;
+      document.getElementById('availableItems').textContent = available;
+      document.getElementById('soldItems').textContent = sold;
+      document.getElementById('reservedItems').textContent = reserved;
+    }
+    
+    // Filter items
+    function filterItems(filter) {
+      currentFilter = filter;
+      
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      event?.target?.classList.add('active');
+      
+      if (filter === 'all') {
+        filteredItems = allItems;
+      } else {
+        filteredItems = allItems.filter(item => item.status === filter);
+      }
+      
+      displayItems(filteredItems);
+    }
+    
+    // Search items
+    function searchItems() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      
+      if (!query) {
+        filterItems(currentFilter);
+        return;
+      }
+      
+      filteredItems = allItems.filter(item => 
+        item.imei.toLowerCase().includes(query)
+      );
+      
+      displayItems(filteredItems);
+    }
+    
+    // Display items
+    function displayItems(items) {
+      const grid = document.getElementById('itemsGrid');
+      
+      if (!items || items.length === 0) {
+        grid.innerHTML = '<p class="empty">IMEI topilmadi</p>';
+        return;
+      }
+      
+      grid.innerHTML = items.map(item => {
+        const statusClass = `status-${item.status}`;
+        const statusText = {
+          available: '✅ Mavjud',
+          sold: '💰 Sotilgan',
+          reserved: '🔒 Band'
+        }[item.status] || item.status;
+        
+        return `
+          <div class="item-card">
+            <div class="item-imei">${item.imei}</div>
+            <div class="item-status ${statusClass}">${statusText}</div>
+            
+            <div class="item-info">💵 Kelgan: $${item.buyPrice.toFixed(2)}</div>
+            <div class="item-info">💰 Sotish: $${item.sellPrice.toFixed(2)}</div>
+            ${item.soldDate ? `<div class="item-info">📅 Sotilgan: ${new Date(item.soldDate).toLocaleDateString('uz-UZ')}</div>` : ''}
+            ${item.notes ? `<div class="item-info">📝 ${item.notes}</div>` : ''}
+            
+            <div class="item-actions">
+              ${item.status === 'available' ? `
+                <button class="item-btn btn-sell" onclick="openSellModal('${item._id}', '${item.imei}', ${item.sellPrice})">
+                  💰 Sotish
+                </button>
+              ` : ''}
+              <button class="item-btn btn-delete" onclick="deleteItem('${item._id}')">
+                🗑️ O'chirish
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // Add item modal
+    function openAddItemModal() {
+      document.getElementById('itemIMEI').value = '';
+      document.getElementById('itemBuyPrice').value = '';
+      document.getElementById('itemSellPrice').value = '';
+      document.getElementById('itemNotes').value = '';
+      document.getElementById('addItemModal').classList.add('active');
+    }
+    
+    function closeAddItemModal() {
+      document.getElementById('addItemModal').classList.remove('active');
+    }
+    
+    // Save item
+    async function saveItem() {
+      const imei = document.getElementById('itemIMEI').value.trim();
+      const buyPrice = parseFloat(document.getElementById('itemBuyPrice').value);
+      const sellPrice = parseFloat(document.getElementById('itemSellPrice').value);
+      const notes = document.getElementById('itemNotes').value.trim();
+      
+      if (!imei || !buyPrice || !sellPrice) {
+        alert('Barcha maydonlarni to\'ldiring!');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/warehouse/product-items`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId,
+            imei,
+            buyPrice,
+            sellPrice,
+            notes
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          alert('✅ IMEI muvaffaqiyatli qo\'shildi!');
+          closeAddItemModal();
+          await loadItems();
+          await loadProduct();
+        } else {
+          alert('❌ Xatolik: ' + data.error);
+        }
+      } catch (error) {
+        console.error('IMEI qo\'shish xato:', error);
+        alert('❌ Server bilan aloqa yo\'q!');
+      }
+    }
+    
+    // Sell modal
+    function openSellModal(itemId, imei, price) {
+      selectedItemId = itemId;
+      document.getElementById('sellItemIMEI').value = imei;
+      document.getElementById('sellItemPrice').value = price;
+      document.getElementById('sellCustomerName').value = '';
+      document.getElementById('sellNotes').value = '';
+      document.getElementById('sellItemModal').classList.add('active');
+    }
+    
+    function closeSellItemModal() {
+      document.getElementById('sellItemModal').classList.remove('active');
+      selectedItemId = null;
+    }
+    
+    // Confirm sell
+    async function confirmSell() {
+      if (!selectedItemId) return;
+      
+      const price = parseFloat(document.getElementById('sellItemPrice').value);
+      const customerName = document.getElementById('sellCustomerName').value.trim();
+      const notes = document.getElementById('sellNotes').value.trim();
+      
+      if (!price) {
+        alert('Narxni kiriting!');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/warehouse/sell-item`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            itemId: selectedItemId,
+            sellPrice: price,
+            customerName,
+            notes
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          alert('✅ Mahsulot sotildi!');
+          closeSellItemModal();
+          await loadItems();
+          await loadProduct();
+        } else {
+          alert('❌ Xatolik: ' + data.error);
+        }
+      } catch (error) {
+        console.error('Sotish xato:', error);
+        alert('❌ Server bilan aloqa yo\'q!');
+      }
+    }
+    
+    // Delete item
+    async function deleteItem(itemId) {
+      if (!confirm('Haqiqatan ham bu IMEI ni o\'chirmoqchimisiz?')) return;
+      
+      try {
+        const response = await fetch(`${API_URL}/warehouse/product-items/${itemId}`, {
+          method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          alert('✅ IMEI o\'chirildi!');
+          await loadItems();
+          await loadProduct();
+        } else {
+          alert('❌ Xatolik: ' + data.error);
+        }
+      } catch (error) {
+        console.error('O\'chirish xato:', error);
+        alert('❌ Server bilan aloqa yo\'q!');
+      }
+    }
+    
+    function goBack() {
+      window.location.href = '/warehouse.html';
+    }
+    
+    // Start
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

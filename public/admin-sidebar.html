@@ -1,0 +1,223 @@
+<!-- Admin Sidebar Component -->
+<div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <!-- Header -->
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <span>🏪</span>
+                <span>Do'kon CRM</span>
+            </div>
+            <div class="sidebar-subtitle">Professional Boshqaruv Tizimi</div>
+        </div>
+
+        <!-- Menu -->
+        <nav class="sidebar-menu">
+            <!-- Dashboard Section -->
+            <div class="menu-section">
+                <div class="menu-section-title">Dashboard</div>
+                <a href="admin.html" class="menu-item" data-page="admin">
+                    <span class="menu-item-icon">🏠</span>
+                    <span>Asosiy Panel</span>
+                </a>
+                <a href="admin-simple.html" class="menu-item" data-page="admin-simple">
+                    <span class="menu-item-icon">🎯</span>
+                    <span>Oson Panel</span>
+                </a>
+                <a href="admin-dashboard-pro.html" class="menu-item" data-page="admin-dashboard-pro">
+                    <span class="menu-item-icon">📊</span>
+                    <span>Pro Dashboard</span>
+                </a>
+            </div>
+
+            <!-- Analytics Section -->
+            <div class="menu-section">
+                <div class="menu-section-title">Tahlil va Hisobotlar</div>
+                <a href="admin-analytics-pro.html" class="menu-item" data-page="admin-analytics-pro">
+                    <span class="menu-item-icon">📈</span>
+                    <span>Pro Analytics</span>
+                </a>
+                <a href="admin-analytics.html" class="menu-item" data-page="admin-analytics">
+                    <span class="menu-item-icon">📉</span>
+                    <span>Analytics</span>
+                </a>
+                <a href="admin-reports.html" class="menu-item" data-page="admin-reports">
+                    <span class="menu-item-icon">📋</span>
+                    <span>Hisobotlar</span>
+                </a>
+                <a href="finance-dashboard.html" class="menu-item" data-page="finance-dashboard">
+                    <span class="menu-item-icon">💰</span>
+                    <span>Moliya</span>
+                </a>
+            </div>
+
+            <!-- Management Section -->
+            <div class="menu-section">
+                <div class="menu-section-title">Boshqaruv</div>
+                <a href="admin-branches.html" class="menu-item" data-page="admin-branches">
+                    <span class="menu-item-icon">🏢</span>
+                    <span>Filiallar</span>
+                </a>
+                <a href="admin-cashiers.html" class="menu-item" data-page="admin-cashiers">
+                    <span class="menu-item-icon">👥</span>
+                    <span>Kassirlar</span>
+                </a>
+                <a href="admin-handovers.html" class="menu-item" data-page="admin-handovers">
+                    <span class="menu-item-icon">💵</span>
+                    <span>Kirim Berishlar</span>
+                </a>
+                <a href="admin-expenses.html" class="menu-item" data-page="admin-expenses">
+                    <span class="menu-item-icon">💸</span>
+                    <span>Xarajatlar</span>
+                </a>
+            </div>
+
+            <!-- Warehouse Section -->
+            <div class="menu-section">
+                <div class="menu-section-title">Ombor</div>
+                <a href="warehouse-select.html" class="menu-item" data-page="warehouse-select">
+                    <span class="menu-item-icon">🏭</span>
+                    <span>Ombor Boshqaruvi</span>
+                </a>
+                <a href="warehouse-pro.html" class="menu-item" data-page="warehouse-pro">
+                    <span class="menu-item-icon">📦</span>
+                    <span>Mahsulotlar</span>
+                </a>
+                <a href="warehouse-items.html" class="menu-item" data-page="warehouse-items">
+                    <span class="menu-item-icon">📋</span>
+                    <span>Inventar</span>
+                </a>
+            </div>
+
+            <!-- Customers Section -->
+            <div class="menu-section">
+                <div class="menu-section-title">Mijozlar</div>
+                <a href="customer-search.html" class="menu-item" data-page="customer-search">
+                    <span class="menu-item-icon">🔍</span>
+                    <span>Mijoz Qidirish</span>
+                </a>
+                <a href="customer-segmentation.html" class="menu-item" data-page="customer-segmentation">
+                    <span class="menu-item-icon">👨‍👩‍👧‍👦</span>
+                    <span>Segmentatsiya</span>
+                </a>
+            </div>
+
+            <!-- Cashier Section -->
+            <div class="menu-section">
+                <div class="menu-section-title">Kassa</div>
+                <a href="cashier-login-enhanced.html" class="menu-item" data-page="cashier-login-enhanced">
+                    <span class="menu-item-icon">💼</span>
+                    <span>Kassir Panel</span>
+                </a>
+                <a href="cashier-pro.html" class="menu-item" data-page="cashier-pro">
+                    <span class="menu-item-icon">🎯</span>
+                    <span>Kassa Pro</span>
+                </a>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="menu-section">
+                <div class="menu-section-title">Sozlamalar</div>
+                <a href="admin-notifications.html" class="menu-item" data-page="admin-notifications">
+                    <span class="menu-item-icon">🔔</span>
+                    <span>Bildirishnomalar</span>
+                    <span class="menu-item-badge">3</span>
+                </a>
+                <a href="#" class="menu-item" onclick="openSettings(); return false;">
+                    <span class="menu-item-icon">⚙️</span>
+                    <span>Sozlamalar</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Info -->
+        <div class="sidebar-user">
+            <div class="user-info">
+                <div class="user-avatar">A</div>
+                <div>
+                    <div class="user-name">Admin</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout -->
+        <div class="sidebar-logout">
+            <button class="logout-btn" onclick="logout()">
+                <span>🚪</span> Chiqish
+            </button>
+        </div>
+    </aside>
+
+    <!-- Mobile Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+        ☰
+    </button>
+
+    <!-- Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="admin-main" id="adminMain">
+        <!-- Content will be loaded here -->
+    </main>
+</div>
+
+<script>
+// Sidebar functionality
+function toggleSidebar() {
+    const sidebar = document.getElementById('adminSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+// Set active menu item based on current page
+function setActiveMenuItem() {
+    const currentPage = window.location.pathname.split('/').pop() || 'admin.html';
+    const menuItems = document.querySelectorAll('.menu-item');
+    
+    menuItems.forEach(item => {
+        const href = item.getAttribute('href');
+        if (href === currentPage || href === './' + currentPage) {
+            item.classList.add('active');
+        }
+    });
+}
+
+// Logout function
+function logout() {
+    if (confirm('Tizimdan chiqmoqchimisiz?')) {
+        localStorage.removeItem('adminToken');
+        window.location.href = 'admin-login.html';
+    }
+}
+
+// Settings function
+function openSettings() {
+    alert('Sozlamalar sahifasi tez orada qo'shiladi!');
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    setActiveMenuItem();
+    
+    // Close sidebar on mobile when clicking menu item
+    if (window.innerWidth <= 768) {
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                toggleSidebar();
+            });
+        });
+    }
+});
+
+// Close sidebar on window resize
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+        document.getElementById('adminSidebar').classList.remove('active');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+    }
+});
+</script>

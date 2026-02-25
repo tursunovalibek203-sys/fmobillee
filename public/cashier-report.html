@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mening Hisobotim</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .date-info {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .summary-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-item {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .summary-value {
+            font-size: 2em;
+            font-weight: 700;
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Mening Kunlik Hisobotim</h1>
+            <div class="date-info" id="dateInfo">Yuklanmoqda...</div>
+        </div>
+        
+        <div class="summary-box">
+            <div class="summary-title">Bugungi Natijalar</div>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-label">Savdolar Soni</div>
+                    <div class="summary-value" id="todaySalesCount">0</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Jami Daromad</div>
+                    <div class="summary-value" id="todayRevenue">$0</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Hozirgi Balans</div>
+                    <div class="summary-value" id="currentBalance">$0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💵</div>
+                <div class="stat-value" id="balanceUSD">$0</div>
+                <div class="stat-label">Dollar Balansi</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="balanceUZS">0</div>
+                <div class="stat-label">So'm Balansi</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💸</div>
+                <div class="stat-value" id="balanceRUB">0</div>
+                <div class="stat-label">Rubl Balansi</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <span>📊</span>
+                <span>Bugungi Savdolar</span>
+            </div>
+            <div id="todaySalesTable"></div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <span>💸</span>
+                <span>Bugungi Kirimlar</span>
+            </div>
+            <div id="todayHandoversTable"></div>
+        </div>
+        
+        <div class="actions">
+            <a href="cashier-multi-currency.html" class="btn btn-primary">⬅ Kassir Paneliga Qaytish</a>
+            <button class="btn btn-success" onclick="printReport()">🖨️ Hisobotni Chop Etish</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let cashierId = null;
+        
+        // LocalStorage dan kassir ID ni olish
+        const cashierData = localStorage.getItem('cashierData');
+        if (cashierData) {
+            const data = JSON.parse(cashierData);
+            cashierId = data.cashierId;
+        }
+        
+        if (!cashierId) {
+            alert('Iltimos avval login qiling!');
+            window.location.href = 'cashier-multi-currency.html';
+        }
+        
+        async function loadReport() {
+            try {
+                const today = new Date().toLocaleDateString('uz-UZ');
+                document.getElementById('dateInfo').textContent = today;
+                
+                // Kassir ma'lumotlarini olish
+                const cashierRes = await fetch(`${API_URL}/cashiers`);
+                const cashierData = await cashierRes.json();
+                
+                if (cashierData.success) {
+                    const cashier = cashierData.cashiers.find(c => c.cashierId == cashierId);
+                    
+                    if (cashier) {
+                        displayBalance(cashier);
+                    }
+                }
+                
+                // Bugungi savdolarni olish
+                const salesRes = await fetch(`${API_URL}/cashier-sales/${cashierId}`);
+                const salesData = await salesRes.json();
+                
+                if (salesData.success) {
+                    const todaySales = salesData.sales.filter(s => s.date === today);
+                    displayTodaySales(todaySales);
+                    updateTodayStats(todaySales);
+                }
+                
+                // Bugungi kirimlarni olish
+                const handoversRes = await fetch(`${API_URL}/cashier-handovers/${cashierId}`);
+                const handoversData = await handoversRes.json();
+                
+                if (handoversData.success) {
+                    const todayHandovers = handoversData.handovers.filter(h => h.date === today);
+                    displayTodayHandovers(todayHandovers);
+                }
+                
+            } catch (error) {
+                console.error('Xato:', error);
+                alert('Hisobotni yuklashda xato!');
+            }
+        }
+        
+        function displayBalance(cashier) {
+            document.getElementById('currentBalance').textContent = '$' + (cashier.balance?.toFixed(2) || '0.00');
+            document.getElementById('balanceUSD').textContent = '$' + (cashier.balanceUSD?.toFixed(2) || '0.00');
+            document.getElementById('balanceUZS').textContent = (cashier.balanceUZS?.toLocaleString() || '0') + ' so\'m';
+            document.getElementById('balanceRUB').textContent = (cashier.balanceRUB?.toLocaleString() || '0') + ' ₽';
+        }
+        
+        function displayTodaySales(sales) {
+            const container = document.getElementById('todaySalesTable');
+            
+            if (sales.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Bugun hali savdolar yo'q</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Vaqt</th>
+                            <th>Mijoz</th>
+                            <th>Mahsulot</th>
+                            <th>Narx</th>
+                            <th>To'landi</th>
+                            <th>Valyuta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sales.map((s, index) => `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${s.time}</td>
+                                <td>${s.customerName || '-'}</td>
+                                <td>${s.product}</td>
+                                <td>$${s.price?.toFixed(2)}</td>
+                                <td>$${s.paidUSD?.toFixed(2) || '0.00'}</td>
+                                <td>USD</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        function displayTodayHandovers(handovers) {
+            const container = document.getElementById('todayHandoversTable');
+            
+            if (handovers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💸</div>
+                        <p>Bugun hali kirimlar yo'q</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Vaqt</th>
+                            <th>Miqdor</th>
+                            <th>Oldingi Balans</th>
+                            <th>Keyingi Balans</th>
+                            <th>Izoh</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${handovers.map((h, index) => `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${h.time}</td>
+                                <td>$${h.amount?.toFixed(2)}</td>
+                                <td>$${h.balanceBefore?.toFixed(2)}</td>
+                                <td>$${h.balanceAfter?.toFixed(2)}</td>
+                                <td>${h.notes || '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        function updateTodayStats(sales) {
+            document.getElementById('todaySalesCount').textContent = sales.length;
+            
+            const totalRevenue = sales.reduce((sum, s) => sum + (s.price || 0), 0);
+            document.getElementById('todayRevenue').textContent = '$' + totalRevenue.toFixed(2);
+        }
+        
+        function printReport() {
+            window.print();
+        }
+        
+        // Sahifa yuklanganda
+        loadReport();
+        
+        // Har 30 sekundda yangilash
+        setInterval(loadReport, 30000);
+    </script>
+    
+    <style media="print">
+        body {
+            background: white;
+            padding: 20px;
+        }
+        
+        .actions {
+            display: none;
+        }
+        
+        .btn {
+            display: none;
+        }
+    </style>
+    <script src="mobile-enhancements.js"></script>
+    <script src="cashier-sidebar-loader.js"></script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Ombor Tarixi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            border: none;
+            background: #f3f4f6;
+            color: #6b7280;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tab:hover:not(.active) {
+            background: #e5e7eb;
+        }
+        
+        .content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .history-table th {
+            background: #f9fafb;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .history-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .history-table tr:hover {
+            background: #f9fafb;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-in {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge-out {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .badge-sale {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .badge-return {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .badge-damage {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-input {
+            padding: 10px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        
+        .filter-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .time-info {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .user-info {
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Ombor Tarixi</h1>
+            <p style="color: #6b7280; margin-top: 5px;">Mahsulot kelishi va ketishi to'liq tarixi</p>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('all')">📋 Barchasi</button>
+                <button class="tab" onclick="showTab('in')">📥 Kelish</button>
+                <button class="tab" onclick="showTab('out')">📤 Ketish</button>
+                <button class="tab" onclick="showTab('today')">📅 Bugun</button>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="stats" id="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Jami Kelish</div>
+                    <div class="stat-value" id="totalIn">0</div>
+                    <div class="stat-label">dona</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Jami Ketish</div>
+                    <div class="stat-value" id="totalOut">0</div>
+                    <div class="stat-label">dona</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Bugungi Kelish</div>
+                    <div class="stat-value" id="todayIn">0</div>
+                    <div class="stat-label">dona</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Bugungi Ketish</div>
+                    <div class="stat-value" id="todayOut">0</div>
+                    <div class="stat-label">dona</div>
+                </div>
+            </div>
+            
+            <div class="filters">
+                <input type="text" class="filter-input" id="searchProduct" placeholder="🔍 Mahsulot qidirish...">
+                <input type="date" class="filter-input" id="startDate">
+                <input type="date" class="filter-input" id="endDate">
+                <button class="btn btn-primary" onclick="applyFilters()">Filtr</button>
+                <button class="btn btn-primary" onclick="resetFilters()">Tozalash</button>
+            </div>
+            
+            <div id="historyContent">
+                <div class="loading">Yuklanmoqda...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allStockIns = [];
+        let allStockOuts = [];
+        let currentTab = 'all';
+
+        // Sahifa yuklanganda
+        window.onload = function() {
+            loadHistory();
+        };
+
+        // Tarixni yuklash
+        async function loadHistory() {
+            try {
+                // Stock In
+                const inResponse = await fetch('/api/stock-in?limit=1000');
+                const inData = await inResponse.json();
+                
+                if (inData.success) {
+                    allStockIns = inData.stockIns;
+                }
+
+                // Stock Out
+                const outResponse = await fetch('/api/stock-out?limit=1000');
+                const outData = await outResponse.json();
+                
+                if (outData.success) {
+                    allStockOuts = outData.stockOuts;
+                }
+
+                // Bugungi ma'lumotlar
+                const todayResponse = await fetch('/api/stock-today');
+                const todayData = await todayResponse.json();
+                
+                if (todayData.success) {
+                    document.getElementById('todayIn').textContent = todayData.today.totalIn;
+                    document.getElementById('todayOut').textContent = todayData.today.totalOut;
+                }
+
+                // Statistika
+                updateStats();
+                
+                // Tarixni ko'rsatish
+                displayHistory();
+
+            } catch (error) {
+                console.error('Xato:', error);
+                document.getElementById('historyContent').innerHTML = 
+                    '<div class="no-data">❌ Ma\'lumotlarni yuklashda xatolik</div>';
+            }
+        }
+
+        // Statistikani yangilash
+        function updateStats() {
+            const totalIn = allStockIns.reduce((sum, s) => sum + s.quantity, 0);
+            const totalOut = allStockOuts.reduce((sum, s) => sum + s.quantity, 0);
+            
+            document.getElementById('totalIn').textContent = totalIn;
+            document.getElementById('totalOut').textContent = totalOut;
+        }
+
+        // Tarixni ko'rsatish
+        function displayHistory() {
+            let history = [];
+            
+            if (currentTab === 'all') {
+                history = [
+                    ...allStockIns.map(s => ({ ...s, type: 'in' })),
+                    ...allStockOuts.map(s => ({ ...s, type: 'out' }))
+                ];
+            } else if (currentTab === 'in') {
+                history = allStockIns.map(s => ({ ...s, type: 'in' }));
+            } else if (currentTab === 'out') {
+                history = allStockOuts.map(s => ({ ...s, type: 'out' }));
+            } else if (currentTab === 'today') {
+                const today = new Date().toLocaleDateString('uz-UZ');
+                history = [
+                    ...allStockIns.filter(s => s.date === today).map(s => ({ ...s, type: 'in' })),
+                    ...allStockOuts.filter(s => s.date === today).map(s => ({ ...s, type: 'out' }))
+                ];
+            }
+
+            // Sanaga ko'ra saralash (yangi birinchi)
+            history.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            if (history.length === 0) {
+                document.getElementById('historyContent').innerHTML = 
+                    '<div class="no-data">📭 Ma\'lumot topilmadi</div>';
+                return;
+            }
+
+            let html = '<table class="history-table">';
+            html += '<thead><tr>';
+            html += '<th>Turi</th>';
+            html += '<th>Mahsulot</th>';
+            html += '<th>Miqdor</th>';
+            html += '<th>Narx</th>';
+            html += '<th>Sabab/Yetkazib beruvchi</th>';
+            html += '<th>Kim</th>';
+            html += '<th>Vaqt</th>';
+            html += '</tr></thead><tbody>';
+
+            history.forEach(item => {
+                const isIn = item.type === 'in';
+                const badge = isIn ? 'badge-in' : 'badge-out';
+                const icon = isIn ? '📥' : '📤';
+                const typeText = isIn ? 'Kelish' : 'Ketish';
+                
+                html += '<tr>';
+                html += `<td><span class="badge ${badge}">${icon} ${typeText}</span></td>`;
+                html += `<td><strong>${item.productName}</strong></td>`;
+                html += `<td><strong>${item.quantity} dona</strong></td>`;
+                
+                if (isIn) {
+                    html += `<td>$${item.buyPrice} / $${item.totalCost}</td>`;
+                    html += `<td>${item.supplier || '-'}</td>`;
+                    html += `<td><div class="user-info">${item.addedBy}</div><div class="time-info">${item.userRole}</div></td>`;
+                } else {
+                    html += `<td>$${item.sellPrice} / $${item.totalAmount}</td>`;
+                    html += `<td><span class="badge ${getBadgeClass(item.reason)}">${item.reasonText || item.reason}</span></td>`;
+                    html += `<td><div class="user-info">${item.processedBy}</div><div class="time-info">${item.userRole}</div></td>`;
+                }
+                
+                html += `<td><div class="time-info">${item.date}</div><div class="time-info">${item.time}</div></td>`;
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            document.getElementById('historyContent').innerHTML = html;
+        }
+
+        // Sabab badge classi
+        function getBadgeClass(reason) {
+            const classes = {
+                'sale': 'badge-sale',
+                'return': 'badge-return',
+                'damage': 'badge-damage',
+                'transfer': 'badge-in'
+            };
+            return classes[reason] || 'badge-out';
+        }
+
+        // Tab o'zgartirish
+        function showTab(tab) {
+            currentTab = tab;
+            
+            // Tab buttonlarni yangilash
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            displayHistory();
+        }
+
+        // Filtrlarni qo'llash
+        function applyFilters() {
+            const search = document.getElementById('searchProduct').value.toLowerCase();
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            // Filtr logikasi
+            // TODO: Implement filtering
+            
+            displayHistory();
+        }
+
+        // Filtrlarni tozalash
+        function resetFilters() {
+            document.getElementById('searchProduct').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            displayHistory();
+        }
+    </script>
+</body>
+</html>

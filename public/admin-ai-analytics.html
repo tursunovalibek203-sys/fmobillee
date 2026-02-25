@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🤖 AI Analytics Dashboard</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .ai-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .main-analytics {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .ai-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .ai-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .ai-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .ai-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        
+        .prediction-card {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+        
+        .prediction-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+        
+        .prediction-value {
+            font-size: 28px;
+            font-weight: 900;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .prediction-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+        
+        .prediction-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .trend-up {
+            color: #10b981;
+        }
+        
+        .trend-down {
+            color: #ef4444;
+        }
+        
+        .trend-stable {
+            color: #6b7280;
+        }
+        
+        .chart-container {
+            height: 350px;
+            position: relative;
+            margin-top: 16px;
+        }
+        
+        .insights-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .insight-item {
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .insight-icon {
+            font-size: 20px;
+            margin-top: 2px;
+        }
+        
+        .insight-content {
+            flex: 1;
+        }
+        
+        .insight-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+        
+        .insight-description {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+        
+        .confidence-bar {
+            width: 100%;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        
+        .sidebar-ai {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .ai-controls {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .control-group {
+            margin-bottom: 16px;
+        }
+        
+        .control-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .control-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+        }
+        
+        .control-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .control-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .ai-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .metric-item {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        
+        .metric-value {
+            font-size: 20px;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+        
+        .metric-label {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+        
+        .loading-ai {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 12px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .accuracy-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .accuracy-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .accuracy-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e5e7eb;
+        }
+        
+        .accuracy-dot.active {
+            background: #10b981;
+        }
+        
+        .customer-segments {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .segment-card {
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .segment-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .segment-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .segment-name {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+        
+        .segment-count {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        @media (max-width: 1024px) {
+            .ai-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar-ai {
+                order: -1;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .prediction-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1 style="margin: 0; font-size: 32px; font-weight: 900;">🤖 AI Analytics Dashboard</h1>
+                <p style="margin: 8px 0 0 0; opacity: 0.9;">Machine Learning asosida savdo bashorati va tahlil</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" onclick="window.location.href='admin-ultimate.html'">
+                    ← Orqaga
+                </button>
+                <button class="btn btn-primary" onclick="refreshAIAnalysis()">
+                    🔄 AI Tahlilni Yangilash
+                </button>
+            </div>
+        </div>
+
+        <!-- AI Grid -->
+        <div class="ai-grid">
+            <!-- Main Analytics -->
+            <div class="main-analytics">
+                <!-- Sales Forecasting -->
+                <div class="ai-card">
+                    <div class="ai-card-header">
+                        <div class="ai-title">
+                            📈 Savdo Bashorati
+                        </div>
+                        <div class="ai-status">
+                            <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
+                            AI Faol
+                        </div>
+                    </div>
+                    
+                    <div class="prediction-grid">
+                        <div class="prediction-card">
+                            <div class="prediction-value" id="nextWeekSales">$0</div>
+                            <div class="prediction-label">Keyingi Hafta Bashorati</div>
+                            <div class="prediction-trend trend-up" id="weekTrend">
+                                ↗️ +12.5% o'sish kutilmoqda
+                            </div>
+                            <div class="accuracy-indicator">
+                                <span style="font-size: 12px;">Aniqlik:</span>
+                                <div class="accuracy-dots">
+                                    <div class="accuracy-dot active"></div>
+                                    <div class="accuracy-dot active"></div>
+                                    <div class="accuracy-dot active"></div>
+                                    <div class="accuracy-dot active"></div>
+                                    <div class="accuracy-dot"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #10b981;">87%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="prediction-card">
+                            <div class="prediction-value" id="nextMonthSales">$0</div>
+                            <div class="prediction-label">Keyingi Oy Bashorati</div>
+                            <div class="prediction-trend trend-up" id="monthTrend">
+                                ↗️ +8.3% o'sish kutilmoqda
+                            </div>
+                            <div class="accuracy-indicator">
+                                <span style="font-size: 12px;">Aniqlik:</span>
+                                <div class="accuracy-dots">
+                                    <div class="accuracy-dot active"></div>
+                                    <div class="accuracy-dot active"></div>
+                                    <div class="accuracy-dot active"></div>
+                                    <div class="accuracy-dot active"></div>
+                                    <div class="accuracy-dot active"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #10b981;">92%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="prediction-card">
+                            <div class="prediction-value" id="bestSellingProduct">iPhone 15</div>
+                            <div class="prediction-label">Eng Ko'p Sotiladigan Mahsulot</div>
+                            <div class="prediction-trend trend-up">
+                                📱 45 dona kutilmoqda
+                            </div>
+                        </div>
+                        
+                        <div class="prediction-card">
+                            <div class="prediction-value" id="optimalPrice">$899</div>
+                            <div class="prediction-label">Optimal Narx Tavsiyasi</div>
+                            <div class="prediction-trend trend-stable">
+                                💰 Maksimal foyda uchun
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="forecastChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Customer Behavior Analysis -->
+                <div class="ai-card">
+                    <div class="ai-card-header">
+                        <div class="ai-title">
+                            🎯 Mijozlar Xatti-Harakati Tahlili
+                        </div>
+                        <button class="btn btn-secondary" onclick="analyzeCustomerBehavior()">
+                            🔍 Batafsil Tahlil
+                        </button>
+                    </div>
+                    
+                    <div class="customer-segments">
+                        <div class="segment-card">
+                            <div class="segment-icon">👑</div>
+                            <div class="segment-name">VIP Mijozlar</div>
+                            <div class="segment-count">23 kishi (15%)</div>
+                        </div>
+                        <div class="segment-card">
+                            <div class="segment-icon">🔄</div>
+                            <div class="segment-name">Doimiy Mijozlar</div>
+                            <div class="segment-count">67 kishi (45%)</div>
+                        </div>
+                        <div class="segment-card">
+                            <div class="segment-icon">🆕</div>
+                            <div class="segment-name">Yangi Mijozlar</div>
+                            <div class="segment-count">34 kishi (25%)</div>
+                        </div>
+                        <div class="segment-card">
+                            <div class="segment-icon">⚠️</div>
+                            <div class="segment-name">Risk Guruhi</div>
+                            <div class="segment-count">12 kishi (8%)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="behaviorChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- AI Insights -->
+                <div class="ai-card">
+                    <div class="ai-card-header">
+                        <div class="ai-title">
+                            💡 AI Tavsiyalar va Insights
+                        </div>
+                        <div style="font-size: 12px; color: #6b7280;">
+                            So'nggi yangilanish: <span id="lastUpdate">Hozir</span>
+                        </div>
+                    </div>
+                    
+                    <div class="insights-list" id="aiInsightsList">
+                        <!-- AI insights will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar-ai">
+                <!-- AI Controls -->
+                <div class="ai-controls">
+                    <div class="ai-title" style="color: white; margin-bottom: 16px;">
+                        ⚙️ AI Sozlamalari
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Bashorat Davri:</label>
+                        <select class="control-input" id="forecastPeriod" onchange="updateForecast()">
+                            <option value="week">1 Hafta</option>
+                            <option value="month" selected>1 Oy</option>
+                            <option value="quarter">3 Oy</option>
+                            <option value="year">1 Yil</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Tahlil Turi:</label>
+                        <select class="control-input" id="analysisType" onchange="updateAnalysis()">
+                            <option value="sales">Savdo Tahlili</option>
+                            <option value="customer">Mijozlar Tahlili</option>
+                            <option value="product">Mahsulot Tahlili</option>
+                            <option value="financial">Moliyaviy Tahlil</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">AI Model:</label>
+                        <select class="control-input" id="aiModel">
+                            <option value="neural">Neural Network</option>
+                            <option value="regression">Linear Regression</option>
+                            <option value="forest">Random Forest</option>
+                            <option value="gradient">Gradient Boosting</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="trainAIModel()" style="width: 100%; margin-top: 16px;">
+                        🧠 AI Modelni O'qitish
+                    </button>
+                </div>
+
+                <!-- AI Metrics -->
+                <div class="ai-controls">
+                    <div class="ai-title" style="color: white; margin-bottom: 16px;">
+                        📊 AI Metrikalar
+                    </div>
+                    
+                    <div class="ai-metrics">
+                        <div class="metric-item">
+                            <div class="metric-value" id="modelAccuracy">94.2%</div>
+                            <div class="metric-label">Model Aniqligi</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="dataPoints">15.2K</div>
+                            <div class="metric-label">Ma'lumot Nuqtalari</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="trainingTime">2.3s</div>
+                            <div class="metric-label">O'qitish Vaqti</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="predictionSpeed">0.1ms</div>
+                            <div class="metric-label">Bashorat Tezligi</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="ai-controls">
+                    <div class="ai-title" style="color: white; margin-bottom: 16px;">
+                        ⚡ Tezkor Harakatlar
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="generateReport()" style="width: 100%; margin-bottom: 8px;">
+                        📊 AI Hisobot Yaratish
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportPredictions()" style="width: 100%; margin-bottom: 8px;">
+                        📥 Bashoratlarni Eksport
+                    </button>
+                    <button class="btn btn-secondary" onclick="scheduleAnalysis()" style="width: 100%; margin-bottom: 8px;">
+                        ⏰ Avtomatik Tahlil
+                    </button>
+                    <button class="btn btn-secondary" onclick="aiSettings()" style="width: 100%;">
+                        ⚙️ Qo'shimcha Sozlamalar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="admin-ai-analytics.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

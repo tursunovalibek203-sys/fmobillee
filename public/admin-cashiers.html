@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kassirlar Boshqaruvi</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #f5576c;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+        }
+        
+        .add-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #f5576c;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background: #f5576c;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #e04455;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .cashiers-list {
+            margin-top: 30px;
+        }
+        
+        .cashier-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .cashier-card:hover {
+            border-color: #f5576c;
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.2);
+        }
+        
+        .cashier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .cashier-name {
+            font-size: 1.5em;
+            color: #f5576c;
+            font-weight: 700;
+        }
+        
+        .cashier-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .cashier-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .cashier-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .filter-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>👤 Kassirlar Boshqaruvi</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCashiers">0</div>
+                <div class="stat-label">Jami Kassirlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeCashiers">0</div>
+                <div class="stat-label">Faol Kassirlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalBalance">$0</div>
+                <div class="stat-label">Jami Balans</div>
+            </div>
+        </div>
+        
+        <div class="add-section">
+            <h2 style="margin-bottom: 20px; color: #f5576c;">➕ Yangi Kassir Qo'shish</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Filial *</label>
+                    <select id="cashierBranch">
+                        <option value="">Filialni tanlang</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ism *</label>
+                    <input type="text" id="cashierName" placeholder="Kassir ismi">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Login *</label>
+                    <input type="text" id="cashierUsername" placeholder="Login">
+                </div>
+                <div class="form-group">
+                    <label>Parol *</label>
+                    <input type="password" id="cashierPassword" placeholder="Parol">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Telefon</label>
+                <input type="text" id="cashierPhone" placeholder="+998 90 123 45 67">
+            </div>
+            <button class="btn btn-primary" onclick="addCashier()">Kassir Qo'shish</button>
+        </div>
+        
+        <div class="filter-section">
+            <label style="margin: 0;">Filial bo'yicha filter:</label>
+            <select id="filterBranch" onchange="filterCashiers()" style="width: 300px;">
+                <option value="">Barcha filiallar</option>
+            </select>
+        </div>
+        
+        <div class="cashiers-list" id="cashiersList"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let allCashiers = [];
+        let allBranches = [];
+        
+        async function loadBranches() {
+            try {
+                const response = await fetch(`${API_URL}/branches`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allBranches = data.branches.filter(b => b.isActive);
+                    
+                    // Filial selectlarini to'ldirish
+                    const branchSelect = document.getElementById('cashierBranch');
+                    const filterSelect = document.getElementById('filterBranch');
+                    
+                    branchSelect.innerHTML = '<option value="">Filialni tanlang</option>' +
+                        allBranches.map(b => `<option value="${b.branchId}">${b.name}</option>`).join('');
+                    
+                    filterSelect.innerHTML = '<option value="">Barcha filiallar</option>' +
+                        allBranches.map(b => `<option value="${b.branchId}">${b.name}</option>`).join('');
+                }
+            } catch (error) {
+                console.error('Xato:', error);
+            }
+        }
+        
+        async function loadCashiers() {
+            try {
+                const response = await fetch(`${API_URL}/cashiers`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allCashiers = data.cashiers;
+                    displayCashiers(allCashiers);
+                    updateStats(allCashiers);
+                }
+            } catch (error) {
+                console.error('Xato:', error);
+                alert('Kassirlarni yuklashda xato!');
+            }
+        }
+        
+        function filterCashiers() {
+            const branchId = document.getElementById('filterBranch').value;
+            
+            if (!branchId) {
+                displayCashiers(allCashiers);
+            } else {
+                const filtered = allCashiers.filter(c => c.branchId == branchId);
+                displayCashiers(filtered);
+            }
+        }
+        
+        function displayCashiers(cashiers) {
+            const container = document.getElementById('cashiersList');
+            
+            if (cashiers.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">Hozircha kassirlar yo\'q</p>';
+                return;
+            }
+            
+            container.innerHTML = cashiers.map(cashier => {
+                const branch = allBranches.find(b => b.branchId === cashier.branchId);
+                const branchName = branch ? branch.name : 'Noma\'lum';
+                
+                return `
+                    <div class="cashier-card">
+                        <div class="cashier-header">
+                            <div class="cashier-name">${cashier.name}</div>
+                            <div class="cashier-status ${cashier.isActive ? 'status-active' : 'status-inactive'}">
+                                ${cashier.isActive ? 'Faol' : 'Faolsiz'}
+                            </div>
+                        </div>
+                        <div class="cashier-info">
+                            <div class="info-item">
+                                <div class="info-label">ID</div>
+                                <div class="info-value">#${cashier.cashierId}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Filial</div>
+                                <div class="info-value">${branchName}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Login</div>
+                                <div class="info-value">${cashier.username}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Telefon</div>
+                                <div class="info-value">${cashier.phone || 'Kiritilmagan'}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Balans</div>
+                                <div class="info-value">$${cashier.balance?.toFixed(2) || '0.00'}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Jami Savdolar</div>
+                                <div class="info-value">$${cashier.totalSales?.toFixed(2) || '0.00'}</div>
+                            </div>
+                        </div>
+                        <div class="cashier-actions">
+                            <button class="btn btn-primary" onclick="viewCashierDetails(${cashier.cashierId})">
+                                📊 Batafsil
+                            </button>
+                            <button class="btn btn-success" onclick="viewHandovers(${cashier.cashierId})">
+                                💰 Kirimlar
+                            </button>
+                            ${cashier.isActive ? 
+                                `<button class="btn btn-danger" onclick="deactivateCashier(${cashier.cashierId})">
+                                    ❌ Faolsizlantirish
+                                </button>` : 
+                                `<button class="btn btn-primary" onclick="activateCashier(${cashier.cashierId})">
+                                    ✅ Faollashtirish
+                                </button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateStats(cashiers) {
+            document.getElementById('totalCashiers').textContent = cashiers.length;
+            document.getElementById('activeCashiers').textContent = cashiers.filter(c => c.isActive).length;
+            
+            const totalBalance = cashiers.reduce((sum, c) => sum + (c.balance || 0), 0);
+            document.getElementById('totalBalance').textContent = '$' + totalBalance.toFixed(2);
+        }
+        
+        async function addCashier() {
+            const branchId = document.getElementById('cashierBranch').value;
+            const name = document.getElementById('cashierName').value.trim();
+            const username = document.getElementById('cashierUsername').value.trim();
+            const password = document.getElementById('cashierPassword').value.trim();
+            const phone = document.getElementById('cashierPhone').value.trim();
+            
+            if (!branchId || !name || !username || !password) {
+                alert('Barcha majburiy maydonlarni to\'ldiring!');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/cashiers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ branchId, name, username, password, phone })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Kassir muvaffaqiyatli qo\'shildi!');
+                    document.getElementById('cashierBranch').value = '';
+                    document.getElementById('cashierName').value = '';
+                    document.getElementById('cashierUsername').value = '';
+                    document.getElementById('cashierPassword').value = '';
+                    document.getElementById('cashierPhone').value = '';
+                    loadCashiers();
+                } else {
+                    alert('❌ Xato: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Xato:', error);
+                alert('Kassir qo\'shishda xato!');
+            }
+        }
+        
+        function viewCashierDetails(cashierId) {
+            window.location.href = `admin-cashier-details.html?id=${cashierId}`;
+        }
+        
+        function viewHandovers(cashierId) {
+            window.location.href = `admin-handovers.html?cashierId=${cashierId}`;
+        }
+        
+        async function deactivateCashier(cashierId) {
+            if (!confirm('Bu kassirni faolsizlantirishni xohlaysizmi?')) return;
+            
+            alert('Bu funksiya hozircha ishlamaydi. Keyinroq qo\'shiladi.');
+        }
+        
+        async function activateCashier(cashierId) {
+            alert('Bu funksiya hozircha ishlamaydi. Keyinroq qo\'shiladi.');
+        }
+        
+        // Sahifa yuklanganda
+        loadBranches();
+        loadCashiers();
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

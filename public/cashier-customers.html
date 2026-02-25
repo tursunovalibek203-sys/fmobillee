@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mijozlar Daftari - Kassir</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style-professional.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .customers-header {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      padding: 24px 32px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .customers-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card-mini {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+    }
+    
+    .stat-card-mini h3 {
+      font-size: 28px;
+      font-weight: 900;
+      margin: 0 0 8px 0;
+      color: white;
+    }
+    
+    .stat-card-mini p {
+      font-size: 13px;
+      opacity: 0.9;
+      margin: 0;
+      color: white;
+    }
+    
+    .customers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    
+    .customer-card-full {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+    }
+    
+    .customer-card-full:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      border-color: #10b981;
+    }
+    
+    .customer-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      color: #111827;
+    }
+    
+    .customer-info {
+      font-size: 14px;
+      color: #6b7280;
+      margin: 4px 0;
+    }
+    
+    .customer-debt {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .debt-amount {
+      font-size: 20px;
+      font-weight: 800;
+    }
+    
+    .debt-red {
+      color: #dc2626;
+    }
+    
+    .debt-green {
+      color: #059669;
+    }
+    
+    .filter-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .filter-btn {
+      padding: 12px 24px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .filter-btn.active {
+      background: white;
+      color: #059669;
+      border-color: white;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="customers-header">
+      <div>
+        <h1 style="margin: 0; color: white; font-size: 32px; font-weight: 900;">📖 Mijozlar Daftari</h1>
+        <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9); font-size: 15px;" id="cashierName"></p>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <button class="settings-btn" onclick="window.location.href='/cashier.html'" style="background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.3);">
+          <span>←</span>
+          <span>Orqaga</span>
+        </button>
+        <button class="settings-btn" onclick="openAddCustomerModal()" style="background: rgba(59, 130, 246, 0.2); border-color: rgba(59, 130, 246, 0.3);">
+          <span>+</span>
+          <span>Yangi mijoz</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="customers-stats">
+      <div class="stat-card-mini">
+        <h3 id="totalCustomers">0</h3>
+        <p>👥 Jami mijozlar</p>
+      </div>
+      <div class="stat-card-mini">
+        <h3 id="debtorsCount">0</h3>
+        <p>💰 Qarzdorlar</p>
+      </div>
+      <div class="stat-card-mini">
+        <h3 id="totalDebt">$0.00</h3>
+        <p>📊 Jami qarz</p>
+      </div>
+      <div class="stat-card-mini">
+        <h3 id="todaySalesCount">0</h3>
+        <p>🛒 Bugungi savdolar</p>
+      </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); padding: 20px; border-radius: 16px; margin-bottom: 20px;">
+      <input type="text" id="searchInput" placeholder="🔍 Mijoz qidirish (ism, telefon, ID)..." 
+             style="width: 100%; padding: 14px 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 12px; background: rgba(255,255,255,0.9); font-size: 15px;"
+             oninput="searchCustomers()">
+      
+      <div class="filter-buttons" style="margin-top: 16px;">
+        <button class="filter-btn active" onclick="filterCustomers('all')">Barchasi</button>
+        <button class="filter-btn" onclick="filterCustomers('debt')">💰 Qarzli</button>
+        <button class="filter-btn" onclick="filterCustomers('clear')">✅ Qarzsiz</button>
+      </div>
+    </div>
+
+    <!-- Customers Grid -->
+    <div class="customers-grid" id="customersGrid">
+      <p class="empty">Yuklanmoqda...</p>
+    </div>
+  </div>
+
+  <!-- Add Customer Modal -->
+  <div id="addCustomerModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>➕ Yangi mijoz qo'shish</h2>
+        <button class="modal-close" onclick="closeAddCustomerModal()">×</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Ism</label>
+        <input type="text" id="newCustomerName" placeholder="Mijoz ismi">
+      </div>
+      
+      <div class="form-group">
+        <label>Telefon</label>
+        <input type="text" id="newCustomerPhone" placeholder="+998901234567">
+      </div>
+      
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeAddCustomerModal()">Bekor qilish</button>
+        <button class="confirm-btn" onclick="addCustomer()">
+          <span>✓</span>
+          Saqlash
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="cashier-customers.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

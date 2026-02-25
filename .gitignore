@@ -4,12 +4,25 @@ package-lock.json
 
 # Environment variables
 .env
+.env.local
+.env.production
 
 # Logs
+logs/
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+
+# Excel files
+*.xlsx
+*.xls
+backups/
+excel-exports/
+
+# Test files
+test-*.js
+check-*.js
+fix-*.js
+mongodb-*.js
 
 # OS files
 .DS_Store
@@ -21,22 +34,7 @@ Thumbs.db
 *.swp
 *.swo
 
-# Backups
-backups/*.xlsx
-backups/*.csv
-
-# Excel files (faqat namuna qoldirish)
-excel-files/*.xlsx
-!excel-files/.gitkeep
-
-# Test files
-test-*.js
-
 # Temporary files
+tmp/
+temp/
 *.tmp
-*.temp
-
-# Google Sheets credentials
-google-sheets-config.json
-credentials.json
-token.json

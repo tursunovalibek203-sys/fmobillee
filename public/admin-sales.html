@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👨‍💼 Admin Savdo Panel</title>
+    <link rel="stylesheet" href="admin-sidebar.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            transition: margin-left 0.3s;
+        }
+
+        /* Sidebar ko'rinishi */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #047857);
+            color: white;
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .info-box {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .currency-display {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .currency-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .currency-row.total {
+            font-size: 16px;
+            font-weight: 700;
+            color: #667eea;
+            padding-top: 10px;
+            border-top: 2px solid #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div style="padding: 20px; border-bottom: 2px solid #f0f0f0; margin-bottom: 20px;">
+            <h2 style="color: #667eea; font-size: 20px; margin-bottom: 5px;">👨‍💼 Admin Panel</h2>
+            <p style="color: #666; font-size: 13px;">Boshqaruv tizimi</p>
+        </div>
+        <ul style="list-style: none; padding: 0 20px;">
+            <li style="margin-bottom: 5px;">
+                <a href="admin.html" style="display: flex; align-items: center; padding: 12px 15px; color: #333; text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 14px;">
+                    <span style="margin-right: 10px; font-size: 18px;">🏠</span> Bosh Sahifa
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a href="admin-sales.html" style="display: flex; align-items: center; padding: 12px 15px; color: white; background: linear-gradient(135deg, #667eea, #764ba2); text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 14px;">
+                    <span style="margin-right: 10px; font-size: 18px;">🛒</span> Savdo Qilish
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a href="admin-analytics-pro.html" style="display: flex; align-items: center; padding: 12px 15px; color: #333; text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 14px;">
+                    <span style="margin-right: 10px; font-size: 18px;">📊</span> Analitika
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a href="admin-branches.html" style="display: flex; align-items: center; padding: 12px 15px; color: #333; text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 14px;">
+                    <span style="margin-right: 10px; font-size: 18px;">🏢</span> Filiallar
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a href="admin-cashiers.html" style="display: flex; align-items: center; padding: 12px 15px; color: #333; text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 14px;">
+                    <span style="margin-right: 10px; font-size: 18px;">👥</span> Kassirlar
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a href="warehouse-pro.html" style="display: flex; align-items: center; padding: 12px 15px; color: #333; text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 14px;">
+                    <span style="margin-right: 10px; font-size: 18px;">📦</span> Ombor
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a href="admin-expenses.html" style="display: flex; align-items: center; padding: 12px 15px; color: #333; text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 14px;">
+                    <span style="margin-right: 10px; font-size: 18px;">💰</span> Xarajatlar
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a href="index.html" style="display: flex; align-items: center; padding: 12px 15px; color: #333; text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 14px;">
+                    <span style="margin-right: 10px; font-size: 18px;">🚪</span> Chiqish
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>👨‍💼 Admin Savdo Panel</h1>
+            <p>Barcha filiallar uchun savdo qilish</p>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">🛒 Yangi Savdo</h2>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Filial Tanlash</label>
+                    <select id="branchSelect" onchange="loadBranchData()">
+                        <option value="">Yuklanmoqda...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Mijoz ID</label>
+                    <input type="number" id="customerId" placeholder="Mijoz ID ni kiriting">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="searchCustomer()">🔍 Mijozni Qidirish</button>
+
+            <div class="info-box" id="customerInfo" style="display: none; margin-top: 20px;">
+                <div class="info-row">
+                    <span class="info-label">Ism:</span>
+                    <span class="info-value" id="customerName">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Telefon:</span>
+                    <span class="info-value" id="customerPhone">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Qarz:</span>
+                    <span class="info-value" id="customerDebt">$0</span>
+                </div>
+            </div>
+
+            <div class="form-grid" style="margin-top: 20px;">
+                <div class="form-group">
+                    <label>Mahsulot</label>
+                    <input type="text" id="productName" placeholder="Mahsulot nomi">
+                </div>
+
+                <div class="form-group">
+                    <label>Narxi (USD)</label>
+                    <input type="number" id="productPrice" placeholder="0.00" step="0.01">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>To'lov Valyutasi</label>
+                <select id="paymentCurrency" onchange="updateCurrencyDisplay()">
+                    <option value="USD">💵 Dollar (USD)</option>
+                    <option value="UZS">💸 So'm (UZS)</option>
+                    <option value="EUR">💶 Yevro (EUR)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>To'lov Summasi</label>
+                <input type="number" id="paymentAmount" placeholder="0.00" step="0.01" oninput="calculateCurrencies()">
+            </div>
+
+            <div class="currency-display" id="currencyDisplay" style="display: none;">
+                <div class="currency-row">
+                    <span>💵 USD:</span>
+                    <span id="displayUSD">$0.00</span>
+                </div>
+                <div class="currency-row">
+                    <span>💸 UZS:</span>
+                    <span id="displayUZS">0 so'm</span>
+                </div>
+                <div class="currency-row">
+                    <span>💶 EUR:</span>
+                    <span id="displayEUR">€0.00</span>
+                </div>
+            </div>
+
+            <button class="btn btn-success" onclick="completeSale()" style="margin-top: 20px;">
+                ✅ Savdoni Yakunlash
+            </button>
+        </div>
+    </div>
+
+    <script src="admin-sales.js"></script>
+</body>
+</html>

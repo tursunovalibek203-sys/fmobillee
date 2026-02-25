@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Enterprise Dashboard - Tizim Monitoring</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      color: #667eea;
+      font-size: 28px;
+    }
+
+    .status-badge {
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .status-healthy {
+      background: #10b981;
+      color: white;
+    }
+
+    .status-degraded {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .status-unhealthy {
+      background: #ef4444;
+      color: white;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .service-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: #f3f4f6;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .service-name {
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .service-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .indicator-up {
+      background: #10b981;
+    }
+
+    .indicator-down {
+      background: #ef4444;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .stat-box {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .transaction-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .transaction-item {
+      padding: 15px;
+      background: #f9fafb;
+      border-left: 4px solid #667eea;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .transaction-item.failed {
+      border-left-color: #ef4444;
+      background: #fef2f2;
+    }
+
+    .transaction-id {
+      font-family: monospace;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .transaction-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .status-committed {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-rolled-back {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .refresh-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #6b7280;
+    }
+
+    .memory-bar {
+      width: 100%;
+      height: 20px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .memory-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #f59e0b 70%, #ef4444 100%);
+      transition: width 0.5s;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚀 Enterprise Dashboard</h1>
+      <div>
+        <span id="systemStatus" class="status-badge status-healthy">HEALTHY</span>
+        <button class="refresh-btn" onclick="loadAllData()">🔄 Yangilash</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- System Health -->
+      <div class="card">
+        <h3>🏥 Tizim Holati</h3>
+        <div id="servicesStatus">
+          <div class="loading">Yuklanmoqda...</div>
+        </div>
+        <div style="margin-top: 15px;">
+          <small style="color: #6b7280;">Uptime: <span id="uptime">-</span></small>
+        </div>
+      </div>
+
+      <!-- Transaction Stats -->
+      <div class="card">
+        <h3>📊 Transaction Statistika</h3>
+        <div id="transactionStats">
+          <div class="loading">Yuklanmoqda...</div>
+        </div>
+      </div>
+
+      <!-- Memory Usage -->
+      <div class="card">
+        <h3>💾 Xotira Foydalanish</h3>
+        <div id="memoryUsage">
+          <div class="loading">Yuklanmoqda...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="card">
+      <h3>📝 So'nggi Tranzaksiyalar</h3>
+      <div id="recentTransactions" class="transaction-list">
+        <div class="loading">Yuklanmoqda...</div>
+      </div>
+    </div>
+
+    <!-- Failed Transactions -->
+    <div class="card" style="margin-top: 20px;">
+      <h3>⚠️ Muvaffaqiyatsiz Tranzaksiyalar</h3>
+      <div id="failedTransactions" class="transaction-list">
+        <div class="loading">Yuklanmoqda...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000';
+
+    // System Health
+    async function loadSystemHealth() {
+      try {
+        const response = await fetch(`${API_URL}/api/system/health`);
+        const data = await response.json();
+
+        // Status badge
+        const statusBadge = document.getElementById('systemStatus');
+        statusBadge.textContent = data.status.toUpperCase();
+        statusBadge.className = `status-badge status-${data.status}`;
+
+        // Services
+        const servicesHTML = Object.entries(data.services).map(([name, service]) => {
+          const isUp = service.status === 'UP' || service.connected;
+          return `
+            <div class="service-status">
+              <span class="service-name">${name.toUpperCase()}</span>
+              <div class="service-indicator ${isUp ? 'indicator-up' : 'indicator-down'}"></div>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('servicesStatus').innerHTML = servicesHTML;
+
+        // Uptime
+        const hours = Math.floor(data.uptime / 3600);
+        const minutes = Math.floor((data.uptime % 3600) / 60);
+        document.getElementById('uptime').textContent = `${hours}s ${minutes}d`;
+
+        // Memory
+        const memUsed = (data.memory.heapUsed / 1024 / 1024).toFixed(2);
+        const memTotal = (data.memory.heapTotal / 1024 / 1024).toFixed(2);
+        const memPercent = ((data.memory.heapUsed / data.memory.heapTotal) * 100).toFixed(1);
+
+        document.getElementById('memoryUsage').innerHTML = `
+          <div style="font-size: 24px; font-weight: bold; color: #667eea; margin-bottom: 10px;">
+            ${memUsed} MB / ${memTotal} MB
+          </div>
+          <div class="memory-bar">
+            <div class="memory-fill" style="width: ${memPercent}%"></div>
+          </div>
+          <div style="text-align: center; margin-top: 5px; color: #6b7280; font-size: 14px;">
+            ${memPercent}% ishlatilgan
+          </div>
+        `;
+
+      } catch (error) {
+        console.error('Health check xato:', error);
+        document.getElementById('systemStatus').textContent = 'ERROR';
+        document.getElementById('systemStatus').className = 'status-badge status-unhealthy';
+      }
+    }
+
+    // Transaction Stats
+    async function loadTransactionStats() {
+      try {
+        const response = await fetch(`${API_URL}/api/transactions/stats?days=7`);
+        const data = await response.json();
+
+        if (data.success) {
+          const stats = data.stats;
+          document.getElementById('transactionStats').innerHTML = `
+            <div class="stat-box">
+              <div class="stat-value">${stats.total}</div>
+              <div class="stat-label">Jami Tranzaksiya</div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div style="text-align: center; padding: 15px; background: #d1fae5; border-radius: 8px;">
+                <div style="font-size: 24px; font-weight: bold; color: #065f46;">${stats.committed}</div>
+                <div style="font-size: 12px; color: #065f46;">Muvaffaqiyatli</div>
+              </div>
+              <div style="text-align: center; padding: 15px; background: #fee2e2; border-radius: 8px;">
+                <div style="font-size: 24px; font-weight: bold; color: #991b1b;">${stats.rolledBack}</div>
+                <div style="font-size: 12px; color: #991b1b;">Bekor qilingan</div>
+              </div>
+            </div>
+            <div style="text-align: center; margin-top: 15px; font-size: 18px; font-weight: bold; color: #667eea;">
+              Success Rate: ${stats.successRate}
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Stats xato:', error);
+      }
+    }
+
+    // Recent Transactions
+    async function loadRecentTransactions() {
+      try {
+        const response = await fetch(`${API_URL}/api/transactions?limit=10`);
+        const data = await response.json();
+
+        if (data.success && data.transactions.length > 0) {
+          const html = data.transactions.map(txn => `
+            <div class="transaction-item ${txn.status === 'ROLLED_BACK' ? 'failed' : ''}">
+              <div class="transaction-id">${txn.id}</div>
+              <div style="margin: 8px 0;">
+                <strong>${txn.type.toUpperCase()}</strong>
+              </div>
+              <div style="font-size: 12px; color: #6b7280;">
+                ${new Date(txn.startTime).toLocaleString('uz-UZ')}
+              </div>
+              <span class="transaction-status status-${txn.status.toLowerCase().replace('_', '-')}">
+                ${txn.status}
+              </span>
+            </div>
+          `).join('');
+
+          document.getElementById('recentTransactions').innerHTML = html;
+        } else {
+          document.getElementById('recentTransactions').innerHTML = '<div class="loading">Tranzaksiya yo\'q</div>';
+        }
+      } catch (error) {
+        console.error('Transactions xato:', error);
+      }
+    }
+
+    // Failed Transactions
+    async function loadFailedTransactions() {
+      try {
+        const response = await fetch(`${API_URL}/api/transactions/failed`);
+        const data = await response.json();
+
+        if (data.success && data.transactions.length > 0) {
+          const html = data.transactions.map(txn => `
+            <div class="transaction-item failed">
+              <div class="transaction-id">${txn.id}</div>
+              <div style="margin: 8px 0;">
+                <strong>${txn.type.toUpperCase()}</strong>
+              </div>
+              <div style="font-size: 12px; color: #991b1b; margin-top: 5px;">
+                ❌ ${txn.error || 'Noma\'lum xato'}
+              </div>
+              <div style="font-size: 12px; color: #6b7280; margin-top: 5px;">
+                ${new Date(txn.startTime).toLocaleString('uz-UZ')}
+              </div>
+            </div>
+          `).join('');
+
+          document.getElementById('failedTransactions').innerHTML = html;
+        } else {
+          document.getElementById('failedTransactions').innerHTML = '<div class="loading">✅ Muvaffaqiyatsiz tranzaksiya yo\'q</div>';
+        }
+      } catch (error) {
+        console.error('Failed transactions xato:', error);
+      }
+    }
+
+    // Load all data
+    function loadAllData() {
+      loadSystemHealth();
+      loadTransactionStats();
+      loadRecentTransactions();
+      loadFailedTransactions();
+    }
+
+    // Initial load
+    loadAllData();
+
+    // Auto refresh every 10 seconds
+    setInterval(loadAllData, 10000);
+  </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

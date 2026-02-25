@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>📦 Mahsulot Donalari - IMEI/Serial</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    
+    .stat-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    
+    .content-section {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+    
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .search-box {
+      padding: 12px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 14px;
+      width: 300px;
+    }
+    
+    .search-box:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    
+    .item-card {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    
+    .item-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      border-color: #667eea;
+    }
+    
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+    
+    .item-imei {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .item-status {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .status-available {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .status-sold {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .status-reserved {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .item-info {
+      margin: 8px 0;
+      font-size: 14px;
+      color: #6b7280;
+    }
+    
+    .item-info strong {
+      color: #374151;
+    }
+    
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    
+    .item-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 13px;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #374151;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1>📦 Mahsulot Donalari</h1>
+        <p style="color: #6b7280; margin-top: 4px;">IMEI/Serial Number bilan boshqarish</p>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-primary" onclick="window.location.href='warehouse-pro.html'">
+          🏭 Ombor
+        </button>
+        <button class="btn btn-primary" onclick="window.location.href='admin.html'">
+          🏠 Asosiy
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-value" id="totalItems">0</div>
+        <div class="stat-label">Jami Donalar</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" id="availableItems">0</div>
+        <div class="stat-label">Mavjud</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🛒</div>
+        <div class="stat-value" id="soldItems">0</div>
+        <div class="stat-label">Sotilgan</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-value" id="reservedItems">0</div>
+        <div class="stat-label">Band</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value" id="totalValue">$0</div>
+        <div class="stat-label">Jami Qiymat</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">Barcha Mahsulot Donalari</h2>
+        <div style="display: flex; gap: 12px;">
+          <input type="text" class="search-box" id="searchBox" placeholder="🔍 IMEI/Serial qidirish...">
+          <select class="search-box" id="filterProduct" style="width: 200px;">
+            <option value="">Barcha mahsulotlar</option>
+          </select>
+          <select class="search-box" id="filterStatus" style="width: 150px;">
+            <option value="">Barcha holat</option>
+            <option value="available">Mavjud</option>
+            <option value="sold">Sotilgan</option>
+            <option value="reserved">Band</option>
+          </select>
+          <button class="btn btn-success" onclick="openAddItemModal()">
+            ➕ Dona Qo'shish
+          </button>
+        </div>
+      </div>
+      <div class="items-grid" id="itemsGrid"></div>
+    </div>
+  </div>
+
+  <!-- Add Item Modal -->
+  <div id="addItemModal" class="modal">
+    <div class="modal-content">
+      <h2>➕ Yangi Mahsulot Donasi</h2>
+      <form id="addItemForm">
+        <div class="form-group">
+          <label>Mahsulot *</label>
+          <select id="productSelect" required>
+            <option value="">Tanlang...</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>IMEI / Serial Number *</label>
+          <input type="text" id="imeiInput" required placeholder="123456789012345">
+        </div>
+        
+        <div class="form-group">
+          <label>Sotib Olish Narxi (USD)</label>
+          <input type="number" id="buyPriceInput" step="0.01" placeholder="0.00">
+        </div>
+        
+        <div class="form-group">
+          <label>Sotish Narxi (USD) *</label>
+          <input type="number" id="sellPriceInput" step="0.01" required placeholder="0.00">
+        </div>
+        
+        <div class="form-group">
+          <label>Kafolat (oy)</label>
+          <input type="number" id="warrantyInput" placeholder="12">
+        </div>
+        
+        <div class="form-group">
+          <label>Holati</label>
+          <select id="conditionInput">
+            <option value="new">Yangi</option>
+            <option value="used">Ishlatilgan</option>
+            <option value="refurbished">Ta'mirlangan</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Izoh</label>
+          <textarea id="notesInput" rows="3" placeholder="Qo'shimcha ma'lumot..."></textarea>
+        </div>
+        
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="submit" class="btn btn-success" style="flex: 1;">
+            ✅ Qo'shish
+          </button>
+          <button type="button" class="btn btn-danger" onclick="closeModal('addItemModal')">
+            ❌ Bekor qilish
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Sell Item Modal -->
+  <div id="sellItemModal" class="modal">
+    <div class="modal-content">
+      <h2>🛒 Mahsulot Sotish</h2>
+      <form id="sellItemForm">
+        <input type="hidden" id="sellItemId">
+        
+        <div class="form-group">
+          <label>IMEI / Serial</label>
+          <input type="text" id="sellImei" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label>Mahsulot</label>
+          <input type="text" id="sellProduct" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label>Narx (USD)</label>
+          <input type="number" id="sellPrice" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label>Mijoz ID *</label>
+          <input type="number" id="sellCustomerId" required placeholder="123456">
+        </div>
+        
+        <div class="form-group">
+          <label>Mijoz Ismi *</label>
+          <input type="text" id="sellCustomerName" required placeholder="Alisher Valiyev">
+        </div>
+        
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="submit" class="btn btn-success" style="flex: 1;">
+            ✅ Sotish
+          </button>
+          <button type="button" class="btn btn-danger" onclick="closeModal('sellItemModal')">
+            ❌ Bekor qilish
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let allItems = [];
+    let allProducts = [];
+
+    // Load data
+    async function loadData() {
+      await loadProducts();
+      await loadItems();
+      updateStats();
+    }
+
+    async function loadProducts() {
+      try {
+        const response = await fetch('/api/warehouse/products');
+        allProducts = await response.json();
+        
+        // Populate product selects
+        const productSelect = document.getElementById('productSelect');
+        const filterProduct = document.getElementById('filterProduct');
+        
+        const options = allProducts.map(p => 
+          `<option value="${p.productId}">${p.name} - $${p.sellPrice}</option>`
+        ).join('');
+        
+        productSelect.innerHTML = '<option value="">Tanlang...</option>' + options;
+        filterProduct.innerHTML = '<option value="">Barcha mahsulotlar</option>' + options;
+      } catch (error) {
+        console.error('Mahsulotlarni yuklashda xato:', error);
+      }
+    }
+
+    async function loadItems() {
+      try {
+        const response = await fetch('/api/warehouse/product-items');
+        allItems = await response.json();
+        displayItems(allItems);
+      } catch (error) {
+        console.error('Donalarni yuklashda xato:', error);
+        allItems = [];
+        displayItems([]);
+      }
+    }
+
+    function displayItems(items) {
+      const grid = document.getElementById('itemsGrid');
+      
+      if (items.length === 0) {
+        grid.innerHTML = '<p style="text-align: center; color: #6b7280; grid-column: 1/-1;">Hali mahsulot donalari yo\'q</p>';
+        return;
+      }
+      
+      grid.innerHTML = items.map(item => {
+        const product = allProducts.find(p => p.productId === item.productId);
+        const productName = product ? product.name : 'N/A';
+        
+        return `
+          <div class="item-card">
+            <div class="item-header">
+              <div class="item-imei">${item.imei || item.serialNumber}</div>
+              <span class="item-status status-${item.status}">
+                ${item.status === 'available' ? '✅ Mavjud' : 
+                  item.status === 'sold' ? '🛒 Sotilgan' : '⏳ Band'}
+              </span>
+            </div>
+            
+            <div class="item-info"><strong>Mahsulot:</strong> ${productName}</div>
+            <div class="item-info"><strong>Narx:</strong> $${item.sellPrice.toFixed(2)}</div>
+            ${item.warranty ? `<div class="item-info"><strong>Kafolat:</strong> ${item.warranty} oy</div>` : ''}
+            <div class="item-info"><strong>Holat:</strong> ${
+              item.condition === 'new' ? 'Yangi' : 
+              item.condition === 'used' ? 'Ishlatilgan' : 'Ta\'mirlangan'
+            }</div>
+            ${item.notes ? `<div class="item-info"><strong>Izoh:</strong> ${item.notes}</div>` : ''}
+            
+            <div class="item-actions">
+              ${item.status === 'available' ? `
+                <button class="item-btn btn-success" onclick="openSellModal(${item.itemId})">
+                  🛒 Sotish
+                </button>
+                <button class="item-btn btn-primary" onclick="editItem(${item.itemId})">
+                  ✏️ Tahrir
+                </button>
+              ` : `
+                <button class="item-btn btn-primary" onclick="viewDetails(${item.itemId})">
+                  👁️ Ko'rish
+                </button>
+              `}
+              <button class="item-btn btn-danger" onclick="deleteItem(${item.itemId})">
+                🗑️
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateStats() {
+      const total = allItems.length;
+      const available = allItems.filter(i => i.status === 'available').length;
+      const sold = allItems.filter(i => i.status === 'sold').length;
+      const reserved = allItems.filter(i => i.status === 'reserved').length;
+      const totalValue = allItems
+        .filter(i => i.status === 'available')
+        .reduce((sum, i) => sum + (i.sellPrice || 0), 0);
+      
+      document.getElementById('totalItems').textContent = total;
+      document.getElementById('availableItems').textContent = available;
+      document.getElementById('soldItems').textContent = sold;
+      document.getElementById('reservedItems').textContent = reserved;
+      document.getElementById('totalValue').textContent = '$' + totalValue.toFixed(2);
+    }
+
+    // Search and filter
+    document.getElementById('searchBox').addEventListener('input', filterItems);
+    document.getElementById('filterProduct').addEventListener('change', filterItems);
+    document.getElementById('filterStatus').addEventListener('change', filterItems);
+
+    function filterItems() {
+      const search = document.getElementById('searchBox').value.toLowerCase();
+      const productFilter = document.getElementById('filterProduct').value;
+      const statusFilter = document.getElementById('filterStatus').value;
+      
+      const filtered = allItems.filter(item => {
+        const matchSearch = !search || 
+          (item.imei && item.imei.toLowerCase().includes(search)) ||
+          (item.serialNumber && item.serialNumber.toLowerCase().includes(search));
+        
+        const matchProduct = !productFilter || item.productId === parseInt(productFilter);
+        const matchStatus = !statusFilter || item.status === statusFilter;
+        
+        return matchSearch && matchProduct && matchStatus;
+      });
+      
+      displayItems(filtered);
+    }
+
+    // Modal functions
+    function openAddItemModal() {
+      document.getElementById('addItemModal').classList.add('active');
+    }
+
+    function openSellModal(itemId) {
+      const item = allItems.find(i => i.itemId === itemId);
+      if (!item) return;
+      
+      const product = allProducts.find(p => p.productId === item.productId);
+      
+      document.getElementById('sellItemId').value = itemId;
+      document.getElementById('sellImei').value = item.imei || item.serialNumber;
+      document.getElementById('sellProduct').value = product ? product.name : 'N/A';
+      document.getElementById('sellPrice').value = item.sellPrice;
+      
+      document.getElementById('sellItemModal').classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Auto-fill sell price when product selected
+    document.getElementById('productSelect').addEventListener('change', function() {
+      const productId = parseInt(this.value);
+      const product = allProducts.find(p => p.productId === productId);
+      
+      if (product) {
+        document.getElementById('buyPriceInput').value = product.buyPrice || '';
+        document.getElementById('sellPriceInput').value = product.sellPrice || '';
+      }
+    });
+
+    // Add item form
+    document.getElementById('addItemForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const data = {
+        productId: parseInt(document.getElementById('productSelect').value),
+        imei: document.getElementById('imeiInput').value,
+        buyPrice: parseFloat(document.getElementById('buyPriceInput').value) || 0,
+        sellPrice: parseFloat(document.getElementById('sellPriceInput').value),
+        warranty: parseInt(document.getElementById('warrantyInput').value) || 0,
+        condition: document.getElementById('conditionInput').value,
+        notes: document.getElementById('notesInput').value
+      };
+      
+      try {
+        const response = await fetch('/api/warehouse/product-items', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('✅ Mahsulot donasi qo\'shildi!');
+          closeModal('addItemModal');
+          document.getElementById('addItemForm').reset();
+          loadData();
+        } else {
+          alert('❌ Xato: ' + result.error);
+        }
+      } catch (error) {
+        alert('❌ Xato: ' + error.message);
+      }
+    });
+
+    // Sell item form
+    document.getElementById('sellItemForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const itemId = document.getElementById('sellItemId').value;
+      const customerId = document.getElementById('sellCustomerId').value;
+      const customerName = document.getElementById('sellCustomerName').value;
+      
+      try {
+        const response = await fetch(`/api/warehouse/product-items/${itemId}/sell`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customerId, customerName })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('✅ Mahsulot sotildi!');
+          closeModal('sellItemModal');
+          document.getElementById('sellItemForm').reset();
+          loadData();
+        } else {
+          alert('❌ Xato: ' + result.error);
+        }
+      } catch (error) {
+        alert('❌ Xato: ' + error.message);
+      }
+    });
+
+    async function deleteItem(itemId) {
+      if (!confirm('Mahsulot donasini o\'chirmoqchimisiz?')) return;
+      
+      try {
+        const response = await fetch(`/api/warehouse/product-items/${itemId}`, {
+          method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('✅ O\'chirildi!');
+          loadData();
+        } else {
+          alert('❌ Xato: ' + result.error);
+        }
+      } catch (error) {
+        alert('❌ Xato: ' + error.message);
+      }
+    }
+
+    function editItem(itemId) {
+      alert('Tahrirlash funksiyasi tez orada qo\'shiladi');
+    }
+
+    function viewDetails(itemId) {
+      const item = allItems.find(i => i.itemId === itemId);
+      if (!item) return;
+      
+      const product = allProducts.find(p => p.productId === item.productId);
+      
+      alert(`
+IMEI: ${item.imei || item.serialNumber}
+Mahsulot: ${product ? product.name : 'N/A'}
+Narx: $${item.sellPrice}
+Holat: ${item.status}
+${item.soldTo ? `Sotilgan: ${item.soldTo}` : ''}
+${item.soldDate ? `Sana: ${item.soldDate}` : ''}
+      `);
+    }
+
+    // Initialize
+    loadData();
+  </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

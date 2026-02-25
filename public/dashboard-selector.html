@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🏪 Bo'limlarni Tanlang</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2em;
+        }
+        
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+            animation-fill-mode: both;
+        }
+        
+        .section-card:nth-child(1) { animation-delay: 0.1s; }
+        .section-card:nth-child(2) { animation-delay: 0.2s; }
+        .section-card:nth-child(3) { animation-delay: 0.3s; }
+        .section-card:nth-child(4) { animation-delay: 0.4s; }
+        .section-card:nth-child(5) { animation-delay: 0.5s; }
+        .section-card:nth-child(6) { animation-delay: 0.6s; }
+        
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--color-1), var(--color-2));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .section-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .section-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        
+        .section-card:active {
+            transform: translateY(-5px) scale(0.98);
+        }
+        
+        .section-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+        
+        .section-card:hover .section-icon {
+            animation: pulse 0.6s ease;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1f2937;
+        }
+        
+        .section-description {
+            color: #6b7280;
+            font-size: 1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .section-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        /* Color schemes */
+        .admin-card {
+            --color-1: #667eea;
+            --color-2: #764ba2;
+        }
+        .admin-card .section-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .kassir-card {
+            --color-1: #10b981;
+            --color-2: #059669;
+        }
+        .kassir-card .section-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .ombor-card {
+            --color-1: #f59e0b;
+            --color-2: #d97706;
+        }
+        .ombor-card .section-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .mijoz-card {
+            --color-1: #3b82f6;
+            --color-2: #2563eb;
+        }
+        .mijoz-card .section-badge {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        
+        .moliya-card {
+            --color-1: #8b5cf6;
+            --color-2: #7c3aed;
+        }
+        .moliya-card .section-badge {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+        
+        .hisobot-card {
+            --color-1: #ef4444;
+            --color-2: #dc2626;
+        }
+        .hisobot-card .section-badge {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            animation: fadeIn 1s ease 0.8s both;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .footer-link:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .sections-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .section-card {
+                padding: 30px 20px;
+            }
+            
+            .section-icon {
+                font-size: 4em;
+            }
+            
+            .section-title {
+                font-size: 1.5em;
+            }
+            
+            .section-description {
+                font-size: 0.95em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.6em;
+            }
+            
+            .section-icon {
+                font-size: 3.5em;
+            }
+            
+            .section-title {
+                font-size: 1.3em;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .footer-link {
+                width: 100%;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏪 Do'kon Boshqaruv Tizimi</h1>
+            <p>Qaysi bo'limga kirmoqchisiz?</p>
+        </div>
+        
+        <!-- Sections Grid -->
+        <div class="sections-grid">
+            <!-- Admin Panel -->
+            <div class="section-card admin-card" onclick="location.href='admin-dashboard.html'">
+                <span class="section-icon">⚙️</span>
+                <h2 class="section-title">Admin Panel</h2>
+                <p class="section-description">
+                    Tizimni to'liq boshqarish, filiallar, kassirlar va barcha sozlamalar
+                </p>
+                <span class="section-badge">Boshqaruv</span>
+            </div>
+            
+            <!-- Kassir Panel -->
+            <div class="section-card kassir-card" onclick="location.href='cashier-simple.html'">
+                <span class="section-icon">💼</span>
+                <h2 class="section-title">Kassir Panel</h2>
+                <p class="section-description">
+                    Savdo qilish, mijozlar bilan ishlash va kunlik hisobotlar
+                </p>
+                <span class="section-badge">Savdo</span>
+            </div>
+            
+            <!-- Ombor -->
+            <div class="section-card ombor-card" onclick="location.href='warehouse-pro.html'">
+                <span class="section-icon">📦</span>
+                <h2 class="section-title">Ombor</h2>
+                <p class="section-description">
+                    Mahsulotlar, kirim-chiqim va ombor holatini kuzatish
+                </p>
+                <span class="section-badge">Inventar</span>
+            </div>
+            
+            <!-- Mijozlar -->
+            <div class="section-card mijoz-card" onclick="location.href='index.html'">
+                <span class="section-icon">👥</span>
+                <h2 class="section-title">Mijozlar</h2>
+                <p class="section-description">
+                    Mijozlar bazasi, qarzlar va to'lovlarni boshqarish
+                </p>
+                <span class="section-badge">CRM</span>
+            </div>
+            
+            <!-- Moliya -->
+            <div class="section-card moliya-card" onclick="location.href='finance-dashboard.html'">
+                <span class="section-icon">💰</span>
+                <h2 class="section-title">Moliya</h2>
+                <p class="section-description">
+                    Moliyaviy tahlil, daromad-xarajat va prognozlar
+                </p>
+                <span class="section-badge">Analytics</span>
+            </div>
+            
+            <!-- Hisobotlar -->
+            <div class="section-card hisobot-card" onclick="location.href='admin-reports.html'">
+                <span class="section-icon">📊</span>
+                <h2 class="section-title">Hisobotlar</h2>
+                <p class="section-description">
+                    Batafsil hisobotlar, grafiklar va Excel export
+                </p>
+                <span class="section-badge">Reports</span>
+            </div>
+            
+            <!-- Executive Dashboard -->
+            <div class="section-card" style="--color-1: #ec4899; --color-2: #db2777;" onclick="location.href='executive-dashboard.html'">
+                <span class="section-icon">👔</span>
+                <h2 class="section-title">Executive Dashboard</h2>
+                <p class="section-description">
+                    Tadbirkor uchun maxsus - KPI, tahlil va prognozlar
+                </p>
+                <span class="section-badge" style="background: linear-gradient(135deg, #ec4899, #db2777);">Premium</span>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-links">
+                <a href="#" class="footer-link" onclick="showHelp(); return false;">
+                    ❓ Yordam
+                </a>
+                <a href="#" class="footer-link" onclick="showSettings(); return false;">
+                    ⚙️ Sozlamalar
+                </a>
+                <a href="#" class="footer-link" onclick="logout(); return false;">
+                    🚪 Chiqish
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="mobile-enhancements.js"></script>
+    <script>
+        // Yordam
+        function showHelp() {
+            alert(`📚 YORDAM
+
+🏪 Do'kon Boshqaruv Tizimi
+
+Bo'limlar:
+• Admin Panel - Tizimni to'liq boshqarish
+• Kassir Panel - Savdo va mijozlar
+• Ombor - Mahsulotlar boshqaruvi
+• Mijozlar - CRM tizimi
+• Moliya - Moliyaviy tahlil
+• Hisobotlar - Batafsil hisobotlar
+
+Savollar uchun: support@dokon.uz`);
+        }
+        
+        // Sozlamalar
+        function showSettings() {
+            alert('⚙️ Sozlamalar bo\'limi tez orada qo\'shiladi!');
+        }
+        
+        // Chiqish
+        function logout() {
+            if (confirm('Tizimdan chiqmoqchimisiz?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        location.href = 'admin-dashboard.html';
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        location.href = 'cashier-simple.html';
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        location.href = 'warehouse-pro.html';
+                        break;
+                    case '4':
+                        e.preventDefault();
+                        location.href = 'index.html';
+                        break;
+                    case '5':
+                        e.preventDefault();
+                        location.href = 'finance-dashboard.html';
+                        break;
+                    case '6':
+                        e.preventDefault();
+                        location.href = 'admin-reports.html';
+                        break;
+                }
+            }
+        });
+        
+        // Show keyboard shortcuts hint
+        setTimeout(() => {
+            const hint = document.createElement('div');
+            hint.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 10px 15px;
+                border-radius: 8px;
+                font-size: 12px;
+                z-index: 9999;
+                animation: fadeIn 0.3s ease;
+            `;
+            hint.innerHTML = '💡 Ctrl+1-6 tezkor kirish';
+            document.body.appendChild(hint);
+            
+            setTimeout(() => {
+                hint.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => hint.remove(), 300);
+            }, 3000);
+        }, 2000);
+        
+        console.log('🏪 Do\'kon Boshqaruv Tizimi v1.0.0');
+        console.log('📱 Telefon uchun optimallashtirilgan');
+    </script>
+</body>
+</html>

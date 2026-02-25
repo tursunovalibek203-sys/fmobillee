@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kassir Kirish</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 20%, #1d4ed8 40%, #1e40af 60%, #1e3a8a 80%, #1e3a8a 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .login-container {
+      background: white;
+      padding: 48px;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 420px;
+    }
+    
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    
+    .login-header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #111827;
+      margin: 0 0 8px 0;
+    }
+    
+    .login-header p {
+      color: #6b7280;
+      font-size: 15px;
+      margin: 0;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+      font-size: 14px;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 15px;
+      transition: all 0.3s;
+      box-sizing: border-box;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+    
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 8px;
+    }
+    
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+    }
+    
+    .login-btn:active {
+      transform: translateY(0);
+    }
+    
+    .back-link {
+      text-align: center;
+      margin-top: 24px;
+    }
+    
+    .back-link a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+    
+    .error-message {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <h1>👤 Kassir Kirish</h1>
+      <p>Login va parolingizni kiriting</p>
+    </div>
+    
+    <div id="errorMessage" class="error-message"></div>
+    
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="username">Login</label>
+        <input type="text" id="username" placeholder="Login" required autocomplete="username">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Parol</label>
+        <input type="password" id="password" placeholder="Parol" required autocomplete="current-password">
+      </div>
+      
+      <button type="submit" class="login-btn">
+        Kirish
+      </button>
+    </form>
+    
+    <div class="back-link">
+      <a href="/login.html">← Admin kirish</a>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin + '/api';
+    
+    async function handleLogin(event) {
+      event.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('errorMessage');
+      
+      if (!username || !password) {
+        showError('Login va parolni kiriting!');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/cashier-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+          showError(data.error || 'Login yoki parol noto\'g\'ri');
+          return;
+        }
+        
+        // Kassir ma'lumotlarini saqlash
+        localStorage.setItem('cashierLoggedIn', 'true');
+        localStorage.setItem('cashierData', JSON.stringify(data.cashier));
+        localStorage.setItem('cashierLoginTime', Date.now().toString());
+        
+        // Kassir dashboard'ga o'tish
+        window.location.href = '/cashier-simple.html';
+        
+      } catch (error) {
+        console.error('Login xatosi:', error);
+        showError('Server bilan aloqa yo\'q!');
+      }
+    }
+    
+    function showError(message) {
+      const errorDiv = document.getElementById('errorMessage');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 5000);
+    }
+    
+    // Agar kassir allaqachon login qilgan bo'lsa
+    if (localStorage.getItem('cashierLoggedIn') === 'true') {
+      window.location.href = '/cashier-simple.html';
+    }
+  </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

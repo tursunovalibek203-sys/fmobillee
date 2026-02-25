@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>💼 Kassir - Yaxshilangan Panel</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+        }
+        
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sale-form {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .recent-sales {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sale-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .sale-item:last-child {
+            border-bottom: none;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .history-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .date-filter {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .currency-toggle {
+            display: flex;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 4px;
+        }
+        
+        .currency-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .currency-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .date-filter {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1 style="margin: 0; font-size: 32px; font-weight: 900;">💼 Kassir Panel</h1>
+                <p style="margin: 8px 0 0 0; opacity: 0.9;" id="cashierInfo">Kassir: Loading...</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="currency-toggle">
+                    <button class="currency-btn active" onclick="setCurrency('USD')" id="usdBtn">USD</button>
+                    <button class="currency-btn" onclick="setCurrency('UZS')" id="uzsBtn">UZS</button>
+                </div>
+                <button class="btn btn-secondary" onclick="logout()">Chiqish</button>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Bugungi savdolar</div>
+                <div style="font-size: 28px; font-weight: 900;" id="todaySales">0</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Bugungi summa</div>
+                <div style="font-size: 28px; font-weight: 900;" id="todayAmount">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Balans</div>
+                <div style="font-size: 28px; font-weight: 900;" id="cashierBalance">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Oxirgi savdo</div>
+                <div style="font-size: 18px; font-weight: 700;" id="lastSaleTime">--:--</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Panel -->
+            <div class="left-panel">
+                <!-- Sale Form -->
+                <div class="sale-form">
+                    <h3 style="margin-bottom: 20px; color: #374151;">🛒 Yangi Savdo</h3>
+                    
+                    <div class="form-group">
+                        <label>Mijoz</label>
+                        <input type="text" id="customerName" placeholder="Mijoz ismini kiriting..." autocomplete="off">
+                        <div id="customerSuggestions" style="display: none; position: absolute; background: white; border: 1px solid #e5e7eb; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 1000; width: calc(100% - 32px);"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Mahsulot</label>
+                        <input type="text" id="productName" placeholder="Mahsulot nomini kiriting..." autocomplete="off">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label>Narx (<span id="currencyLabel">USD</span>)</label>
+                            <input type="number" id="salePrice" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>To'lov (<span id="currencyLabel2">USD</span>)</label>
+                            <input type="number" id="paidAmount" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Izoh (ixtiyoriy)</label>
+                        <input type="text" id="saleNotes" placeholder="Qo'shimcha ma'lumot...">
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" onclick="addSale()">💰 Savdo qo'shish</button>
+                        <button class="btn btn-secondary" onclick="clearForm()">🗑️ Tozalash</button>
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="openQuickActions()" style="width: 100%; margin-top: 12px;">
+                        ⚡ Tezkor Harakatlar
+                    </button>
+                </div>
+
+                <!-- Recent Sales -->
+                <div class="recent-sales">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="color: #374151;">📋 So'nggi savdolar</h3>
+                        <button class="btn btn-secondary" onclick="refreshSales()" style="padding: 8px 16px; font-size: 14px;">🔄</button>
+                    </div>
+                    <div id="recentSalesList">
+                        <div style="text-align: center; color: #6b7280; padding: 20px;">
+                            Yuklanmoqda...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <!-- History Panel -->
+                <div class="history-panel">
+                    <h3 style="margin-bottom: 20px; color: #374151;">📅 Tarix bo'yicha ko'rish</h3>
+                    
+                    <div class="date-filter">
+                        <input type="date" id="historyDateFrom" style="padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                        <input type="date" id="historyDateTo" style="padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="loadHistoryByDate()" style="width: 100%; margin-bottom: 16px;">
+                        📊 Ko'rish
+                    </button>
+                    
+                    <div id="historyResults">
+                        <div style="text-align: center; color: #6b7280; padding: 20px;">
+                            Sana tanlang va "Ko'rish" tugmasini bosing
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="history-panel">
+                    <h3 style="margin-bottom: 20px; color: #374151;">⚡ Tezkor statistika</h3>
+                    
+                    <div style="display: grid; gap: 12px;">
+                        <div style="display: flex; justify-content: space-between; padding: 12px; background: #f9fafb; border-radius: 8px;">
+                            <span>Haftalik savdolar:</span>
+                            <strong id="weeklySales">0</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 12px; background: #f9fafb; border-radius: 8px;">
+                            <span>Oylik savdolar:</span>
+                            <strong id="monthlySales">0</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 12px; background: #f9fafb; border-radius: 8px;">
+                            <span>Eng ko'p sotilgan:</span>
+                            <strong id="topProduct">--</strong>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="openDetailedHistory()" style="width: 100%; margin-top: 16px;">
+                        📋 Batafsil tarix
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="cashier-enhanced.js"></script>
+    <script src="mobile-enhancements.js"></script>
+    <script src="cashier-sidebar-loader.js"></script>
+</body>
+</html>

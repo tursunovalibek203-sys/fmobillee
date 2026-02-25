@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>⚡ Tezkor Harakatlar - Kassir</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .quick-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .quick-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .preset-btn {
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .preset-btn:hover {
+            background: #f3f4f6;
+            border-color: #667eea;
+        }
+        
+        .recent-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .recent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .recent-item:hover {
+            background: #f9fafb;
+            margin: 0 -12px;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+        
+        .recent-item:last-child {
+            border-bottom: none;
+        }
+        
+        .calculator {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .calc-btn {
+            aspect-ratio: 1;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .calc-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .calc-btn.operator {
+            background: #667eea;
+            color: white;
+        }
+        
+        .calc-btn.equals {
+            background: #10b981;
+            color: white;
+        }
+        
+        .stats-mini {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .stat-mini {
+            text-align: center;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #374151;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .preset-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1 style="margin: 0; font-size: 32px; font-weight: 900;">⚡ Tezkor Harakatlar</h1>
+                <p style="margin: 8px 0 0 0; opacity: 0.9;" id="cashierInfo">Kassir: Loading...</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" onclick="window.location.href='cashier-enhanced.html'" style="background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.3);">
+                    ← Orqaga
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Actions Grid -->
+        <div class="quick-grid">
+            <!-- Quick Sale -->
+            <div class="quick-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #10b981, #059669);">⚡</div>
+                    <div class="card-title">Tezkor Savdo</div>
+                </div>
+                
+                <form id="quickSaleForm">
+                    <div class="form-group">
+                        <label>Mijoz</label>
+                        <input type="text" id="quickCustomer" placeholder="Mijoz nomi..." autocomplete="off">
+                    </div>
+                    
+                    <div class="preset-grid">
+                        <button type="button" class="preset-btn" onclick="setQuickCustomer('Naqd mijoz')">Naqd mijoz</button>
+                        <button type="button" class="preset-btn" onclick="setQuickCustomer('Doimiy mijoz')">Doimiy mijoz</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Mahsulot</label>
+                        <select id="quickProduct">
+                            <option value="">Mahsulot tanlang...</option>
+                            <option value="Telefon">📱 Telefon</option>
+                            <option value="Noutbuk">💻 Noutbuk</option>
+                            <option value="Quloqchin">🎧 Quloqchin</option>
+                            <option value="Zaryadlovchi">🔌 Zaryadlovchi</option>
+                            <option value="Kabel">🔗 Kabel</option>
+                        </select>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="form-group">
+                            <label>Narx</label>
+                            <input type="number" id="quickPrice" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>To'lov</label>
+                            <input type="number" id="quickPaid" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">💰 Savdo qo'shish</button>
+                </form>
+            </div>
+
+            <!-- Calculator -->
+            <div class="quick-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">🧮</div>
+                    <div class="card-title">Kalkulyator</div>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" id="calcDisplay" placeholder="0" readonly style="font-size: 18px; text-align: right; font-weight: 700;">
+                </div>
+                
+                <div class="calculator">
+                    <button class="calc-btn" onclick="clearCalc()">C</button>
+                    <button class="calc-btn" onclick="calcInput('/')" class="operator">÷</button>
+                    <button class="calc-btn" onclick="calcInput('*')" class="operator">×</button>
+                    <button class="calc-btn" onclick="deleteLast()">⌫</button>
+                    
+                    <button class="calc-btn" onclick="calcInput('7')">7</button>
+                    <button class="calc-btn" onclick="calcInput('8')">8</button>
+                    <button class="calc-btn" onclick="calcInput('9')">9</button>
+                    <button class="calc-btn operator" onclick="calcInput('-')">-</button>
+                    
+                    <button class="calc-btn" onclick="calcInput('4')">4</button>
+                    <button class="calc-btn" onclick="calcInput('5')">5</button>
+                    <button class="calc-btn" onclick="calcInput('6')">6</button>
+                    <button class="calc-btn operator" onclick="calcInput('+')">+</button>
+                    
+                    <button class="calc-btn" onclick="calcInput('1')">1</button>
+                    <button class="calc-btn" onclick="calcInput('2')">2</button>
+                    <button class="calc-btn" onclick="calcInput('3')">3</button>
+                    <button class="calc-btn equals" onclick="calculate()" style="grid-row: span 2;">=</button>
+                    
+                    <button class="calc-btn" onclick="calcInput('0')" style="grid-column: span 2;">0</button>
+                    <button class="calc-btn" onclick="calcInput('.')">.</button>
+                </div>
+            </div>
+
+            <!-- Recent Customers -->
+            <div class="quick-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">👥</div>
+                    <div class="card-title">So'nggi Mijozlar</div>
+                </div>
+                
+                <div class="recent-list" id="recentCustomers">
+                    <div style="text-align: center; color: #6b7280; padding: 20px;">
+                        Yuklanmoqda...
+                    </div>
+                </div>
+                
+                <button class="btn btn-secondary" onclick="refreshCustomers()">🔄 Yangilash</button>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">📊</div>
+                    <div class="card-title">Bugungi Statistika</div>
+                </div>
+                
+                <div class="stats-mini">
+                    <div class="stat-mini">
+                        <div class="stat-value" id="todaySalesCount">0</div>
+                        <div class="stat-label">Savdolar</div>
+                    </div>
+                    <div class="stat-mini">
+                        <div class="stat-value" id="todayRevenue">$0</div>
+                        <div class="stat-label">Daromad</div>
+                    </div>
+                    <div class="stat-mini">
+                        <div class="stat-value" id="avgSale">$0</div>
+                        <div class="stat-label">O'rtacha</div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <button class="btn btn-secondary" onclick="openDashboard()">📊 Dashboard</button>
+                    <button class="btn btn-secondary" onclick="openHistory()">📋 Tarix</button>
+                </div>
+            </div>
+
+            <!-- Quick Payment -->
+            <div class="quick-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">💳</div>
+                    <div class="card-title">Tezkor To'lov</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Mijoz ID</label>
+                    <input type="number" id="paymentCustomerId" placeholder="Mijoz ID...">
+                </div>
+                
+                <div class="form-group">
+                    <label>To'lov miqdori</label>
+                    <input type="number" id="paymentAmount" placeholder="0.00" step="0.01">
+                </div>
+                
+                <div class="preset-grid">
+                    <button type="button" class="preset-btn" onclick="setPaymentAmount(10)">$10</button>
+                    <button type="button" class="preset-btn" onclick="setPaymentAmount(20)">$20</button>
+                    <button type="button" class="preset-btn" onclick="setPaymentAmount(50)">$50</button>
+                    <button type="button" class="preset-btn" onclick="setPaymentAmount(100)">$100</button>
+                </div>
+                
+                <button class="btn btn-primary" onclick="processPayment()">💰 To'lov qilish</button>
+            </div>
+
+            <!-- Barcode Scanner -->
+            <div class="quick-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">📷</div>
+                    <div class="card-title">Barcode Scanner</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Barcode</label>
+                    <input type="text" id="barcodeInput" placeholder="Barcode ni skanerlang yoki kiriting..." autocomplete="off">
+                </div>
+                
+                <div id="scannedProduct" style="display: none; padding: 12px; background: #f0f9ff; border-radius: 8px; margin-bottom: 16px;">
+                    <div style="font-weight: 600; color: #374151;" id="productName"></div>
+                    <div style="font-size: 14px; color: #6b7280;" id="productPrice"></div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <button class="btn btn-secondary" onclick="scanBarcode()">📷 Skanerlash</button>
+                    <button class="btn btn-primary" onclick="addScannedProduct()">➕ Qo'shish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="cashier-quick-actions.js"></script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

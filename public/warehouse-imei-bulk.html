@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ombor - Har Dona uchun IMEI</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      color: #667eea;
+      font-size: 28px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #374151;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .imei-list {
+      margin-top: 30px;
+    }
+
+    .imei-item {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .imei-number {
+      background: #667eea;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .imei-input {
+      flex: 1;
+    }
+
+    .imei-status {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .status-pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-done {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background: #e5e7eb;
+      border-radius: 15px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+
+    .summary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .summary h3 {
+      margin-bottom: 10px;
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .alert-info {
+      background: #dbeafe;
+      color: #1e40af;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .alert-success {
+      background: #d1fae5;
+      color: #065f46;
+      border-left: 4px solid #10b981;
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📱 Har Dona uchun IMEI Qo'shish</h1>
+    </div>
+
+    <!-- Step 1: Mahsulot ma'lumotlari -->
+    <div class="card" id="step1">
+      <h2>1️⃣ Mahsulot Ma'lumotlari</h2>
+      <div class="alert alert-info">
+        💡 Avval mahsulot ma'lumotlarini kiriting, keyin har bir dona uchun IMEI kiritasiz
+      </div>
+
+      <div class="form-group">
+        <label>Mahsulot Nomi</label>
+        <input type="text" id="productName" placeholder="Masalan: iPhone 15 Pro">
+      </div>
+
+      <div class="form-group">
+        <label>Kategoriya</label>
+        <select id="category">
+          <option value="Telefon">Telefon</option>
+          <option value="Noutbuk">Noutbuk</option>
+          <option value="Planshet">Planshet</option>
+          <option value="Aksessuar">Aksessuar</option>
+          <option value="Boshqa">Boshqa</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Miqdor (dona)</label>
+        <input type="number" id="quantity" min="1" value="1" placeholder="Nechta dona qo'shasiz?">
+      </div>
+
+      <div class="form-group">
+        <label>Sotib Olish Narxi (USD)</label>
+        <input type="number" id="buyPrice" step="0.01" placeholder="1000.00">
+      </div>
+
+      <div class="form-group">
+        <label>Sotish Narxi (USD)</label>
+        <input type="number" id="sellPrice" step="0.01" placeholder="1200.00">
+      </div>
+
+      <div class="form-group">
+        <label>Yetkazib Beruvchi</label>
+        <input type="text" id="supplier" placeholder="Masalan: Apple Store">
+      </div>
+
+      <button class="btn btn-primary" onclick="goToStep2()">
+        Keyingi Qadam: IMEI Kiritish →
+      </button>
+    </div>
+
+    <!-- Step 2: IMEI kiritish -->
+    <div class="card" id="step2" style="display: none;">
+      <h2>2️⃣ Har Dona uchun IMEI Kiritish</h2>
+      
+      <div class="summary">
+        <h3 id="productSummary"></h3>
+        <p id="quantitySummary"></p>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressBar">0%</div>
+      </div>
+
+      <div class="imei-list" id="imeiList"></div>
+
+      <div style="margin-top: 30px; display: flex; gap: 10px;">
+        <button class="btn btn-primary" onclick="goToStep1()">
+          ← Orqaga
+        </button>
+        <button class="btn btn-success" onclick="saveAllItems()" id="saveBtn" disabled>
+          ✅ Barchasini Saqlash
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 3: Muvaffaqiyat -->
+    <div class="card" id="step3" style="display: none;">
+      <div class="alert alert-success">
+        <h2>✅ Muvaffaqiyatli Saqlandi!</h2>
+        <p id="successMessage"></p>
+      </div>
+
+      <button class="btn btn-primary" onclick="resetForm()">
+        ➕ Yana Mahsulot Qo'shish
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000';
+    let productData = {};
+    let items = [];
+
+    function goToStep2() {
+      // Validatsiya
+      const productName = document.getElementById('productName').value.trim();
+      const quantity = parseInt(document.getElementById('quantity').value);
+      const buyPrice = parseFloat(document.getElementById('buyPrice').value);
+      const sellPrice = parseFloat(document.getElementById('sellPrice').value);
+
+      if (!productName) {
+        alert('Mahsulot nomini kiriting!');
+        return;
+      }
+
+      if (quantity < 1) {
+        alert('Miqdor kamida 1 bo\'lishi kerak!');
+        return;
+      }
+
+      if (buyPrice <= 0 || sellPrice <= 0) {
+        alert('Narxlarni to\'g\'ri kiriting!');
+        return;
+      }
+
+      // Ma'lumotlarni saqlash
+      productData = {
+        name: productName,
+        category: document.getElementById('category').value,
+        quantity: quantity,
+        buyPrice: buyPrice,
+        sellPrice: sellPrice,
+        supplier: document.getElementById('supplier').value.trim()
+      };
+
+      // Summary ko'rsatish
+      document.getElementById('productSummary').textContent = productData.name;
+      document.getElementById('quantitySummary').textContent = 
+        `${productData.quantity} dona × $${productData.sellPrice} = $${(productData.quantity * productData.sellPrice).toFixed(2)}`;
+
+      // IMEI inputlarni yaratish
+      createIMEIInputs(productData.quantity);
+
+      // Step 2 ga o'tish
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('step2').style.display = 'block';
+    }
+
+    function createIMEIInputs(quantity) {
+      const imeiList = document.getElementById('imeiList');
+      imeiList.innerHTML = '';
+      items = [];
+
+      for (let i = 1; i <= quantity; i++) {
+        const item = {
+          number: i,
+          imei: '',
+          serialNumber: '',
+          status: 'pending'
+        };
+        items.push(item);
+
+        const div = document.createElement('div');
+        div.className = 'imei-item';
+        div.innerHTML = `
+          <div class="imei-number">${i}</div>
+          <div class="imei-input">
+            <input 
+              type="text" 
+              placeholder="IMEI: 123456789012345" 
+              maxlength="15"
+              onchange="updateIMEI(${i-1}, this.value)"
+              style="margin-bottom: 5px;"
+            >
+            <input 
+              type="text" 
+              placeholder="Serial Number (ixtiyoriy)" 
+              onchange="updateSerial(${i-1}, this.value)"
+            >
+          </div>
+          <span class="imei-status status-pending" id="status-${i-1}">Kutilmoqda</span>
+        `;
+        imeiList.appendChild(div);
+      }
+
+      updateProgress();
+    }
+
+    function updateIMEI(index, value) {
+      items[index].imei = value.trim();
+      
+      if (value.trim().length === 15) {
+        items[index].status = 'done';
+        document.getElementById(`status-${index}`).textContent = '✅ Tayyor';
+        document.getElementById(`status-${index}`).className = 'imei-status status-done';
+      } else {
+        items[index].status = 'pending';
+        document.getElementById(`status-${index}`).textContent = 'Kutilmoqda';
+        document.getElementById(`status-${index}`).className = 'imei-status status-pending';
+      }
+
+      updateProgress();
+    }
+
+    function updateSerial(index, value) {
+      items[index].serialNumber = value.trim();
+    }
+
+    function updateProgress() {
+      const completed = items.filter(item => item.status === 'done').length;
+      const total = items.length;
+      const percent = Math.round((completed / total) * 100);
+
+      document.getElementById('progressBar').style.width = percent + '%';
+      document.getElementById('progressBar').textContent = `${completed}/${total} (${percent}%)`;
+
+      // Save tugmasini yoqish/o'chirish
+      document.getElementById('saveBtn').disabled = completed !== total;
+    }
+
+    function goToStep1() {
+      document.getElementById('step2').style.display = 'none';
+      document.getElementById('step1').style.display = 'block';
+    }
+
+    async function saveAllItems() {
+      try {
+        const saveBtn = document.getElementById('saveBtn');
+        saveBtn.disabled = true;
+        saveBtn.textContent = '⏳ Saqlanmoqda...';
+
+        // Har bir dona uchun alohida request
+        const promises = items.map(async (item, index) => {
+          const itemData = {
+            productName: productData.name,
+            category: productData.category,
+            imei: item.imei,
+            serialNumber: item.serialNumber,
+            buyPrice: productData.buyPrice,
+            sellPrice: productData.sellPrice,
+            supplier: productData.supplier,
+            status: 'available'
+          };
+
+          const response = await fetch(`${API_URL}/api/warehouse/items`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(itemData)
+          });
+
+          if (!response.ok) {
+            throw new Error(`Dona ${index + 1} saqlanmadi`);
+          }
+
+          return response.json();
+        });
+
+        await Promise.all(promises);
+
+        // Muvaffaqiyat
+        document.getElementById('step2').style.display = 'none';
+        document.getElementById('step3').style.display = 'block';
+        document.getElementById('successMessage').textContent = 
+          `${productData.name} - ${productData.quantity} dona muvaffaqiyatli qo'shildi!`;
+
+      } catch (error) {
+        alert('Xatolik: ' + error.message);
+        saveBtn.disabled = false;
+        saveBtn.textContent = '✅ Barchasini Saqlash';
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('step3').style.display = 'none';
+      document.getElementById('step1').style.display = 'block';
+      
+      // Formani tozalash
+      document.getElementById('productName').value = '';
+      document.getElementById('quantity').value = '1';
+      document.getElementById('buyPrice').value = '';
+      document.getElementById('sellPrice').value = '';
+      document.getElementById('supplier').value = '';
+      
+      productData = {};
+      items = [];
+    }
+  </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kassir Batafsil</title>
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #f5576c;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #e04455;
+            transform: translateY(-2px);
+        }
+        
+        .cashier-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 {
+            color: #f5576c;
+            font-size: 2.5em;
+        }
+        
+        .cashier-status {
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .cashier-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #f5576c;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #f5576c;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .balance-breakdown {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .balance-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .balance-currency {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .balance-amount {
+            font-size: 2em;
+            font-weight: 700;
+            color: #f5576c;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="back-button.js"></script>
+</head>
+<body>
+    <div class="container">
+        <a href="admin-cashiers.html" class="back-btn">⬅ Kassirlar ro'yxatiga qaytish</a>
+        
+        <div class="header">
+            <div class="cashier-title">
+                <div>
+                    <h1 id="cashierName">Yuklanmoqda...</h1>
+                    <div class="cashier-info" id="cashierInfo"></div>
+                </div>
+                <div class="cashier-status status-active" id="cashierStatus">Faol</div>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="totalBalance">$0</div>
+                <div class="stat-label">Umumiy Balans</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="totalSales">0</div>
+                <div class="stat-label">Jami Savdolar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💵</div>
+                <div class="stat-value" id="totalRevenue">$0</div>
+                <div class="stat-label">Jami Daromad</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💸</div>
+                <div class="stat-value" id="totalHandedOver">$0</div>
+                <div class="stat-label">Topshirilgan</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <span>💰</span>
+                <span>Balans Tafsiloti</span>
+            </div>
+            <div class="balance-breakdown">
+                <div class="balance-item">
+                    <div class="balance-currency">USD (Dollar)</div>
+                    <div class="balance-amount" id="balanceUSD">$0</div>
+                </div>
+                <div class="balance-item">
+                    <div class="balance-currency">UZS (So'm)</div>
+                    <div class="balance-amount" id="balanceUZS">0</div>
+                </div>
+                <div class="balance-item">
+                    <div class="balance-currency">RUB (Rubl)</div>
+                    <div class="balance-amount" id="balanceRUB">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <span>📊</span>
+                <span>So'nggi Savdolar</span>
+            </div>
+            <div id="salesTable"></div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <span>💸</span>
+                <span>Kirim Topshirishlar</span>
+            </div>
+            <div id="handoversTable"></div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <span>📈</span>
+                <span>Kunlik Savdolar Grafigi</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let cashierId = null;
+        let cashier = null;
+        
+        // URL dan kassir ID ni olish
+        const urlParams = new URLSearchParams(window.location.search);
+        cashierId = urlParams.get('id');
+        
+        if (!cashierId) {
+            alert('Kassir ID topilmadi!');
+            window.location.href = 'admin-cashiers.html';
+        }
+        
+        async function loadCashierDetails() {
+            try {
+                // Kassir ma'lumotlarini olish
+                const cashierRes = await fetch(`${API_URL}/cashiers`);
+                const cashierData = await cashierRes.json();
+                
+                if (cashierData.success) {
+                    cashier = cashierData.cashiers.find(c => c.cashierId == cashierId);
+                    
+                    if (!cashier) {
+                        alert('Kassir topilmadi!');
+                        window.location.href = 'admin-cashiers.html';
+                        return;
+                    }
+                    
+                    displayCashierInfo(cashier);
+                }
+                
+                // Filial nomini olish
+                const branchRes = await fetch(`${API_URL}/branches`);
+                const branchData = await branchRes.json();
+                let branchName = 'Noma\'lum';
+                
+                if (branchData.success) {
+                    const branch = branchData.branches.find(b => b.branchId === cashier.branchId);
+                    if (branch) branchName = branch.name;
+                }
+                
+                // Savdolarni olish
+                const salesRes = await fetch(`${API_URL}/cashier-sales/${cashierId}`);
+                const salesData = await salesRes.json();
+                
+                if (salesData.success) {
+                    displaySales(salesData.sales);
+                    updateSalesStats(salesData.sales);
+                    createSalesChart(salesData.sales);
+                }
+                
+                // Kirimlarni olish
+                const handoversRes = await fetch(`${API_URL}/cashier-handovers/${cashierId}`);
+                const handoversData = await handoversRes.json();
+                
+                if (handoversData.success) {
+                    displayHandovers(handoversData.handovers);
+                }
+                
+            } catch (error) {
+                console.error('Xato:', error);
+                alert('Ma\'lumotlarni yuklashda xato!');
+            }
+        }
+        
+        function displayCashierInfo(cashier) {
+            document.getElementById('cashierName').textContent = cashier.name;
+            document.getElementById('cashierStatus').textContent = cashier.isActive ? 'Faol' : 'Faolsiz';
+            document.getElementById('cashierStatus').className = 
+                'cashier-status ' + (cashier.isActive ? 'status-active' : 'status-inactive');
+            
+            document.getElementById('cashierInfo').innerHTML = `
+                <div class="info-card">
+                    <div class="info-label">ID</div>
+                    <div class="info-value">#${cashier.cashierId}</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Login</div>
+                    <div class="info-value">${cashier.username}</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Telefon</div>
+                    <div class="info-value">${cashier.phone || 'Kiritilmagan'}</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Rol</div>
+                    <div class="info-value">${cashier.role === 'cashier' ? 'Kassir' : 'Admin'}</div>
+                </div>
+            `;
+            
+            // Balans
+            document.getElementById('totalBalance').textContent = '$' + (cashier.balance?.toFixed(2) || '0.00');
+            document.getElementById('balanceUSD').textContent = '$' + (cashier.balanceUSD?.toFixed(2) || '0.00');
+            document.getElementById('balanceUZS').textContent = (cashier.balanceUZS?.toLocaleString() || '0') + ' so\'m';
+            document.getElementById('balanceRUB').textContent = (cashier.balanceRUB?.toLocaleString() || '0') + ' ₽';
+            
+            // Statistika
+            document.getElementById('totalRevenue').textContent = '$' + (cashier.totalSales?.toFixed(2) || '0.00');
+            document.getElementById('totalHandedOver').textContent = '$' + (cashier.totalHandedOver?.toFixed(2) || '0.00');
+        }
+        
+        function displaySales(sales) {
+            const container = document.getElementById('salesTable');
+            
+            if (sales.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Hozircha savdolar yo'q</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Faqat oxirgi 10 ta savdoni ko'rsatish
+            const recentSales = sales.slice(0, 10);
+            
+            container.innerHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Sana</th>
+                            <th>Vaqt</th>
+                            <th>Mijoz</th>
+                            <th>Mahsulot</th>
+                            <th>Narx</th>
+                            <th>To'landi</th>
+                            <th>Valyuta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${recentSales.map(s => `
+                            <tr>
+                                <td>#${s.saleId}</td>
+                                <td>${s.date}</td>
+                                <td>${s.time}</td>
+                                <td>${s.customerName || '-'}</td>
+                                <td>${s.product}</td>
+                                <td>$${s.price?.toFixed(2)}</td>
+                                <td>$${s.paidUSD?.toFixed(2) || '0.00'}</td>
+                                <td>USD</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        function displayHandovers(handovers) {
+            const container = document.getElementById('handoversTable');
+            
+            if (handovers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💸</div>
+                        <p>Hozircha kirimlar yo'q</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Sana</th>
+                            <th>Vaqt</th>
+                            <th>Miqdor</th>
+                            <th>Oldingi Balans</th>
+                            <th>Keyingi Balans</th>
+                            <th>Izoh</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${handovers.map(h => `
+                            <tr>
+                                <td>#${h.handoverId}</td>
+                                <td>${h.date}</td>
+                                <td>${h.time}</td>
+                                <td>$${h.amount?.toFixed(2)}</td>
+                                <td>$${h.balanceBefore?.toFixed(2)}</td>
+                                <td>$${h.balanceAfter?.toFixed(2)}</td>
+                                <td>${h.notes || '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        function updateSalesStats(sales) {
+            document.getElementById('totalSales').textContent = sales.length;
+        }
+        
+        function createSalesChart(sales) {
+            // Oxirgi 7 kunlik savdolar
+            const last7Days = [];
+            const today = new Date();
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                last7Days.push(date.toLocaleDateString('uz-UZ'));
+            }
+            
+            const salesByDay = last7Days.map(day => {
+                return sales.filter(s => s.date === day).length;
+            });
+            
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: last7Days,
+                    datasets: [{
+                        label: 'Savdolar soni',
+                        data: salesByDay,
+                        backgroundColor: 'rgba(245, 87, 108, 0.8)',
+                        borderColor: '#f5576c',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Sahifa yuklanganda
+        loadCashierDetails();
+        
+        // Har 30 sekundda yangilash
+        setInterval(loadCashierDetails, 30000);
+    </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

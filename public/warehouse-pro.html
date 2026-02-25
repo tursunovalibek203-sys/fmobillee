@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🏭 Professional Ombor Boshqaruvi</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="mobile-responsive.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Push Notification sozlamalari
+    if ('Notification' in window && 'serviceWorker' in navigator) {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          console.log('✅ Bildirishnomalar ruxsat etildi');
+        }
+      });
+    }
+    
+    // Bildirishnoma yuborish funksiyasi
+    function showNotification(title, body, icon = '⚠️') {
+      if (Notification.permission === 'granted') {
+        new Notification(title, {
+          body: body,
+          icon: icon,
+          badge: icon
+        });
+      }
+    }
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .dashboard {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      background: white;
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .menu-item {
+      padding: 12px 16px;
+      margin: 8px 0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .menu-item:hover {
+      background: #f3f4f6;
+    }
+    
+    .menu-item.active {
+      background: #667eea;
+      color: white;
+    }
+    
+    /* Main Content */
+    .main-content {
+      padding: 30px;
+      overflow-y: auto;
+    }
+    
+    .header {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .stat-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: #6b7280;
+    }
+    
+    .content-section {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+    
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: #059669;
+    }
+    
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+    
+    .search-box {
+      padding: 12px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 14px;
+      width: 300px;
+      transition: all 0.2s;
+    }
+    
+    .search-box:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .table th {
+      background: #f9fafb;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .table td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .table tr:hover {
+      background: #f9fafb;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .badge-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .badge-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #374151;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .action-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    
+    .action-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    }
+    
+    .action-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    
+    .action-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    /* 📱 TELEFON UCHUN MAXSUS SOZLAMALAR */
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        width: 70%;
+        max-width: 250px;
+        height: 100%;
+        z-index: 9999;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+      }
+      
+      .sidebar.active {
+        left: 0;
+      }
+      
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 9998;
+      }
+      
+      .sidebar-overlay.active {
+        display: block;
+      }
+      
+      .main-content {
+        padding: 15px;
+      }
+      
+      .header {
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .header h1 {
+        font-size: 1.3em;
+      }
+      
+      .header p {
+        font-size: 0.85em;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 15px;
+      }
+      
+      .stat-card {
+        padding: 15px;
+        border-radius: 12px;
+      }
+      
+      .stat-icon {
+        font-size: 2em;
+        margin-bottom: 8px;
+      }
+      
+      .stat-value {
+        font-size: 1.5em;
+        margin-bottom: 5px;
+      }
+      
+      .stat-label {
+        font-size: 0.8em;
+      }
+      
+      .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 15px;
+      }
+      
+      .action-card {
+        padding: 20px 15px;
+        border-radius: 12px;
+      }
+      
+      .action-icon {
+        font-size: 2.5em;
+        margin-bottom: 8px;
+      }
+      
+      .action-title {
+        font-size: 0.95em;
+      }
+      
+      .content-section {
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      
+      .section-title {
+        font-size: 1.1em;
+      }
+      
+      .search-box {
+        width: 100%;
+        padding: 10px 15px;
+        font-size: 16px;
+      }
+      
+      .btn {
+        padding: 10px 18px;
+        font-size: 0.9em;
+        width: 100%;
+      }
+      
+      .table {
+        font-size: 0.85em;
+      }
+      
+      .table th,
+      .table td {
+        padding: 8px;
+      }
+      
+      .modal-content {
+        width: 95%;
+        padding: 20px;
+        border-radius: 12px;
+      }
+      
+      .form-group label {
+        font-size: 0.9em;
+      }
+      
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 10px;
+        font-size: 16px;
+      }
+      
+      /* Hamburger menu button */
+      .menu-toggle {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 10000;
+        background: white;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        font-size: 1.5em;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+      
+      .header h1 {
+        font-size: 1.1em;
+      }
+    }
+  </style>
+  <script src="back-button.js"></script>
+</head>
+<body>
+  <!-- Mobile Menu Toggle -->
+  <button class="menu-toggle" onclick="toggleSidebar()" style="display: none;">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+  
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo">🏭 OMBOR PRO</div>
+      <div class="menu-item active" onclick="showSection('dashboard')">
+        📊 Bosh sahifa
+      </div>
+      <div class="menu-item" onclick="showSection('products')">
+        📦 Mahsulotlar
+      </div>
+      <div class="menu-item" onclick="showSection('stock-in')">
+        📥 Kirim
+      </div>
+      <div class="menu-item" onclick="showSection('stock-out')">
+        📤 Chiqim
+      </div>
+      <div class="menu-item" onclick="showSection('movements')">
+        📋 Tarix
+      </div>
+      <div class="menu-item" onclick="showSection('low-stock')">
+        ⚠️ Kam qolgan
+      </div>
+      <div class="menu-item" onclick="showSection('reports')">
+        📈 Hisobotlar
+      </div>
+      <div class="menu-item" onclick="exportToExcel()">
+        📊 Excel Export
+      </div>
+      <div class="menu-item" onclick="window.location.href='admin.html'">
+        🏠 Asosiy menyu
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="header">
+        <div>
+          <h1>Professional Ombor Boshqaruvi</h1>
+          <p style="color: #6b7280; margin-top: 4px;">Zamonaviy ombor tizimi</p>
+        </div>
+        <div>
+          <span id="currentDate"></span>
+        </div>
+      </div>
+
+      <!-- Dashboard Section -->
+      <div id="dashboardSection">
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-value" id="totalProducts">0</div>
+            <div class="stat-label">Jami Mahsulotlar</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value" id="totalValue">$0</div>
+            <div class="stat-label">Ombor Qiymati</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-value" id="lowStockCount">0</div>
+            <div class="stat-label">Kam Qolgan</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-value" id="totalStock">0</div>
+            <div class="stat-label">Jami Miqdor</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <div class="action-card" onclick="openStockInModal()">
+            <div class="action-icon">📥</div>
+            <div class="action-title">Kirim</div>
+          </div>
+          <div class="action-card" onclick="openStockOutModal()">
+            <div class="action-icon">📤</div>
+            <div class="action-title">Chiqim</div>
+          </div>
+          <div class="action-card" onclick="openAddProductModal()">
+            <div class="action-icon">➕</div>
+            <div class="action-title">Mahsulot Qo'shish</div>
+          </div>
+          <div class="action-card" onclick="showSection('reports')">
+            <div class="action-icon">📈</div>
+            <div class="action-title">Hisobotlar</div>
+          </div>
+        </div>
+
+        <!-- Recent Movements -->
+        <div class="content-section">
+          <div class="section-header">
+            <h2 class="section-title">So'nggi Harakatlar</h2>
+            <button class="btn btn-primary" onclick="showSection('movements')">
+              Barchasini Ko'rish
+            </button>
+          </div>
+          <div id="recentMovements"></div>
+        </div>
+      </div>
+
+      <!-- Products Section -->
+      <div id="productsSection" style="display: none;">
+        <div class="content-section">
+          <div class="section-header">
+            <h2 class="section-title">Barcha Mahsulotlar</h2>
+            <div style="display: flex; gap: 12px;">
+              <input type="text" class="search-box" id="productSearch" placeholder="🔍 Qidirish...">
+              <button class="btn btn-success" onclick="openAddProductModal()">
+                ➕ Yangi Mahsulot
+              </button>
+            </div>
+          </div>
+          <div id="productsTable"></div>
+        </div>
+      </div>
+
+      <!-- Low Stock Section -->
+      <div id="lowStockSection" style="display: none;">
+        <div class="content-section">
+          <div class="section-header">
+            <h2 class="section-title">⚠️ Kam Qolgan Mahsulotlar</h2>
+          </div>
+          <div id="lowStockTable"></div>
+        </div>
+      </div>
+
+      <!-- Reports Section -->
+      <div id="reportsSection" style="display: none;">
+        <div class="content-section">
+          <div class="section-header">
+            <h2 class="section-title">📈 Hisobotlar va Grafiklar</h2>
+            <button class="btn btn-primary" onclick="exportToExcel()">
+              📊 Excel Export
+            </button>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-top: 24px;">
+            <!-- Stock Chart -->
+            <div style="background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <h3 style="margin-bottom: 16px;">📊 Mahsulotlar Miqdori</h3>
+              <canvas id="stockChart"></canvas>
+            </div>
+            
+            <!-- Value Chart -->
+            <div style="background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <h3 style="margin-bottom: 16px;">💰 Mahsulotlar Qiymati</h3>
+              <canvas id="valueChart"></canvas>
+            </div>
+            
+            <!-- Category Chart -->
+            <div style="background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <h3 style="margin-bottom: 16px;">📂 Kategoriyalar</h3>
+              <canvas id="categoryChart"></canvas>
+            </div>
+            
+            <!-- Status Chart -->
+            <div style="background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <h3 style="margin-bottom: 16px;">⚠️ Mahsulot Holati</h3>
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stock In Modal -->
+  <div id="stockInModal" class="modal">
+    <div class="modal-content">
+      <h2>📥 Omborga Kirim</h2>
+      <form id="stockInForm">
+        <div class="form-group">
+          <label>Mahsulot *</label>
+          <select id="stockInProduct" required></select>
+        </div>
+        <div class="form-group">
+          <label>Miqdor *</label>
+          <input type="number" id="stockInQuantity" required min="1">
+        </div>
+        <div class="form-group">
+          <label>Sotib Olish Narxi</label>
+          <input type="number" id="stockInPrice" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Yetkazib Beruvchi</label>
+          <input type="text" id="stockInSupplier">
+        </div>
+        <div class="form-group">
+          <label>Izoh</label>
+          <textarea id="stockInNotes" rows="3"></textarea>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="submit" class="btn btn-success" style="flex: 1;">
+            ✅ Kiritish
+          </button>
+          <button type="button" class="btn btn-danger" onclick="closeModal('stockInModal')">
+            ❌ Bekor qilish
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Stock Out Modal -->
+  <div id="stockOutModal" class="modal">
+    <div class="modal-content">
+      <h2>📤 Ombordan Chiqim</h2>
+      <form id="stockOutForm">
+        <div class="form-group">
+          <label>Mahsulot *</label>
+          <select id="stockOutProduct" required></select>
+        </div>
+        <div class="form-group">
+          <label>Miqdor *</label>
+          <input type="number" id="stockOutQuantity" required min="1">
+        </div>
+        <div class="form-group">
+          <label>Sabab</label>
+          <select id="stockOutReason">
+            <option value="sale">Savdo</option>
+            <option value="damage">Buzilgan</option>
+            <option value="return">Qaytarildi</option>
+            <option value="other">Boshqa</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Izoh</label>
+          <textarea id="stockOutNotes" rows="3"></textarea>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="submit" class="btn btn-success" style="flex: 1;">
+            ✅ Chiqarish
+          </button>
+          <button type="button" class="btn btn-danger" onclick="closeModal('stockOutModal')">
+            ❌ Bekor qilish
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Current date
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('uz-UZ', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    // Show section
+    function showSection(section) {
+      document.querySelectorAll('.main-content > div').forEach(div => {
+        if (div.id.includes('Section')) div.style.display = 'none';
+      });
+      
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      event.target.classList.add('active');
+      
+      if (section === 'dashboard') {
+        document.getElementById('dashboardSection').style.display = 'block';
+        loadDashboard();
+      } else if (section === 'products') {
+        document.getElementById('productsSection').style.display = 'block';
+        loadProducts();
+      } else if (section === 'low-stock') {
+        document.getElementById('lowStockSection').style.display = 'block';
+        loadLowStock();
+      } else if (section === 'reports') {
+        document.getElementById('reportsSection').style.display = 'block';
+        loadReports();
+      }
+    }
+
+    // Load dashboard
+    async function loadDashboard() {
+      try {
+        const response = await fetch('/api/warehouse/stats');
+        const data = await response.json();
+        
+        if (data.success) {
+          document.getElementById('totalProducts').textContent = data.stats.totalProducts || 0;
+          document.getElementById('totalValue').textContent = '$' + (data.stats.totalValue || 0).toFixed(2);
+          document.getElementById('lowStockCount').textContent = data.stats.lowStockCount || 0;
+          document.getElementById('totalStock').textContent = data.stats.totalStock || 0;
+          
+          // Kam qolgan mahsulotlar uchun bildirishnoma
+          if (data.stats.lowStockCount > 0) {
+            showNotification(
+              '⚠️ Kam Qolgan Mahsulotlar',
+              `${data.stats.lowStockCount} ta mahsulot tugab qolmoqda!`,
+              '⚠️'
+            );
+          }
+        }
+      } catch (error) {
+        console.error('Dashboard yuklashda xato:', error);
+      }
+    }
+
+    // Load products
+    async function loadProducts() {
+      try {
+        const response = await fetch('/api/warehouse/products');
+        const products = await response.json();
+        
+        const table = document.getElementById('productsTable');
+        table.innerHTML = `
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nomi</th>
+                <th>Kategoriya</th>
+                <th>Miqdor</th>
+                <th>Narx</th>
+                <th>Holat</th>
+                <th>Amallar</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${products.map(p => `
+                <tr>
+                  <td>${p.productId}</td>
+                  <td>${p.name}</td>
+                  <td>${p.category || 'N/A'}</td>
+                  <td>${p.stock} ${p.unit || 'dona'}</td>
+                  <td>$${p.sellPrice}</td>
+                  <td>
+                    <span class="badge ${p.stock <= p.minStock ? 'badge-danger' : 'badge-success'}">
+                      ${p.stock <= p.minStock ? 'Kam' : 'Yetarli'}
+                    </span>
+                  </td>
+                  <td>
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="editProduct(${p.productId})">
+                      ✏️
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (error) {
+        console.error('Mahsulotlarni yuklashda xato:', error);
+      }
+    }
+
+    // Load low stock
+    async function loadLowStock() {
+      try {
+        const response = await fetch('/api/warehouse/low-stock');
+        const data = await response.json();
+        
+        const table = document.getElementById('lowStockTable');
+        table.innerHTML = `
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Mahsulot</th>
+                <th>Hozirgi Miqdor</th>
+                <th>Minimal Miqdor</th>
+                <th>Amal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.products.map(p => `
+                <tr>
+                  <td>${p.name}</td>
+                  <td><span class="badge badge-danger">${p.stock} ${p.unit}</span></td>
+                  <td>${p.minStock} ${p.unit}</td>
+                  <td>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="quickStockIn(${p.productId})">
+                      📥 Kiritish
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (error) {
+        console.error('Kam qolgan mahsulotlarni yuklashda xato:', error);
+      }
+    }
+
+    // Modal functions
+    function openStockInModal() {
+      document.getElementById('stockInModal').classList.add('active');
+      loadProductsForSelect('stockInProduct');
+    }
+
+    function openStockOutModal() {
+      document.getElementById('stockOutModal').classList.add('active');
+      loadProductsForSelect('stockOutProduct');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    async function loadProductsForSelect(selectId) {
+      try {
+        const response = await fetch('/api/warehouse/products');
+        const products = await response.json();
+        
+        const select = document.getElementById(selectId);
+        select.innerHTML = '<option value="">Tanlang...</option>' + 
+          products.map(p => `<option value="${p.productId}">${p.name} (${p.stock} ${p.unit})</option>`).join('');
+      } catch (error) {
+        console.error('Mahsulotlarni yuklashda xato:', error);
+      }
+    }
+
+    // Stock In Form
+    document.getElementById('stockInForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const data = {
+        productId: document.getElementById('stockInProduct').value,
+        quantity: parseInt(document.getElementById('stockInQuantity').value),
+        price: parseFloat(document.getElementById('stockInPrice').value) || 0,
+        supplierName: document.getElementById('stockInSupplier').value,
+        notes: document.getElementById('stockInNotes').value,
+        userId: 1,
+        userName: 'Admin'
+      };
+      
+      try {
+        const response = await fetch('/api/warehouse/stock-in', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('✅ Mahsulot omborga kiritildi!');
+          closeModal('stockInModal');
+          document.getElementById('stockInForm').reset();
+          loadDashboard();
+        } else {
+          alert('❌ Xato: ' + result.error);
+        }
+      } catch (error) {
+        alert('❌ Xato: ' + error.message);
+      }
+    });
+
+    // Stock Out Form
+    document.getElementById('stockOutForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const data = {
+        productId: document.getElementById('stockOutProduct').value,
+        quantity: parseInt(document.getElementById('stockOutQuantity').value),
+        reason: document.getElementById('stockOutReason').value,
+        notes: document.getElementById('stockOutNotes').value,
+        userId: 1,
+        userName: 'Admin'
+      };
+      
+      try {
+        const response = await fetch('/api/warehouse/stock-out', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('✅ Mahsulot ombordan chiqarildi!');
+          closeModal('stockOutModal');
+          document.getElementById('stockOutForm').reset();
+          loadDashboard();
+        } else {
+          alert('❌ Xato: ' + result.error);
+        }
+      } catch (error) {
+        alert('❌ Xato: ' + error.message);
+      }
+    });
+
+    // Initialize
+    loadDashboard();
+    
+    // Mobile menu toggle
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('active');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    
+    // Show menu button on mobile
+    if (window.innerWidth <= 768) {
+      document.querySelector('.menu-toggle').style.display = 'block';
+    }
+    
+    window.addEventListener('resize', () => {
+      if (window.innerWidth <= 768) {
+        document.querySelector('.menu-toggle').style.display = 'block';
+      } else {
+        document.querySelector('.menu-toggle').style.display = 'none';
+        document.querySelector('.sidebar').classList.remove('active');
+        document.querySelector('.sidebar-overlay').classList.remove('active');
+      }
+    });
+    
+    // Excel Export
+    function exportToExcel() {
+      window.location.href = '/api/warehouse/export-excel';
+      alert('📊 Excel fayl yuklab olinmoqda...');
+    }
+    
+    // Load Reports with Charts
+    async function loadReports() {
+      try {
+        const response = await fetch('/api/warehouse/products');
+        const products = await response.json();
+        
+        // Top 10 products by stock
+        const topProducts = products
+          .sort((a, b) => b.stock - a.stock)
+          .slice(0, 10);
+        
+        // Stock Chart
+        new Chart(document.getElementById('stockChart'), {
+          type: 'bar',
+          data: {
+            labels: topProducts.map(p => p.name.substring(0, 15)),
+            datasets: [{
+              label: 'Miqdor',
+              data: topProducts.map(p => p.stock),
+              backgroundColor: 'rgba(102, 126, 234, 0.8)',
+              borderColor: 'rgba(102, 126, 234, 1)',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+        
+        // Value Chart
+        const topByValue = products
+          .map(p => ({ ...p, value: p.stock * (p.buyPrice || 0) }))
+          .sort((a, b) => b.value - a.value)
+          .slice(0, 10);
+        
+        new Chart(document.getElementById('valueChart'), {
+          type: 'bar',
+          data: {
+            labels: topByValue.map(p => p.name.substring(0, 15)),
+            datasets: [{
+              label: 'Qiymat ($)',
+              data: topByValue.map(p => p.value),
+              backgroundColor: 'rgba(16, 185, 129, 0.8)',
+              borderColor: 'rgba(16, 185, 129, 1)',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+        
+        // Category Chart
+        const categories = {};
+        products.forEach(p => {
+          const cat = p.category || 'Boshqa';
+          categories[cat] = (categories[cat] || 0) + 1;
+        });
+        
+        new Chart(document.getElementById('categoryChart'), {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(categories),
+            datasets: [{
+              data: Object.values(categories),
+              backgroundColor: [
+                'rgba(102, 126, 234, 0.8)',
+                'rgba(16, 185, 129, 0.8)',
+                'rgba(239, 68, 68, 0.8)',
+                'rgba(245, 158, 11, 0.8)',
+                'rgba(139, 92, 246, 0.8)'
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' }
+            }
+          }
+        });
+        
+        // Status Chart
+        const lowStock = products.filter(p => p.stock <= p.minStock).length;
+        const normalStock = products.length - lowStock;
+        
+        new Chart(document.getElementById('statusChart'), {
+          type: 'pie',
+          data: {
+            labels: ['Yetarli', 'Kam'],
+            datasets: [{
+              data: [normalStock, lowStock],
+              backgroundColor: [
+                'rgba(16, 185, 129, 0.8)',
+                'rgba(239, 68, 68, 0.8)'
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' }
+            }
+          }
+        });
+        
+      } catch (error) {
+        console.error('Hisobotlarni yuklashda xato:', error);
+      }
+    }
+  </script>
+    <script src="mobile-enhancements.js"></script>
+</body>
+</html>

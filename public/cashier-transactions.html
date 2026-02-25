@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kirim-Chiqim Tarixi</title>
+  <script src="back-button.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      color: #667eea;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .balance-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .balance-card {
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
+      text-align: center;
+    }
+
+    .balance-card.income {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .balance-card.expense {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .balance-card.handover {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .balance-card.current {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .balance-label {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+
+    .balance-value {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 22px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filter-group label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .transactions-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .transactions-table th {
+      background: #f8f9fa;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .transactions-table td {
+      padding: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .transactions-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    .transaction-type {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .type-income {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .type-expense {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .type-handover {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .type-return {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .amount-positive {
+      color: #27ae60;
+      font-weight: 700;
+    }
+
+    .amount-negative {
+      color: #e74c3c;
+      font-weight: 700;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      padding: 8px 16px;
+      border: 2px solid #667eea;
+      background: white;
+      color: #667eea;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .pagination button.active {
+      background: #667eea;
+      color: white;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      .balance-summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      .transactions-table {
+        font-size: 12px;
+      }
+
+      .transactions-table th,
+      .transactions-table td {
+        padding: 10px 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>📊 Kirim-Chiqim Tarixi</h1>
+      <p style="color: #666; margin-top: 5px;">Barcha moliyaviy operatsiyalar</p>
+
+      <!-- Balance Summary -->
+      <div class="balance-summary">
+        <div class="balance-card income">
+          <div class="balance-label">💰 Jami Kirim</div>
+          <div class="balance-value" id="totalIncome">$0</div>
+        </div>
+        <div class="balance-card expense">
+          <div class="balance-label">💸 Jami Chiqim</div>
+          <div class="balance-value" id="totalExpense">$0</div>
+        </div>
+        <div class="balance-card handover">
+          <div class="balance-label">📤 Kirim Berilgan</div>
+          <div class="balance-value" id="totalHandover">$0</div>
+        </div>
+        <div class="balance-card current">
+          <div class="balance-label">💼 Joriy Balans</div>
+          <div class="balance-value" id="currentBalance">$0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card">
+      <h2>
+        🔍 Filtrlar
+        <div>
+          <button class="btn btn-primary" onclick="applyFilters()">Qidirish</button>
+          <button class="btn btn-success" onclick="exportToExcel()">📥 Excel</button>
+        </div>
+      </h2>
+      <div class="filters">
+        <div class="filter-group">
+          <label>Turi</label>
+          <select id="filterType">
+            <option value="">Barchasi</option>
+            <option value="income">Kirim</option>
+            <option value="expense">Chiqim</option>
+            <option value="handover">Kirim Berish</option>
+            <option value="return">Qaytarish</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Boshlanish Sanasi</label>
+          <input type="date" id="filterStartDate">
+        </div>
+        <div class="filter-group">
+          <label>Tugash Sanasi</label>
+          <input type="date" id="filterEndDate">
+        </div>
+        <div class="filter-group">
+          <label>Qidiruv</label>
+          <input type="text" id="filterSearch" placeholder="Mijoz, mahsulot...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="card">
+      <h2>📋 Operatsiyalar Tarixi</h2>
+      <div style="overflow-x: auto;">
+        <table class="transactions-table" id="transactionsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Turi</th>
+              <th>Tavsif</th>
+              <th>Mijoz</th>
+              <th>Summa</th>
+              <th>Balans</th>
+              <th>Sana</th>
+              <th>Vaqt</th>
+            </tr>
+          </thead>
+          <tbody id="transactionsBody">
+            <tr>
+              <td colspan="8">
+                <div class="empty-state">
+                  <div class="empty-state-icon">📭</div>
+                  <p>Ma'lumotlar yuklanmoqda...</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+
+  <script src="cashier-transactions.js"></script>
+</body>
+</html>
