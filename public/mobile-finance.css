@@ -1,0 +1,395 @@
+/* 💰 FINANCE & ANALYTICS - TELEFON RESPONSIVE */
+
+@media (max-width: 768px) {
+    
+    /* FINANCE CONTAINER */
+    .finance-container {
+        padding: 10px !important;
+    }
+    
+    /* FINANCE HEADER */
+    .finance-header {
+        padding: 15px !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    
+    .finance-title {
+        font-size: 1.3rem !important;
+    }
+    
+    /* BALANCE CARDS */
+    .balance-cards {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .balance-card {
+        padding: 20px 15px !important;
+        border-radius: 15px !important;
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        color: white !important;
+    }
+    
+    .balance-label {
+        font-size: 0.85rem !important;
+        opacity: 0.9 !important;
+    }
+    
+    .balance-amount {
+        font-size: 1.8rem !important;
+        font-weight: 700 !important;
+        margin: 8px 0 !important;
+    }
+    
+    .balance-change {
+        font-size: 0.8rem !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+    
+    /* TRANSACTION FILTERS */
+    .transaction-filters {
+        padding: 15px !important;
+        margin-bottom: 15px !important;
+        background: white !important;
+        border-radius: 12px !important;
+    }
+    
+    .filter-tabs {
+        display: flex !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .filter-tab {
+        padding: 10px 16px !important;
+        white-space: nowrap !important;
+        font-size: 0.85rem !important;
+        border-radius: 20px !important;
+        border: 2px solid #e5e7eb !important;
+    }
+    
+    .filter-tab.active {
+        background: #3b82f6 !important;
+        color: white !important;
+        border-color: #3b82f6 !important;
+    }
+    
+    /* TRANSACTIONS LIST */
+    .transactions-list {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    .transaction-item {
+        padding: 15px !important;
+        background: white !important;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+    
+    .transaction-icon {
+        width: 45px !important;
+        height: 45px !important;
+        border-radius: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 1.3rem !important;
+    }
+    
+    .transaction-icon.income {
+        background: #d1fae5 !important;
+        color: #065f46 !important;
+    }
+    
+    .transaction-icon.expense {
+        background: #fee2e2 !important;
+        color: #991b1b !important;
+    }
+    
+    .transaction-details {
+        flex: 1 !important;
+    }
+    
+    .transaction-title {
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .transaction-meta {
+        font-size: 0.75rem !important;
+        color: #666 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+    
+    .transaction-amount {
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+    }
+    
+    .transaction-amount.income {
+        color: #10b981 !important;
+    }
+    
+    .transaction-amount.expense {
+        color: #ef4444 !important;
+    }
+    
+    /* CHARTS */
+    .finance-charts {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .chart-card {
+        padding: 15px !important;
+        background: white !important;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    }
+    
+    .chart-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .chart-title {
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+    }
+    
+    .chart-period {
+        font-size: 0.75rem !important;
+        color: #666 !important;
+        padding: 6px 12px !important;
+        background: #f3f4f6 !important;
+        border-radius: 15px !important;
+    }
+    
+    .chart-canvas {
+        max-height: 250px !important;
+    }
+    
+    /* EXPENSE CATEGORIES */
+    .expense-categories {
+        padding: 15px !important;
+        background: white !important;
+        border-radius: 12px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .category-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        padding: 12px 0 !important;
+        border-bottom: 1px solid #f3f4f6 !important;
+    }
+    
+    .category-item:last-child {
+        border-bottom: none !important;
+    }
+    
+    .category-icon {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 1.2rem !important;
+    }
+    
+    .category-info {
+        flex: 1 !important;
+    }
+    
+    .category-name {
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .category-progress {
+        height: 6px !important;
+        background: #f3f4f6 !important;
+        border-radius: 3px !important;
+        overflow: hidden !important;
+    }
+    
+    .category-progress-bar {
+        height: 100% !important;
+        background: #3b82f6 !important;
+        border-radius: 3px !important;
+        transition: width 0.3s !important;
+    }
+    
+    .category-amount {
+        font-size: 0.9rem !important;
+        font-weight: 700 !important;
+        color: #333 !important;
+    }
+    
+    .category-percentage {
+        font-size: 0.75rem !important;
+        color: #666 !important;
+    }
+    
+    /* BUDGET TRACKER */
+    .budget-tracker {
+        padding: 15px !important;
+        background: white !important;
+        border-radius: 12px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .budget-header {
+        margin-bottom: 15px !important;
+    }
+    
+    .budget-title {
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .budget-summary {
+        display: flex !important;
+        justify-content: space-between !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .budget-spent {
+        color: #ef4444 !important;
+        font-weight: 600 !important;
+    }
+    
+    .budget-remaining {
+        color: #10b981 !important;
+        font-weight: 600 !important;
+    }
+    
+    .budget-progress {
+        height: 12px !important;
+        background: #f3f4f6 !important;
+        border-radius: 6px !important;
+        overflow: hidden !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .budget-progress-bar {
+        height: 100% !important;
+        background: linear-gradient(90deg, #10b981, #3b82f6) !important;
+        border-radius: 6px !important;
+        transition: width 0.3s !important;
+    }
+    
+    .budget-progress-bar.warning {
+        background: linear-gradient(90deg, #f59e0b, #ef4444) !important;
+    }
+    
+    /* QUICK ACTIONS */
+    .finance-quick-actions {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .quick-action-btn {
+        padding: 15px !important;
+        background: white !important;
+        border: 2px solid #e5e7eb !important;
+        border-radius: 12px !important;
+        text-align: center !important;
+        cursor: pointer !important;
+        transition: all 0.2s !important;
+    }
+    
+    .quick-action-btn:active {
+        transform: scale(0.95) !important;
+        background: #f9fafb !important;
+    }
+    
+    .quick-action-icon {
+        font-size: 2rem !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .quick-action-label {
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+    }
+    
+    /* ANALYTICS STATS */
+    .analytics-stats {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .analytics-stat-card {
+        padding: 15px !important;
+        background: white !important;
+        border-radius: 12px !important;
+        text-align: center !important;
+    }
+    
+    .stat-icon {
+        font-size: 1.5rem !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .stat-value {
+        font-size: 1.3rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem !important;
+        color: #666 !important;
+    }
+    
+    .stat-change {
+        font-size: 0.75rem !important;
+        margin-top: 4px !important;
+    }
+    
+    .stat-change.positive {
+        color: #10b981 !important;
+    }
+    
+    .stat-change.negative {
+        color: #ef4444 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .finance-quick-actions,
+    .analytics-stats {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .balance-amount {
+        font-size: 1.5rem !important;
+    }
+}

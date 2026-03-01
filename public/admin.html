@@ -271,6 +271,10 @@
         }
     </style>
   <script src="back-button.js"></script>
+
+  <!-- 📱 Mobile Responsive CSS -->
+  <link rel="stylesheet" href="mobile-universal.css">
+  <script src="mobile-enhancements.js"></script>
 </head>
 <body>
     <!-- Sidebar -->
@@ -453,7 +457,8 @@
                 if (data.success) {
                     document.getElementById('totalCustomers').textContent = data.stats.totalCustomers;
                     document.getElementById('totalSales').textContent = data.stats.totalSales;
-                    document.getElementById('totalDebt').textContent = '$' + data.stats.totalDebt.toLocaleString('en-US', {minimumFractionDigits: 2});
+                    const debtValue = Number(data.stats.totalDebt) || 0;
+                    document.getElementById('totalDebt').textContent = '$' + debtValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                     document.getElementById('todaySales').textContent = data.stats.todaySales;
                 }
                 

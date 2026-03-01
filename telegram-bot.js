@@ -6,12 +6,13 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
 // Modellarni import qilish (qayta yaratmaslik uchun)
-let Customer, Sale, Branch;
+let Customer, Sale, Branch, CashierSale;
 
-function setModels(customerModel, saleModel, branchModel) {
+function setModels(customerModel, saleModel, branchModel, cashierSaleModel) {
   Customer = customerModel;
   Sale = saleModel;
   Branch = branchModel;
+  CashierSale = cashierSaleModel || saleModel;
 }
 
 // Telegram API functions
@@ -127,6 +128,7 @@ async function processMessage(message) {
 
 💡 <b>Buyruqlar:</b>
 /balans - Qarzni ko'rish
+/savdolar - Savdolar tarixi
 /id - ID ni qayta ko'rish
 /filial - Filialni o'zgartirish
 
@@ -195,6 +197,7 @@ Filial raqamini yuboring:\n\n`;
 
 💡 <b>Buyruqlar:</b>
 /balans - Qarzni ko'rish
+/savdolar - Savdolar tarixi
 /id - ID ni qayta ko'rish
 /filial - Filialni o'zgartirish
 
@@ -312,6 +315,75 @@ Filial raqamini yuboring:\n\n`;
       }
     }
     
+    else if (text === '/savdolar') {
+      const customer = await Customer.findOne({ chatId: String(chatId) });
+      
+      const formatUSD = (amount) => `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      
+      if (!customer) {
+        await sendMessage(chatId, '❌ Siz tizimda topilmadingiz.\n\n📝 /start buyrug\'ini yuboring.');
+      } else if (customer.branchId === -1) {
+        await sendMessage(chatId, '⚠️ Avval filialni tanlang!\n\n/filial buyrug\'ini yuboring.');
+      } else {
+        // CashierSale dan qidirish
+        const salesModel = CashierSale || Sale;
+        const sales = await salesModel.find({ 
+          customerId: customer.customerId,
+          type: 'sale'
+        }).sort({ createdAt: -1 }).limit(10);
+        
+        if (sales.length === 0) {
+          await sendMessage(chatId, '📋 <b>Sizning savdolaringiz yo\'q</b>\n\n😊 Birinchi xaridingizni qiling!');
+        } else {
+          let salesMsg = `📋 <b>SAVDOLAR TARIXI</b>\n\n`;
+          salesMsg += `👤 Mijoz: ${customer.name}\n`;
+          salesMsg += `🆔 ID: <code>${customer.customerId}</code>\n\n`;
+          salesMsg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+          
+          let totalAmount = 0;
+          let totalPaid = 0;
+          
+          sales.forEach((sale, index) => {
+            const debt = sale.price - sale.paid;
+            const status = debt > 0 ? '⚠️ Qarz' : '✅ To\'liq';
+            
+            salesMsg += `${index + 1}. <b>${sale.product}</b>\n`;
+            salesMsg += `   💰 Narx: ${formatUSD(sale.price)}\n`;
+            salesMsg += `   💵 To'landi: ${formatUSD(sale.paid)}\n`;
+            
+            if (debt > 0) {
+              salesMsg += `   📊 Qarz: ${formatUSD(debt)}\n`;
+            }
+            
+            salesMsg += `   ${status}\n`;
+            salesMsg += `   📅 ${sale.date} ${sale.time || ''}\n\n`;
+            
+            totalAmount += sale.price;
+            totalPaid += sale.paid;
+          });
+          
+          const totalDebt = totalAmount - totalPaid;
+          
+          salesMsg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+          salesMsg += `📊 <b>JAMI:</b>\n`;
+          salesMsg += `💰 Umumiy summa: ${formatUSD(totalAmount)}\n`;
+          salesMsg += `💵 To'langan: ${formatUSD(totalPaid)}\n`;
+          
+          if (totalDebt > 0) {
+            salesMsg += `⚠️ Qarz: <b>${formatUSD(totalDebt)}</b>\n`;
+          } else {
+            salesMsg += `✅ Qarz yo'q\n`;
+          }
+          
+          if (sales.length === 10) {
+            salesMsg += `\n💡 Oxirgi 10 ta savdo ko'rsatildi`;
+          }
+          
+          await sendMessage(chatId, salesMsg);
+        }
+      }
+    }
+    
     // Filial raqami yuborilgan bo'lsa
     else if (/^\d+$/.test(text)) {
       const customer = await Customer.findOne({ chatId: String(chatId) });
@@ -370,6 +442,7 @@ ${selectedBranch.address ? `📍 ${selectedBranch.address}` : ''}
 /start - Boshlash
 /id - ID ko'rish  
 /balans - Qarz ko'rish
+/savdolar - Savdolar tarixi
 /filial - Filialni o'zgartirish
 
 📞 Yordam kerak bo'lsa, do'kon egasiga murojaat qiling.`);

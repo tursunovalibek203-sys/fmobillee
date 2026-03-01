@@ -258,6 +258,11 @@
     }
   </style>
   <script src="back-button.js"></script>
+
+  <!-- Mobile Responsive CSS -->
+  <link rel="stylesheet" href="mobile-universal.css">
+  <link rel="stylesheet" href="mobile-login.css">
+  <script src="mobile-enhancements.js"></script>
 </head>
 <body>
   <div class="login-container">
@@ -304,7 +309,7 @@
 
     // Agar allaqachon login qilingan bo'lsa
     if (localStorage.getItem('isLoggedIn') === 'true') {
-      window.location.href = '/index.html';
+      window.location.href = '/admin-simple.html';
     }
 
     loginForm.addEventListener('submit', async (e) => {

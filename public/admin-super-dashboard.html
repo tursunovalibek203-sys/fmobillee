@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Admin Super Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 30px 20px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .sidebar-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-user {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .menu-item {
+            padding: 15px 20px;
+            color: #374151;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+            color: #667eea;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .menu-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .menu-label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 2px solid #f3f4f6;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: white;
+        }
+        
+        .logout-btn {
+            width: 100%;
+            padding: 12px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+        
+        /* Main Content */
+        .main-wrapper {
+            margin-left: 280px;
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+        }
+        
+        .header-info {
+            text-align: right;
+        }
+        
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .stat-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .stat-change {
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .stat-change.positive {
+            color: #10b981;
+        }
+        
+        .stat-change.negative {
+            color: #ef4444;
+        }
+        
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .chart-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 20px;
+        }
+        
+        /* Activity Feed */
+        .activity-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .activity-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+        }
+        
+        .activity-feed {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #f3f4f6;
+            transition: all 0.2s;
+        }
+        
+        .activity-item:hover {
+            background: #f9fafb;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon.sale {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .activity-icon.payment {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .activity-icon.stock {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-text {
+            color: #374151;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .activity-meta {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+        
+        .activity-amount {
+            font-weight: 700;
+            color: #10b981;
+            font-size: 18px;
+        }
+        
+        /* Top Performers */
+        .performers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .performer-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .performer-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .performer-rank {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .performer-info {
+            flex: 1;
+        }
+        
+        .performer-name {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+        
+        .performer-stats {
+            color: #6b7280;
+            font-size: 13px;
+        }
+        
+        .performer-value {
+            font-weight: 700;
+            color: #10b981;
+            font-size: 20px;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-wrapper {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block !important;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1001;
+                background: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                font-size: 24px;
+                cursor: pointer;
+            }
+            
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+            }
+            
+            .sidebar-overlay.active {
+                display: block;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .header-info {
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .performers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+        }
+    </style>
+    <script src="admin-auth-check.js"></script>
+</head>
+<body>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">🏪 ADMIN PANEL</div>
+            <div class="sidebar-user">👤 Administrator</div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="admin-super-dashboard.html" class="menu-item active">
+                <span class="menu-icon">📊</span>
+                <span class="menu-label">Super Dashboard</span>
+            </a>
+            <a href="admin-dashboard.html" class="menu-item">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-label">Asosiy Dashboard</span>
+            </a>
+            <a href="admin-branches.html" class="menu-item">
+                <span class="menu-icon">🏢</span>
+                <span class="menu-label">Filiallar</span>
+            </a>
+            <a href="admin-cashiers.html" class="menu-item">
+                <span class="menu-icon">👥</span>
+                <span class="menu-label">Kassirlar</span>
+            </a>
+            <a href="warehouse-pro.html" class="menu-item">
+                <span class="menu-icon">📦</span>
+                <span class="menu-label">Ombor</span>
+            </a>
+            <a href="admin-warehouse-branches.html" class="menu-item">
+                <span class="menu-icon">🏭</span>
+                <span class="menu-label">Filial Omborlari</span>
+            </a>
+            <a href="warehouse-history.html" class="menu-item">
+                <span class="menu-icon">📋</span>
+                <span class="menu-label">Ombor Tarixi</span>
+            </a>
+            <a href="admin-handovers.html" class="menu-item">
+                <span class="menu-icon">💰</span>
+                <span class="menu-label">Kirim Berish</span>
+            </a>
+            <a href="admin-reports.html" class="menu-item">
+                <span class="menu-icon">📈</span>
+                <span class="menu-label">Hisobotlar</span>
+            </a>
+            <a href="admin-notifications-new.html" class="menu-item">
+                <span class="menu-icon">🔔</span>
+                <span class="menu-label">Bildirishnomalar</span>
+            </a>
+            <a href="activity-log.html" class="menu-item">
+                <span class="menu-icon">📝</span>
+                <span class="menu-label">Faoliyat Tarixi</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">
+                🚪 Chiqish
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>📊 Admin Super Dashboard</h1>
+                <p style="color: #6b7280; margin-top: 5px;">Real-time biznes tahlili</p>
+            </div>
+            <div class="header-info">
+                <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    LIVE
+                </div>
+                <div style="margin-top: 10px; color: #6b7280; font-size: 14px;" id="currentTime"></div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="todayRevenue">$0</div>
+                <div class="stat-label">Bugungi Daromad</div>
+                <div class="stat-change positive" id="revenueChange">+0%</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🛒</div>
+                <div class="stat-value" id="todaySales">0</div>
+                <div class="stat-label">Bugungi Savdolar</div>
+                <div class="stat-change positive" id="salesChange">+0%</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">💵</div>
+                <div class="stat-value" id="totalBalance">$0</div>
+                <div class="stat-label">Kassadagi Pul</div>
+                <div class="stat-change positive">Real-time</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="activeCashiers">0</div>
+                <div class="stat-label">Faol Kassirlar</div>
+                <div class="stat-change positive" id="cashiersOnline">Online</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🏢</div>
+                <div class="stat-value" id="activeBranches">0</div>
+                <div class="stat-label">Faol Filiallar</div>
+                <div class="stat-change positive">100%</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-value" id="totalProducts">0</div>
+                <div class="stat-label">Jami Mahsulotlar</div>
+                <div class="stat-change" id="stockStatus">Omborda</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3 class="chart-title">📈 Kunlik Savdolar Dinamikasi</h3>
+                <canvas id="salesChart"></canvas>
+            </div>
+            
+            <div class="chart-card">
+                <h3 class="chart-title">🏢 Filiallar Bo'yicha Daromad</h3>
+                <canvas id="branchesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="activity-section">
+            <div class="activity-header">
+                <h2 class="activity-title">🔔 Jonli Hodisalar</h2>
+                <span style="color: #6b7280; font-size: 14px;">Oxirgi 50 ta</span>
+            </div>
+            <div class="activity-feed" id="activityFeed">
+                <div style="text-align: center; padding: 40px; color: #9ca3af;">
+                    Yuklanmoqda...
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Performers -->
+        <div class="performers-grid">
+            <div class="performer-card">
+                <h3 class="chart-title">🏆 Eng Ko'p Sotgan Kassirlar</h3>
+                <div id="topCashiers"></div>
+            </div>
+            
+            <div class="performer-card">
+                <h3 class="chart-title">🏅 Eng Ko'p Sotilgan Mahsulotlar</h3>
+                <div id="topProducts"></div>
+            </div>
+        </div>
+
+        <!-- Additional Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3 class="chart-title">💳 To'lov Turlari</h3>
+                <canvas id="paymentChart"></canvas>
+            </div>
+            
+            <div class="chart-card">
+                <h3 class="chart-title">⏰ Soatlik Savdolar</h3>
+                <canvas id="hourlyChart"></canvas>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Sidebar (Mobile)
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+        
+        // Logout
+        function logout() {
+            if (confirm('Tizimdan chiqmoqchimisiz?')) {
+                localStorage.removeItem('adminData');
+                window.location.href = 'index.html';
+            }
+        }
+        
+    </script>
+    <script>
+        // Current time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleString('uz-UZ', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Load Dashboard Data
+        async function loadDashboard() {
+            try {
+                console.log('🔄 Dashboard yuklanmoqda...');
+                
+                // Load stats
+                await loadStats();
+                
+                // Load charts
+                await loadCharts();
+                
+                // Load activity feed
+                await loadActivityFeed();
+                
+                // Load top performers
+                await loadTopPerformers();
+                
+                console.log('✅ Dashboard yuklandi');
+            } catch (error) {
+                console.error('❌ Dashboard yuklashda xato:', error);
+            }
+        }
+
+        // Load Stats
+        async function loadStats() {
+            try {
+                // Today's sales
+                const salesResponse = await fetch('/api/cashier-sales/stats');
+                const salesData = await salesResponse.json();
+                
+                if (salesData.success) {
+                    document.getElementById('todayRevenue').textContent = '$' + (salesData.todayRevenue || 0).toFixed(2);
+                    document.getElementById('todaySales').textContent = salesData.todaySales || 0;
+                }
+                
+                // Cashiers
+                const cashiersResponse = await fetch('/api/cashiers');
+                const cashiersData = await cashiersResponse.json();
+                
+                if (cashiersData.success) {
+                    const totalBalance = cashiersData.cashiers.reduce((sum, c) => sum + (c.balance || 0), 0);
+                    const activeCashiers = cashiersData.cashiers.filter(c => c.isActive).length;
+                    
+                    document.getElementById('totalBalance').textContent = '$' + totalBalance.toFixed(2);
+                    document.getElementById('activeCashiers').textContent = activeCashiers;
+                }
+                
+                // Branches
+                const branchesResponse = await fetch('/api/branches');
+                const branchesData = await branchesResponse.json();
+                
+                if (branchesData.success) {
+                    const activeBranches = branchesData.branches.filter(b => b.isActive).length;
+                    document.getElementById('activeBranches').textContent = activeBranches;
+                }
+                
+                // Products
+                const productsResponse = await fetch('/api/products');
+                const products = await productsResponse.json();
+                
+                document.getElementById('totalProducts').textContent = products.length;
+                
+                const lowStock = products.filter(p => p.stock <= p.minStock).length;
+                document.getElementById('stockStatus').textContent = lowStock > 0 ? `⚠️ ${lowStock} kam` : '✅ Yaxshi';
+                document.getElementById('stockStatus').className = lowStock > 0 ? 'stat-change negative' : 'stat-change positive';
+                
+            } catch (error) {
+                console.error('Statistika yuklashda xato:', error);
+            }
+        }
+
+        // Load Charts
+        async function loadCharts() {
+            try {
+                // Sales Chart
+                const salesCtx = document.getElementById('salesChart').getContext('2d');
+                new Chart(salesCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Dush', 'Sesh', 'Chor', 'Pay', 'Juma', 'Shan', 'Yak'],
+                        datasets: [{
+                            label: 'Savdolar',
+                            data: [12, 19, 15, 25, 22, 30, 28],
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+                
+                // Branches Chart
+                const branchesCtx = document.getElementById('branchesChart').getContext('2d');
+                new Chart(branchesCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Toshkent', 'Samarqand', 'Buxoro'],
+                        datasets: [{
+                            label: 'Daromad ($)',
+                            data: [16750, 19600, 19600],
+                            backgroundColor: [
+                                'rgba(102, 126, 234, 0.8)',
+                                'rgba(16, 185, 129, 0.8)',
+                                'rgba(245, 158, 11, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+                
+                // Payment Chart
+                const paymentCtx = document.getElementById('paymentChart').getContext('2d');
+                new Chart(paymentCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['USD', 'UZS', 'EUR'],
+                        datasets: [{
+                            data: [70, 25, 5],
+                            backgroundColor: [
+                                'rgba(102, 126, 234, 0.8)',
+                                'rgba(16, 185, 129, 0.8)',
+                                'rgba(245, 158, 11, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+                
+                // Hourly Chart
+                const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
+                new Chart(hourlyCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
+                        datasets: [{
+                            label: 'Savdolar',
+                            data: [3, 5, 8, 12, 15, 18, 14, 10, 7, 4],
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Chartlar yuklashda xato:', error);
+            }
+        }
+
+        // Load Activity Feed
+        async function loadActivityFeed() {
+            try {
+                const response = await fetch('/api/cashier-sales?limit=50');
+                const data = await response.json();
+                
+                const feed = document.getElementById('activityFeed');
+                
+                if (!data || data.length === 0) {
+                    feed.innerHTML = '<div style="text-align: center; padding: 40px; color: #9ca3af;">Hozircha hodisalar yo\'q</div>';
+                    return;
+                }
+                
+                feed.innerHTML = data.map(sale => `
+                    <div class="activity-item">
+                        <div class="activity-icon sale">🛒</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                <strong>${sale.cashierName}</strong> sotdi: ${sale.product}
+                            </div>
+                            <div class="activity-meta">
+                                ${sale.date} ${sale.time} • ${sale.customerName || 'Ochiq savdo'}
+                            </div>
+                        </div>
+                        <div class="activity-amount">$${sale.paid.toFixed(2)}</div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Activity feed yuklashda xato:', error);
+            }
+        }
+
+        // Load Top Performers
+        async function loadTopPerformers() {
+            try {
+                // Top Cashiers
+                const cashiersResponse = await fetch('/api/cashiers');
+                const cashiersData = await cashiersResponse.json();
+                
+                if (cashiersData.success) {
+                    const topCashiers = cashiersData.cashiers
+                        .sort((a, b) => b.balance - a.balance)
+                        .slice(0, 5);
+                    
+                    document.getElementById('topCashiers').innerHTML = topCashiers.map((cashier, index) => `
+                        <div class="performer-item">
+                            <div class="performer-rank">${index + 1}</div>
+                            <div class="performer-info">
+                                <div class="performer-name">${cashier.name}</div>
+                                <div class="performer-stats">${cashier.totalSales} ta savdo</div>
+                            </div>
+                            <div class="performer-value">$${cashier.balance.toFixed(2)}</div>
+                        </div>
+                    `).join('');
+                }
+                
+                // Top Products (mock data for now)
+                const topProducts = [
+                    { name: 'iPhone 15 Pro Max', sales: 25, revenue: 25000 },
+                    { name: 'Samsung S24 Ultra', sales: 20, revenue: 19000 },
+                    { name: 'Xiaomi 14 Pro', sales: 18, revenue: 10800 },
+                    { name: 'AirPods Pro', sales: 15, revenue: 3750 },
+                    { name: 'Samsung Buds', sales: 12, revenue: 1800 }
+                ];
+                
+                document.getElementById('topProducts').innerHTML = topProducts.map((product, index) => `
+                    <div class="performer-item">
+                        <div class="performer-rank">${index + 1}</div>
+                        <div class="performer-info">
+                            <div class="performer-name">${product.name}</div>
+                            <div class="performer-stats">${product.sales} ta sotildi</div>
+                        </div>
+                        <div class="performer-value">$${product.revenue.toFixed(0)}</div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Top performers yuklashda xato:', error);
+            }
+        }
+
+        // Initialize
+        loadDashboard();
+        
+        // Auto refresh every 30 seconds
+        setInterval(loadDashboard, 30000);
+    </script>
+</body>
+</html>

@@ -6,6 +6,8 @@
   <title>🏭 Professional Ombor Boshqaruvi</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="mobile-responsive.css">
+  <link rel="stylesheet" href="mobile-warehouse-pro.css">
+  <link rel="stylesheet" href="mobile-warehouse-complete.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     // Push Notification sozlamalari
@@ -530,10 +532,137 @@
         font-size: 1.1em;
       }
     }
-  </style>
+  
+        /* Sidebar Styles */
+        .menu-item:hover {
+            background: #f3f4f6 !important;
+            color: #667eea !important;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            color: white !important;
+        }
+        
+        .logout-btn:hover {
+            background: #dc2626 !important;
+        }
+        
+        /* Main Content Wrapper */
+        body {
+            display: flex !important;
+        }
+        
+        body > .container,
+        body > .dashboard,
+        body > div:not(.admin-sidebar):not(.sidebar-overlay):not(.mobile-menu-btn) {
+            margin-left: 280px !important;
+            flex: 1 !important;
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%) !important;
+            }
+            
+            .admin-sidebar.active {
+                transform: translateX(0) !important;
+            }
+            
+            body > .container,
+            body > .dashboard,
+            body > div:not(.admin-sidebar):not(.sidebar-overlay):not(.mobile-menu-btn) {
+                margin-left: 0 !important;
+            }
+            
+            .mobile-menu-btn {
+                display: block !important;
+            }
+            
+            .sidebar-overlay.active {
+                display: block !important;
+            }
+        }
+
+    </style>
   <script src="back-button.js"></script>
+
+  <!-- Mobile Responsive CSS -->
+  <link rel="stylesheet" href="mobile-universal.css">
+  <link rel="stylesheet" href="mobile-warehouse-pro.css">
+  <link rel="stylesheet" href="mobile-warehouse-complete.css">
+  <script src="mobile-enhancements.js"></script>
+    <script src="admin-auth-check.js"></script>
+    <script src="warehouse-strict-validation.js"></script>
 </head>
 <body>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()" style="display: none; position: fixed; top: 20px; left: 20px; z-index: 1001; background: white; border: none; padding: 10px 15px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-size: 24px; cursor: pointer;">☰</button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+    
+    <!-- Sidebar -->
+    <div class="admin-sidebar" style="width: 280px; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.1); position: fixed; left: 0; top: 0; height: 100vh; overflow-y: auto; z-index: 1000; transition: transform 0.3s;">
+        <div class="sidebar-header" style="padding: 30px 20px; border-bottom: 2px solid #f3f4f6; background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+            <div class="sidebar-logo" style="font-size: 24px; font-weight: 700; margin-bottom: 10px;">🏪 ADMIN PANEL</div>
+            <div class="sidebar-user" style="font-size: 14px; opacity: 0.9;">👤 Administrator</div>
+        </div>
+        
+        <div class="sidebar-menu" style="padding: 20px 0;">
+            <a href="admin-super-dashboard.html" class="menu-item" style="padding: 15px 20px; color: #374151; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                <span class="menu-icon" style="font-size: 20px; width: 24px; text-align: center;">📊</span>
+                <span class="menu-label" style="font-weight: 600; font-size: 14px;">Super Dashboard</span>
+            </a>
+            <a href="admin-dashboard.html" class="menu-item" style="padding: 15px 20px; color: #374151; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                <span class="menu-icon" style="font-size: 20px; width: 24px; text-align: center;">🏠</span>
+                <span class="menu-label" style="font-weight: 600; font-size: 14px;">Asosiy Dashboard</span>
+            </a>
+            <a href="admin-branches.html" class="menu-item" style="padding: 15px 20px; color: #374151; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                <span class="menu-icon" style="font-size: 20px; width: 24px; text-align: center;">🏢</span>
+                <span class="menu-label" style="font-weight: 600; font-size: 14px;">Filiallar</span>
+            </a>
+            <a href="admin-cashiers.html" class="menu-item" style="padding: 15px 20px; color: #374151; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                <span class="menu-icon" style="font-size: 20px; width: 24px; text-align: center;">👥</span>
+                <span class="menu-label" style="font-weight: 600; font-size: 14px;">Kassirlar</span>
+            </a>
+            <a href="warehouse-pro.html" class="menu-item" style="padding: 15px 20px; color: #374151; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                <span class="menu-icon" style="font-size: 20px; width: 24px; text-align: center;">📦</span>
+                <span class="menu-label" style="font-weight: 600; font-size: 14px;">Ombor</span>
+            </a>
+            <a href="admin-warehouse-branches.html" class="menu-item" style="padding: 15px 20px; color: #374151; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                <span class="menu-icon" style="font-size: 20px; width: 24px; text-align: center;">🏭</span>
+                <span class="menu-label" style="font-weight: 600; font-size: 14px;">Filial Omborlari</span>
+            </a>
+            <a href="warehouse-history.html" class="menu-item" style="padding: 15px 20px; color: #374151; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                <span class="menu-icon" style="font-size: 20px; width: 24px; text-align: center;">📋</span>
+                <span class="menu-label" style="font-weight: 600; font-size: 14px;">Ombor Tarixi</span>
+            </a>
+            <a href="admin-handovers.html" class="menu-item" style="padding: 15px 20px; color: #374151; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                <span class="menu-icon" style="font-size: 20px; width: 24px; text-align: center;">💰</span>
+                <span class="menu-label" style="font-weight: 600; font-size: 14px;">Kirim Berish</span>
+            </a>
+            <a href="admin-reports.html" class="menu-item" style="padding: 15px 20px; color: #374151; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                <span class="menu-icon" style="font-size: 20px; width: 24px; text-align: center;">📈</span>
+                <span class="menu-label" style="font-weight: 600; font-size: 14px;">Hisobotlar</span>
+            </a>
+            <a href="admin-notifications-new.html" class="menu-item" style="padding: 15px 20px; color: #374151; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                <span class="menu-icon" style="font-size: 20px; width: 24px; text-align: center;">🔔</span>
+                <span class="menu-label" style="font-weight: 600; font-size: 14px;">Bildirishnomalar</span>
+            </a>
+            <a href="activity-log.html" class="menu-item" style="padding: 15px 20px; color: #374151; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                <span class="menu-icon" style="font-size: 20px; width: 24px; text-align: center;">📝</span>
+                <span class="menu-label" style="font-weight: 600; font-size: 14px;">Faoliyat Tarixi</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-footer" style="padding: 20px; border-top: 2px solid #f3f4f6; position: sticky; bottom: 0; background: white;">
+            <button class="logout-btn" onclick="logout()" style="width: 100%; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                🚪 Chiqish
+            </button>
+        </div>
+    </div>
+
   <!-- Mobile Menu Toggle -->
   <button class="menu-toggle" onclick="toggleSidebar()" style="display: none;">☰</button>
   <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
@@ -579,7 +708,17 @@
           <h1>Professional Ombor Boshqaruvi</h1>
           <p style="color: #6b7280; margin-top: 4px;">Zamonaviy ombor tizimi</p>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <!-- Filial Tanlash -->
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <label for="branchFilter" style="font-weight: 600; color: #374151;">🏢 Filial:</label>
+            <select id="branchFilter" onchange="changeBranch()" style="padding: 8px 16px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; cursor: pointer; min-width: 200px;">
+              <option value="0">Umumiy Ombor</option>
+              <option value="1001">Toshkent Filiali</option>
+              <option value="1002">Samarqand Filiali</option>
+              <option value="1003">Buxoro Filiali</option>
+            </select>
+          </div>
           <span id="currentDate"></span>
         </div>
       </div>
@@ -819,10 +958,44 @@
       }
     }
 
+    // Filial ID ni olish
+    let currentBranchId = 0; // Default: Umumiy ombor
+    
+    function getCurrentBranchId() {
+      // Tanlangan filial ID ni qaytarish
+      return currentBranchId;
+    }
+    
+    // Filial o'zgartirish
+    function changeBranch() {
+      const select = document.getElementById('branchFilter');
+      currentBranchId = parseInt(select.value);
+      console.log('🏢 Filial o\'zgartirildi:', currentBranchId);
+      
+      // Ma'lumotlarni qayta yuklash
+      loadDashboard();
+      
+      // Agar products section ochiq bo'lsa, uni ham yangilash
+      if (document.getElementById('productsSection').style.display !== 'none') {
+        loadProducts();
+      }
+      
+      // Agar low-stock section ochiq bo'lsa, uni ham yangilash
+      if (document.getElementById('lowStockSection').style.display !== 'none') {
+        loadLowStock();
+      }
+      
+      // Agar reports section ochiq bo'lsa, uni ham yangilash
+      if (document.getElementById('reportsSection').style.display !== 'none') {
+        loadReports();
+      }
+    }
+
     // Load dashboard
     async function loadDashboard() {
       try {
-        const response = await fetch('/api/warehouse/stats');
+        const branchId = getCurrentBranchId();
+        const response = await fetch(`/api/warehouse/stats?branchId=${branchId}`);
         const data = await response.json();
         
         if (data.success) {
@@ -848,10 +1021,31 @@
     // Load products
     async function loadProducts() {
       try {
-        const response = await fetch('/api/warehouse/products');
+        const branchId = getCurrentBranchId();
+        console.log('🔄 Mahsulotlar yuklanmoqda, branchId:', branchId);
+        
+        const url = `/api/products?branchId=${branchId}`;
+        console.log('🌐 API URL:', url);
+        
+        const response = await fetch(url);
         const products = await response.json();
         
+        console.log('📦 Yuklangan mahsulotlar:', products.length, 'ta');
+        console.log('📋 Birinchi 3 ta:', products.slice(0, 3).map(p => ({ id: p.productId, name: p.name, branchId: p.branchId })));
+        
         const table = document.getElementById('productsTable');
+        
+        if (products.length === 0) {
+          table.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #6b7280;">
+              <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
+              <p style="font-size: 18px; font-weight: 600;">Bu filialda mahsulot yo'q</p>
+              <p style="margin-top: 8px;">Yangi mahsulot qo'shish uchun "➕ Yangi Mahsulot" tugmasini bosing</p>
+            </div>
+          `;
+          return;
+        }
+        
         table.innerHTML = `
           <table class="table">
             <thead>
@@ -869,10 +1063,10 @@
               ${products.map(p => `
                 <tr>
                   <td>${p.productId}</td>
-                  <td>${p.name}</td>
+                  <td>${p.name} ${p.imei ? '<span style="color: #999; font-size: 11px;">(IMEI: ' + p.imei + ')</span>' : ''}</td>
                   <td>${p.category || 'N/A'}</td>
                   <td>${p.stock} ${p.unit || 'dona'}</td>
-                  <td>$${p.sellPrice}</td>
+                  <td>$${p.sellPrice.toFixed(2)}</td>
                   <td>
                     <span class="badge ${p.stock <= p.minStock ? 'badge-danger' : 'badge-success'}">
                       ${p.stock <= p.minStock ? 'Kam' : 'Yetarli'}
@@ -889,14 +1083,22 @@
           </table>
         `;
       } catch (error) {
-        console.error('Mahsulotlarni yuklashda xato:', error);
+        console.error('❌ Mahsulotlarni yuklashda xato:', error);
+        document.getElementById('productsTable').innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #ef4444;">
+            <div style="font-size: 48px; margin-bottom: 16px;">❌</div>
+            <p style="font-size: 18px; font-weight: 600;">Xatolik yuz berdi</p>
+            <p style="margin-top: 8px;">${error.message}</p>
+          </div>
+        `;
       }
     }
 
     // Load low stock
     async function loadLowStock() {
       try {
-        const response = await fetch('/api/warehouse/low-stock');
+        const branchId = getCurrentBranchId();
+        const response = await fetch(`/api/warehouse/low-stock?branchId=${branchId}`);
         const data = await response.json();
         
         const table = document.getElementById('lowStockTable');
@@ -948,7 +1150,8 @@
 
     async function loadProductsForSelect(selectId) {
       try {
-        const response = await fetch('/api/warehouse/products');
+        const branchId = getCurrentBranchId();
+        const response = await fetch(`/api/products?branchId=${branchId}`);
         const products = await response.json();
         
         const select = document.getElementById(selectId);
@@ -1063,7 +1266,8 @@
     // Load Reports with Charts
     async function loadReports() {
       try {
-        const response = await fetch('/api/warehouse/products');
+        const branchId = getCurrentBranchId();
+        const response = await fetch(`/api/products?branchId=${branchId}`);
         const products = await response.json();
         
         // Top 10 products by stock
@@ -1184,5 +1388,33 @@
     }
   </script>
     <script src="mobile-enhancements.js"></script>
+
+    <script>
+        // Toggle Sidebar (Mobile)
+        function toggleSidebar() {
+            document.querySelector('.admin-sidebar').classList.toggle('active');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+        
+        // Logout
+        function logout() {
+            if (confirm('Tizimdan chiqmoqchimisiz?')) {
+                localStorage.removeItem('adminData');
+                localStorage.removeItem('adminToken');
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Set active menu item
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPage = window.location.pathname.split('/').pop();
+            document.querySelectorAll('.menu-item').forEach(item => {
+                if (item.getAttribute('href') === currentPage) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>

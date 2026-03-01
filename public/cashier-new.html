@@ -2,8 +2,12 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>💼 Kassir Panel - Yangi</title>
+    <link rel="stylesheet" href="cashier-sidebar.css">
+    <link rel="stylesheet" href="mobile-responsive.css">
+    <link rel="stylesheet" href="mobile-cashier-new.css">
+    <link rel="stylesheet" href="mobile-cashier-complete.css">
     <style>
         * {
             margin: 0;
@@ -15,11 +19,16 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
         .container {
             margin-left: 280px;
             padding: 20px;
+            min-height: 100vh;
+            position: relative;
         }
 
         /* Header */
@@ -375,19 +384,58 @@
             cursor: not-allowed;
         }
 
+        /* Sidebar Toggle Button */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
-            .sidebar {
+            body {
+                position: static;
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
+            
+            .container {
+                margin-left: 0;
+                padding: 80px 15px 20px 15px;
+            }
+            
+            .cashier-sidebar {
                 transform: translateX(-100%);
                 transition: transform 0.3s;
             }
 
-            .sidebar.show {
+            .cashier-sidebar.show {
                 transform: translateX(0);
             }
 
             .container {
                 margin-left: 0;
+                height: auto;
+                min-height: 100vh;
+                overflow-y: visible;
             }
 
             .main-grid {
@@ -400,6 +448,28 @@
 
             .header-actions {
                 width: 100%;
+            }
+            
+            .header {
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sale-type-selector {
+                flex-direction: column;
+            }
+            
+            .cart-item-details {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
             }
         }
 
@@ -423,8 +493,20 @@
         }
     </style>
   <script src="back-button.js"></script>
+    <link rel="stylesheet" href="/mobile-responsive-complete.css">
+
+  <!-- Mobile Responsive CSS -->
+  <link rel="stylesheet" href="mobile-universal.css">
+  <link rel="stylesheet" href="mobile-cashier-new.css">
+  <link rel="stylesheet" href="mobile-cashier-complete.css">
+  <script src="mobile-enhancements.js"></script>
+    <script src="cashier-auth-check.js"></script>
+    <script src="sales-strict-validation.js"></script>
 </head>
 <body>
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+    
     <!-- Main Content -->
     <div class="container">
         <!-- Header -->
@@ -479,6 +561,15 @@
                 <!-- Customer Sale Form -->
                 <div id="customerSaleForm">
                     <div class="form-group">
+                        <label>Mijozni Tanlang</label>
+                        <select id="customerSelect" onchange="selectCustomerFromDropdown()" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; background: white;">
+                            <option value="">-- Mijozni tanlang --</option>
+                        </select>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 15px 0; color: #666;">yoki</div>
+                    
+                    <div class="form-group">
                         <label>Mijoz ID</label>
                         <input type="number" id="customerId" placeholder="Mijoz ID ni kiriting">
                     </div>
@@ -520,8 +611,30 @@
                     <input type="text" id="productSearch" placeholder="Mahsulot qidirish..." oninput="searchProducts()">
                 </div>
 
+                <!-- Quick Add Section -->
+                <div class="form-group">
+                    <label>Tezkor Qo'shish</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="number" id="quickProductId" placeholder="Mahsulot ID" style="flex: 1;">
+                        <input type="number" id="quickQuantity" placeholder="Soni" value="1" min="1" style="width: 80px;">
+                        <button class="btn btn-primary" onclick="quickAddToCart()" style="padding: 10px 15px;">
+                            ➕ Qo'shish
+                        </button>
+                    </div>
+                </div>
+
                 <div class="products-list" id="productsList">
                     <div class="loading">Ma'lumotlar yuklanmoqda...</div>
+                </div>
+
+                <!-- Bulk Add Section -->
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Ko'p Mahsulot Qo'shish</label>
+                    <textarea id="bulkProducts" placeholder="Har bir qatorda: Mahsulot ID, Soni&#10;Masalan:&#10;101, 2&#10;102, 1&#10;103, 5" 
+                              style="width: 100%; height: 80px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; resize: vertical;"></textarea>
+                    <button class="btn btn-secondary" onclick="bulkAddToCart()" style="width: 100%; margin-top: 10px;">
+                        📦 Ko'p Mahsulot Qo'shish
+                    </button>
                 </div>
             </div>
 
@@ -588,5 +701,6 @@
 
     <script src="cashier-sidebar-loader.js"></script>
     <script src="cashier-new.js"></script>
+    <script src="mobile-enhancements.js"></script>
 </body>
 </html>

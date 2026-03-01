@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛒 Ko'p Mahsulot Savdo Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .demo-section {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .demo-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            font-size: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .example-box {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .buttons-row {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .buttons-row {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/mobile-responsive-complete.css">
+
+  <!-- 📱 Mobile Responsive CSS -->
+  <link rel="stylesheet" href="mobile-universal.css">
+  <link rel="stylesheet" href="mobile-cashier-complete.css">
+  <script src="mobile-enhancements.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Ko'p Mahsulot Savdo Tizimi</h1>
+            <p>Bir savdoda bir nechta mahsulot sotish imkoniyati</p>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-title">
+                <span class="feature-icon">✨</span>
+                Yangi Funksiyalar
+            </div>
+            <div class="demo-content">
+                <ul class="feature-list">
+                    <li>
+                        <span class="feature-icon">➕</span>
+                        <strong>Tezkor Qo'shish:</strong> Mahsulot ID va sonini kiritib tezda qo'shish
+                    </li>
+                    <li>
+                        <span class="feature-icon">📦</span>
+                        <strong>Ko'p Mahsulot Qo'shish:</strong> Bir vaqtda ko'plab mahsulot qo'shish
+                    </li>
+                    <li>
+                        <span class="feature-icon">🔢</span>
+                        <strong>Mahsulot ID Ko'rsatish:</strong> Har bir mahsulot uchun ID raqami
+                    </li>
+                    <li>
+                        <span class="feature-icon">📱</span>
+                        <strong>Mobil Moslashuv:</strong> Telefonda ham qulay ishlash
+                    </li>
+                    <li>
+                        <span class="feature-icon">🔔</span>
+                        <strong>Bildirishnomalar:</strong> Muvaffaqiyatli qo'shilganda xabar
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-title">
+                <span class="feature-icon">📝</span>
+                Ko'p Mahsulot Qo'shish Namunasi
+            </div>
+            <div class="demo-content">
+                <p><strong>Quyidagi formatda yozing:</strong></p>
+                <div class="example-box">
+101, 2
+102, 1
+103, 5
+104, 3</div>
+                <p><small>Har bir qatorda: Mahsulot ID, Soni</small></p>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-title">
+                <span class="feature-icon">🎯</span>
+                Qanday Ishlaydi
+            </div>
+            <div class="demo-content">
+                <ul class="feature-list">
+                    <li>
+                        <span class="feature-icon">1️⃣</span>
+                        Kassir tizimiga kiring
+                    </li>
+                    <li>
+                        <span class="feature-icon">2️⃣</span>
+                        Mijozni tanlang yoki ochiq savdo qiling
+                    </li>
+                    <li>
+                        <span class="feature-icon">3️⃣</span>
+                        Mahsulotlarni qo'shing (tezkor yoki ko'p mahsulot)
+                    </li>
+                    <li>
+                        <span class="feature-icon">4️⃣</span>
+                        To'lov turini tanlang va savdoni yakunlang
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="buttons-row">
+            <a href="cashier-new.html" class="btn">
+                🚀 Kassir Tizimiga O'tish
+            </a>
+            <a href="admin-dashboard.html" class="btn btn-secondary">
+                📊 Admin Panel
+            </a>
+        </div>
+    </div>
+    <script src="/mobile-enhancements-complete.js"></script>
+</body>
+</html>

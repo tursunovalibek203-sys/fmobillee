@@ -386,7 +386,8 @@ function handleGlobalSearch(e) {
 
 // ==================== UTILITY FUNCTIONS ====================
 function formatMoney(amount) {
-    return '$' + parseFloat(amount || 0).toLocaleString('en-US', {
+    const value = Number(amount) || 0;
+    return '$' + value.toLocaleString('en-US', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     });

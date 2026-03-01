@@ -64,7 +64,7 @@ function searchCustomers() {
       <div style="font-weight: 700;">${c.name}</div>
       <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">
         ID: ${c.customerId} ${c.phone ? '• ' + c.phone : ''}
-        ${c.totalDebt > 0 ? `• Qarz: $${c.totalDebt.toFixed(2)}` : ''}
+        ${c.totalDebt > 0 ? `• Qarz: $${(Number(c.totalDebt) || 0).toFixed(2)}` : ''}
       </div>
     </div>
   `).join('');
@@ -77,7 +77,7 @@ function selectCustomer(customerId) {
   document.getElementById('customerSelected').style.display = 'flex';
   document.getElementById('selectedCustomerName').textContent = selectedCustomer.name;
   document.getElementById('selectedCustomerInfo').textContent = 
-    `ID: ${selectedCustomer.customerId} ${selectedCustomer.phone ? '• ' + selectedCustomer.phone : ''} ${selectedCustomer.totalDebt > 0 ? `• Qarz: $${selectedCustomer.totalDebt.toFixed(2)}` : ''}`;
+    `ID: ${selectedCustomer.customerId} ${selectedCustomer.phone ? '• ' + selectedCustomer.phone : ''} ${selectedCustomer.totalDebt > 0 ? `• Qarz: $${(Number(selectedCustomer.totalDebt) || 0).toFixed(2)}` : ''}`;
   
   document.getElementById('productSearch').focus();
 }
@@ -225,7 +225,7 @@ function calculateTotal() {
   const paidUZS = parseFloat(document.getElementById('paidUZS').value) || 0;
   const paidUZSinUSD = paidUZS / exchangeRate;
   const totalPaid = paidUSD + paidUZSinUSD;
-  const debt = price - totalPaid;
+  const debt = (Number(price) || 0) - (Number(totalPaid) || 0);
   
   document.getElementById('summaryPrice').textContent = '$' + price.toFixed(2);
   document.getElementById('summaryPaidUSD').textContent = '$' + paidUSD.toFixed(2);

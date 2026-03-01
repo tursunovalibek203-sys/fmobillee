@@ -211,13 +211,13 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
     
-    // 10. Orientation change handler
-    window.addEventListener('orientationchange', function() {
-        // Orientatsiya o'zgarganda layout ni qayta hisoblash
-        setTimeout(() => {
-            window.scrollTo(0, 0);
-        }, 100);
-    });
+    // 10. Orientation change handler - O'CHIRILDI (scroll muammosi)
+    // window.addEventListener('orientationchange', function() {
+    //     // Orientatsiya o'zgarganda layout ni qayta hisoblash
+    //     setTimeout(() => {
+    //         window.scrollTo(0, 0);
+    //     }, 100);
+    // });
     
     // 11. Prevent double-tap zoom
     let lastTouchEnd = 0;
@@ -261,16 +261,16 @@ document.addEventListener('DOMContentLoaded', function() {
         clearTimeout(pressTimer);
     });
     
-    // 15. Auto-hide address bar on scroll
-    let lastScrollTop = 0;
-    window.addEventListener('scroll', function() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        if (scrollTop > lastScrollTop && scrollTop > 100) {
-            // Scrolling down
-            window.scrollTo(0, scrollTop + 1);
-        }
-        lastScrollTop = scrollTop;
-    }, false);
+    // 15. Auto-hide address bar on scroll - O'CHIRILDI (muammo keltirayotgan edi)
+    // let lastScrollTop = 0;
+    // window.addEventListener('scroll', function() {
+    //     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    //     if (scrollTop > lastScrollTop && scrollTop > 100) {
+    //         // Scrolling down
+    //         window.scrollTo(0, scrollTop + 1);
+    //     }
+    //     lastScrollTop = scrollTop;
+    // }, false);
     
     console.log('📱 Telefon optimizatsiyalari yuklandi!');
 });

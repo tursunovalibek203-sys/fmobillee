@@ -47,6 +47,7 @@ const SettingsSchema = new mongoose.Schema({
 // Product Schema
 const ProductSchema = new mongoose.Schema({
   productId: { type: Number, required: true, unique: true },
+  branchId: { type: Number, default: 0 },  // ✅ 0 = Umumiy ombor, boshqa raqam = Filial ombori
   name: { type: String, required: true },
   category: { type: String, default: 'Umumiy' },
   buyPrice: { type: Number, default: 0 },
@@ -55,6 +56,7 @@ const ProductSchema = new mongoose.Schema({
   minStock: { type: Number, default: 5 },
   unit: { type: String, default: 'dona' },
   barcode: String,
+  imei: String,  // ✅ IMEI kod (telefonlar uchun)
   description: String,
   isActive: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now }

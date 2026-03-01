@@ -1,0 +1,276 @@
+/* 📋 ACTIVITY LOG - TELEFON RESPONSIVE */
+
+@media (max-width: 768px) {
+    
+    /* ACTIVITY CONTAINER */
+    .activity-container {
+        padding: 10px !important;
+    }
+    
+    /* ACTIVITY HEADER */
+    .activity-header {
+        padding: 15px !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    
+    .activity-title {
+        font-size: 1.3rem !important;
+    }
+    
+    /* ACTIVITY FILTERS */
+    .activity-filters {
+        padding: 15px !important;
+        background: white !important;
+        border-radius: 12px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .filter-row {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    .filter-item {
+        width: 100% !important;
+    }
+    
+    .filter-item label {
+        font-size: 0.85rem !important;
+        margin-bottom: 6px !important;
+    }
+    
+    .filter-item select,
+    .filter-item input {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+        border-radius: 10px !important;
+    }
+    
+    /* ACTIVITY TIMELINE */
+    .activity-timeline {
+        position: relative !important;
+        padding-left: 30px !important;
+    }
+    
+    .activity-timeline::before {
+        content: '' !important;
+        position: absolute !important;
+        left: 10px !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        width: 2px !important;
+        background: #e5e7eb !important;
+    }
+    
+    .activity-item {
+        position: relative !important;
+        padding: 15px !important;
+        background: white !important;
+        border-radius: 12px !important;
+        margin-bottom: 15px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    }
+    
+    .activity-item::before {
+        content: '' !important;
+        position: absolute !important;
+        left: -25px !important;
+        top: 20px !important;
+        width: 12px !important;
+        height: 12px !important;
+        border-radius: 50% !important;
+        background: #3b82f6 !important;
+        border: 3px solid white !important;
+        box-shadow: 0 0 0 2px #3b82f6 !important;
+    }
+    
+    .activity-header-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .activity-user {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    
+    .activity-avatar {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 50% !important;
+        background: #3b82f6 !important;
+        color: white !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .activity-user-info {
+        flex: 1 !important;
+    }
+    
+    .activity-user-name {
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .activity-user-role {
+        font-size: 0.75rem !important;
+        color: #666 !important;
+    }
+    
+    .activity-time {
+        font-size: 0.75rem !important;
+        color: #999 !important;
+        white-space: nowrap !important;
+    }
+    
+    .activity-action {
+        font-size: 0.9rem !important;
+        color: #333 !important;
+        margin-bottom: 8px !important;
+        line-height: 1.5 !important;
+    }
+    
+    .activity-action strong {
+        color: #3b82f6 !important;
+    }
+    
+    .activity-details {
+        padding: 10px !important;
+        background: #f9fafb !important;
+        border-radius: 8px !important;
+        font-size: 0.85rem !important;
+        color: #666 !important;
+    }
+    
+    .activity-details-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        padding: 4px 0 !important;
+    }
+    
+    .activity-details-label {
+        color: #999 !important;
+    }
+    
+    .activity-details-value {
+        font-weight: 600 !important;
+        color: #333 !important;
+    }
+    
+    /* ACTIVITY TYPES */
+    .activity-type-badge {
+        display: inline-block !important;
+        padding: 4px 10px !important;
+        border-radius: 12px !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        margin-top: 8px !important;
+    }
+    
+    .type-sale {
+        background: #d1fae5 !important;
+        color: #065f46 !important;
+    }
+    
+    .type-payment {
+        background: #dbeafe !important;
+        color: #1e40af !important;
+    }
+    
+    .type-stock {
+        background: #fef3c7 !important;
+        color: #92400e !important;
+    }
+    
+    .type-user {
+        background: #e0e7ff !important;
+        color: #3730a3 !important;
+    }
+    
+    .type-system {
+        background: #f3f4f6 !important;
+        color: #374151 !important;
+    }
+    
+    /* ACTIVITY STATS */
+    .activity-stats {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .activity-stat-card {
+        padding: 15px !important;
+        background: white !important;
+        border-radius: 12px !important;
+        text-align: center !important;
+    }
+    
+    .stat-count {
+        font-size: 1.5rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem !important;
+        color: #666 !important;
+    }
+    
+    /* LOAD MORE */
+    .load-more-btn {
+        width: 100% !important;
+        padding: 14px !important;
+        background: white !important;
+        border: 2px solid #e5e7eb !important;
+        border-radius: 12px !important;
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
+        color: #3b82f6 !important;
+        cursor: pointer !important;
+        transition: all 0.2s !important;
+    }
+    
+    .load-more-btn:active {
+        transform: scale(0.98) !important;
+        background: #f9fafb !important;
+    }
+    
+    /* EMPTY STATE */
+    .activity-empty {
+        text-align: center !important;
+        padding: 40px 20px !important;
+    }
+    
+    .empty-icon {
+        font-size: 3rem !important;
+        margin-bottom: 12px !important;
+        opacity: 0.5 !important;
+    }
+    
+    .empty-text {
+        font-size: 0.9rem !important;
+        color: #666 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .activity-stats {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .activity-timeline {
+        padding-left: 25px !important;
+    }
+}

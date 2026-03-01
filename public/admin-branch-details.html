@@ -82,18 +82,25 @@
             background: #f8f9fa;
             padding: 15px;
             border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
         
         .info-label {
             font-size: 14px;
             color: #666;
             margin-bottom: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .info-value {
             font-size: 18px;
             color: #333;
             font-weight: 600;
+            word-break: break-word;
         }
         
         .stats-grid {
@@ -147,7 +154,10 @@
         
         .table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            border-radius: 10px;
         }
         
         .table th {
@@ -157,15 +167,21 @@
             font-weight: 600;
             color: #333;
             border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
         }
         
         .table td {
             padding: 15px;
             border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
         }
         
         .table tr:hover {
             background: #f8f9fa;
+        }
+        
+        .table tr:last-child td {
+            border-bottom: none;
         }
         
         .badge {
@@ -206,9 +222,72 @@
             margin-bottom: 20px;
             opacity: 0.5;
         }
+        
+        /* 📱 RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .branch-title {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .branch-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .section-title {
+                font-size: 1.4em;
+            }
+            
+            .table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .table th,
+            .table td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-value {
+                font-size: 2em;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="back-button.js"></script>
+
+  <!-- 📱 Mobile Responsive CSS -->
+  <link rel="stylesheet" href="mobile-universal.css">
+  <link rel="stylesheet" href="mobile-admin-branches.css">
+  <script src="mobile-enhancements.js"></script>
 </head>
 <body>
     <div class="container">
@@ -281,12 +360,18 @@
         
         // URL dan filial ID ni olish
         const urlParams = new URLSearchParams(window.location.search);
-        branchId = urlParams.get('id');
+        branchId = urlParams.get('branchId') || urlParams.get('id');  // ✅ Ikkala parametrni ham qo'llab-quvvatlash
         
         if (!branchId) {
-            alert('Filial ID topilmadi!');
-            window.location.href = 'admin-branches.html';
+            console.error('Filial ID topilmadi! URL:', window.location.href);
+            alert('Filial ID topilmadi! Iltimos, filiallar ro\'yxatidan qayta tanlang.');
+            setTimeout(() => {
+                window.location.href = 'admin-branches.html';
+            }, 2000);
+            return;  // ✅ Funksiyani to'xtatish
         }
+        
+        let isFirstLoad = true;  // ✅ Birinchi yuklash belgisi
         
         async function loadBranchDetails() {
             try {
@@ -295,14 +380,19 @@
                 const branchData = await branchRes.json();
                 
                 if (branchData.success) {
-                    branch = branchData.branches.find(b => b.branchId == branchId);
+                    const foundBranch = branchData.branches.find(b => b.branchId == branchId);
                     
-                    if (!branch) {
-                        alert('Filial topilmadi!');
-                        window.location.href = 'admin-branches.html';
+                    if (!foundBranch) {
+                        // ✅ Faqat birinchi yuklashda redirect qilish
+                        if (isFirstLoad) {
+                            console.error('Filial topilmadi:', branchId);
+                            alert('Filial topilmadi!');
+                            window.location.href = 'admin-branches.html';
+                        }
                         return;
                     }
                     
+                    branch = foundBranch;
                     displayBranchInfo(branch);
                 }
                 
@@ -327,9 +417,14 @@
                     createSalesChart(branchSales);
                 }
                 
+                isFirstLoad = false;  // ✅ Birinchi yuklash tugadi
+                
             } catch (error) {
                 console.error('Xato:', error);
-                alert('Ma\'lumotlarni yuklashda xato!');
+                // ✅ Faqat birinchi yuklashda alert ko'rsatish
+                if (isFirstLoad) {
+                    alert('Ma\'lumotlarni yuklashda xato!');
+                }
             }
         }
         
@@ -518,11 +613,31 @@
             });
         }
         
+        // Scroll position ni saqlash
+        let savedScrollPosition = 0;
+        
+        // Yangilashdan oldin scroll position ni saqlash
+        function saveScrollPosition() {
+            savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        }
+        
+        // Yangilashdan keyin scroll position ni tiklash
+        function restoreScrollPosition() {
+            window.scrollTo(0, savedScrollPosition);
+        }
+        
+        // loadBranchDetails ni o'zgartirish
+        async function loadBranchDetailsWithScroll() {
+            saveScrollPosition();  // ✅ Scroll ni saqlash
+            await loadBranchDetails();
+            setTimeout(restoreScrollPosition, 100);  // ✅ Scroll ni tiklash
+        }
+        
         // Sahifa yuklanganda
         loadBranchDetails();
         
-        // Har 30 sekundda yangilash
-        setInterval(loadBranchDetails, 30000);
+        // Har 30 sekundda yangilash (scroll bilan)
+        setInterval(loadBranchDetailsWithScroll, 30000);
     </script>
     <script src="mobile-enhancements.js"></script>
 </body>

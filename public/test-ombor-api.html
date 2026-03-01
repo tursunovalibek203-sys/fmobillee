@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ombor API Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .test-section {
+            background: #252526;
+            border: 1px solid #3e3e42;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #4ec9b0;
+            margin-top: 0;
+        }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1177bb;
+        }
+        .result {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { color: #4ec9b0; }
+        .error { color: #f48771; }
+        .warning { color: #dcdcaa; }
+        .info { color: #9cdcfe; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Ombor API Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Barcha Mahsulotlar</h2>
+        <button onclick="testAllProducts()">Test: GET /api/products</button>
+        <div id="result1" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Filial 1001 Mahsulotlari</h2>
+        <button onclick="testBranch1001()">Test: GET /api/products?branchId=1001</button>
+        <div id="result2" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Filial 1002 Mahsulotlari</h2>
+        <button onclick="testBranch1002()">Test: GET /api/products?branchId=1002</button>
+        <div id="result3" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Kassir Ma'lumotlari (localStorage)</h2>
+        <button onclick="testCashierData()">Test: localStorage.cashierData</button>
+        <div id="result4" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>5. Test Mahsulot Qo'shish</h2>
+        <button onclick="addTestProduct()">Filial 1001 ga mahsulot qo'shish</button>
+        <button onclick="addTestProduct2()">Filial 1002 ga mahsulot qo'shish</button>
+        <div id="result5" class="result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type;
+            element.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+        }
+        
+        function clear(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+        
+        async function testAllProducts() {
+            clear('result1');
+            log('result1', '📦 Barcha mahsulotlarni yuklash...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const data = await response.json();
+                
+                if (Array.isArray(data)) {
+                    log('result1', `✅ ${data.length} ta mahsulot topildi`, 'success');
+                    
+                    // Filial bo'yicha guruhlash
+                    const byBranch = {};
+                    data.forEach(p => {
+                        const bid = p.branchId || 'NOMA\'LUM';
+                        if (!byBranch[bid]) byBranch[bid] = [];
+                        byBranch[bid].push(p);
+                    });
+                    
+                    log('result1', '\n📊 Filial bo\'yicha:', 'info');
+                    for (const [branchId, products] of Object.entries(byBranch)) {
+                        log('result1', `  Filial ${branchId}: ${products.length} ta mahsulot`, 'info');
+                        products.slice(0, 3).forEach(p => {
+                            log('result1', `    - ${p.name} (${p.stock} dona)`, 'info');
+                        });
+                    }
+                    
+                    log('result1', '\n📋 Batafsil:', 'info');
+                    log('result1', JSON.stringify(data.slice(0, 2), null, 2), 'info');
+                } else {
+                    log('result1', '❌ Noto\'g\'ri javob formati', 'error');
+                    log('result1', JSON.stringify(data, null, 2), 'error');
+                }
+            } catch (error) {
+                log('result1', `❌ Xato: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testBranch1001() {
+            clear('result2');
+            log('result2', '📦 Filial 1001 mahsulotlarini yuklash...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/products?branchId=1001`);
+                const data = await response.json();
+                
+                if (Array.isArray(data)) {
+                    log('result2', `✅ ${data.length} ta mahsulot topildi`, 'success');
+                    
+                    if (data.length === 0) {
+                        log('result2', '⚠️ Filial 1001 da mahsulot yo\'q!', 'warning');
+                        log('result2', '💡 "Test Mahsulot Qo\'shish" bo\'limidan mahsulot qo\'shing', 'warning');
+                    } else {
+                        data.forEach((p, i) => {
+                            log('result2', `${i + 1}. ${p.name} - ${p.stock} dona - $${p.sellPrice}`, 'info');
+                        });
+                    }
+                } else {
+                    log('result2', '❌ Noto\'g\'ri javob formati', 'error');
+                }
+            } catch (error) {
+                log('result2', `❌ Xato: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testBranch1002() {
+            clear('result3');
+            log('result3', '📦 Filial 1002 mahsulotlarini yuklash...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/products?branchId=1002`);
+                const data = await response.json();
+                
+                if (Array.isArray(data)) {
+                    log('result3', `✅ ${data.length} ta mahsulot topildi`, 'success');
+                    
+                    if (data.length === 0) {
+                        log('result3', '⚠️ Filial 1002 da mahsulot yo\'q!', 'warning');
+                    } else {
+                        data.forEach((p, i) => {
+                            log('result3', `${i + 1}. ${p.name} - ${p.stock} dona - $${p.sellPrice}`, 'info');
+                        });
+                    }
+                } else {
+                    log('result3', '❌ Noto\'g\'ri javob formati', 'error');
+                }
+            } catch (error) {
+                log('result3', `❌ Xato: ${error.message}`, 'error');
+            }
+        }
+        
+        function testCashierData() {
+            clear('result4');
+            log('result4', '👤 Kassir ma\'lumotlarini tekshirish...', 'info');
+            
+            const cashierData = localStorage.getItem('cashierData');
+            
+            if (!cashierData) {
+                log('result4', '❌ localStorage da cashierData yo\'q!', 'error');
+                log('result4', '💡 Kassir login qiling: cashier-login-enhanced.html', 'warning');
+                return;
+            }
+            
+            try {
+                const data = JSON.parse(cashierData);
+                log('result4', '✅ Kassir ma\'lumotlari topildi:', 'success');
+                log('result4', JSON.stringify(data, null, 2), 'info');
+                
+                if (!data.branchId) {
+                    log('result4', '\n⚠️ branchId yo\'q!', 'warning');
+                    log('result4', '💡 Qayta login qiling', 'warning');
+                } else {
+                    log('result4', `\n✅ branchId: ${data.branchId}`, 'success');
+                }
+            } catch (error) {
+                log('result4', `❌ JSON parse xato: ${error.message}`, 'error');
+            }
+        }
+        
+        async function addTestProduct() {
+            clear('result5');
+            log('result5', '➕ Test mahsulot qo\'shilmoqda (Filial 1001)...', 'info');
+            
+            const product = {
+                name: 'Test Mahsulot ' + Date.now(),
+                category: 'Test',
+                buyPrice: 10,
+                sellPrice: 15,
+                stock: 100,
+                minStock: 10,
+                unit: 'dona',
+                branchId: 1001,
+                description: 'Test uchun qo\'shilgan mahsulot'
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/products`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(product)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('result5', '✅ Mahsulot qo\'shildi!', 'success');
+                    log('result5', JSON.stringify(data.product, null, 2), 'info');
+                } else {
+                    log('result5', `❌ Xato: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                log('result5', `❌ Xato: ${error.message}`, 'error');
+            }
+        }
+        
+        async function addTestProduct2() {
+            clear('result5');
+            log('result5', '➕ Test mahsulot qo\'shilmoqda (Filial 1002)...', 'info');
+            
+            const product = {
+                name: 'Test Mahsulot 2 ' + Date.now(),
+                category: 'Test',
+                buyPrice: 20,
+                sellPrice: 30,
+                stock: 50,
+                minStock: 5,
+                unit: 'dona',
+                branchId: 1002,
+                description: 'Filial 1002 uchun test mahsulot'
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/products`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(product)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('result5', '✅ Mahsulot qo\'shildi!', 'success');
+                    log('result5', JSON.stringify(data.product, null, 2), 'info');
+                } else {
+                    log('result5', `❌ Xato: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                log('result5', `❌ Xato: ${error.message}`, 'error');
+            }
+        }
+        
+        // Sahifa yuklanganda avtomatik test
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testAllProducts();
+                testCashierData();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

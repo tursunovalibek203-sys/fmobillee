@@ -221,6 +221,11 @@
         }
     </style>
   <script src="back-button.js"></script>
+
+  <!-- Mobile Responsive CSS -->
+  <link rel="stylesheet" href="mobile-universal.css">
+  <link rel="stylesheet" href="mobile-admin-dashboard.css">
+  <script src="mobile-enhancements.js"></script>
 </head>
 <body>
     <div class="container">
@@ -256,55 +261,55 @@
         
         <!-- Asosiy funksiyalar -->
         <div class="main-actions">
-            <div class="action-card" onclick="location.href='customer-search.html'">
+            <div class="action-card" onclick="window.location.href='/index.html'">
+                <div class="action-icon">👥</div>
+                <div class="action-title">Mijozlar</div>
+                <div class="action-desc">Mijozlarni boshqarish</div>
+            </div>
+            
+            <div class="action-card" onclick="window.location.href='/customer-search.html'">
                 <div class="action-icon">🔍</div>
                 <div class="action-title">Mijoz Qidirish</div>
                 <div class="action-desc">Tez va oson qidirish</div>
             </div>
             
-            <div class="action-card" onclick="location.href='admin-dashboard-pro.html'">
-                <div class="action-icon">📊</div>
-                <div class="action-title">Dashboard</div>
-                <div class="action-desc">Umumiy ko'rinish va hisobotlar</div>
-            </div>
-            
-            <div class="action-card" onclick="location.href='warehouse-select.html'">
+            <div class="action-card" onclick="window.location.href='/warehouse-select.html'">
                 <div class="action-icon">🏭</div>
                 <div class="action-title">Ombor</div>
                 <div class="action-desc">Mahsulotlar va inventar</div>
             </div>
             
-            <div class="action-card" onclick="location.href='admin-branches.html'">
+            <div class="action-card" onclick="window.location.href='/admin-branches.html'">
                 <div class="action-icon">🏢</div>
                 <div class="action-title">Filiallar</div>
                 <div class="action-desc">Filiallarni boshqarish</div>
             </div>
             
-            <div class="action-card" onclick="location.href='admin-cashiers.html'">
+            <div class="action-card" onclick="window.location.href='/admin-cashiers.html'">
                 <div class="action-icon">👤</div>
                 <div class="action-title">Kassirlar</div>
                 <div class="action-desc">Xodimlarni boshqarish</div>
             </div>
             
-            <div class="action-card" onclick="location.href='admin-handovers.html'">
+            <div class="action-card" onclick="window.location.href='/admin-handovers.html'">
                 <div class="action-icon">💵</div>
                 <div class="action-title">Kirimlar</div>
                 <div class="action-desc">Pul kirim-chiqimlari</div>
             </div>
             
-            <div class="action-card" onclick="location.href='admin-reports.html'">
+            <div class="action-card" onclick="window.location.href='/admin-reports.html'">
                 <div class="action-icon">📋</div>
                 <div class="action-title">Hisobotlar</div>
                 <div class="action-desc">Batafsil hisobotlar</div>
             </div>
             
-            <div class="action-card" onclick="location.href='admin-expenses.html'">
+            <div class="action-card" onclick="window.location.href='/admin-expenses.html'">
                 <div class="action-icon">💸</div>
                 <div class="action-title">Xarajatlar</div>
                 <div class="action-desc">Xarajatlar va foyda</div>
             </div>
             
-            <div class="action-card" onclick="location.href='admin-imei.html'">
+            <div class="action-card" onclick="window.location.href='/admin-imei.html'">
                 <div class="action-icon">📱</div>
                 <div class="action-title">IMEI Boshqaruvi</div>
                 <div class="action-desc">IMEI kodlar nazorati</div>
@@ -315,16 +320,19 @@
         <div class="extra-section">
             <h3>⚙️ Qo'shimcha</h3>
             <div class="extra-buttons">
-                <button class="extra-btn" onclick="location.href='admin-analytics.html'">
+                <button class="extra-btn" onclick="window.location.href='/index.html'">
+                    👥 Mijozlar
+                </button>
+                <button class="extra-btn" onclick="window.location.href='/admin-analytics.html'">
                     📈 Analytics
                 </button>
-                <button class="extra-btn" onclick="location.href='admin-settings.html'">
+                <button class="extra-btn" onclick="window.location.href='/admin-settings.html'">
                     ⚙️ Sozlamalar
                 </button>
-                <button class="extra-btn" onclick="location.href='admin-security.html'">
+                <button class="extra-btn" onclick="window.location.href='/admin-security.html'">
                     🔐 Xavfsizlik
                 </button>
-                <button class="extra-btn" onclick="location.href='test-imei.html'">
+                <button class="extra-btn" onclick="window.location.href='/test-imei.html'">
                     📱 IMEI Test
                 </button>
                 <button class="extra-btn" onclick="createBackup()">
@@ -357,7 +365,8 @@
                 if (data.success) {
                     document.getElementById('totalCustomers').textContent = data.stats.totalCustomers;
                     document.getElementById('totalSales').textContent = data.stats.totalSales;
-                    document.getElementById('totalDebt').textContent = '$' + data.stats.totalDebt.toFixed(2);
+                    const debtValue = Number(data.stats.totalDebt) || 0;
+                    document.getElementById('totalDebt').textContent = '$' + debtValue.toFixed(2);
                     document.getElementById('totalProducts').textContent = data.stats.totalProducts;
                 }
             } catch (error) {

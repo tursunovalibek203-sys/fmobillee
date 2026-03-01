@@ -55,18 +55,22 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--green-gradient);
   min-height: 100vh;
+  margin: 0;
   padding: 20px;
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  position: relative;
 }
 
 .container {
   max-width: 1400px;
   margin: 0 auto;
   animation: fadeIn 0.5s ease-out;
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes fadeIn {
@@ -1546,4 +1550,45 @@ h1 {
 .settings-section select option {
   padding: 12px;
   font-weight: 500;
+}
+
+
+/* ==================== KO'P MAHSULOT SAVDO STILLARI ==================== */
+
+.sale-type-tab {
+  transition: all 0.3s ease;
+}
+
+.sale-type-tab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sale-type-tab:active {
+  transform: translateY(0);
+}
+
+#multipleProductsInput {
+  transition: border-color 0.3s ease;
+}
+
+#multipleProductsInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+#multipleResultsPreview {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

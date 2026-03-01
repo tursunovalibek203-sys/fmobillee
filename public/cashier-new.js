@@ -44,52 +44,133 @@ function loadCashierInfo() {
 // Load Customers (filtered by branch)
 async function loadCustomers() {
     try {
+        console.log('🔄 loadCustomers() boshlandi');
+        
+        if (!currentCashier) {
+            console.error('❌ currentCashier mavjud emas!');
+            return;
+        }
+        
         const branchId = currentCashier.branchId || 0;
-        console.log('Mijozlar yuklanmoqda, branchId:', branchId);
+        console.log('🏢 Mijozlar yuklanmoqda, branchId:', branchId);
         
-        const response = await fetch(`/api/customers?branchId=${branchId}`);
+        const url = `/api/customers?branchId=${branchId}`;
+        console.log('🌐 API URL:', url);
+        
+        const response = await fetch(url);
+        console.log('📡 Response status:', response.status);
+        
         const data = await response.json();
-        
-        console.log('Mijozlar yuklandi:', data);
+        console.log('👥 Response data:', data);
+        console.log('👥 Data type:', typeof data, Array.isArray(data));
         
         if (Array.isArray(data)) {
-            window.customers = data; // Global o'zgaruvchiga saqlash
+            window.customers = data;
             console.log(`✅ ${data.length} ta mijoz yuklandi`);
+            
+            // Dropdown ni to'ldirish
+            populateCustomerDropdown(data);
         } else {
-            console.error('Noto\'g\'ri javob formati:', data);
+            console.error('❌ Noto\'g\'ri javob formati:', data);
             window.customers = [];
         }
     } catch (error) {
-        console.error('Mijozlar yuklashda xato:', error);
+        console.error('❌ Mijozlar yuklashda xato:', error);
         window.customers = [];
+    }
+}
+
+// Mijozlar dropdown ni to'ldirish
+function populateCustomerDropdown(customers) {
+    const select = document.getElementById('customerSelect');
+    if (!select) return;
+    
+    // Eski optionlarni tozalash
+    select.innerHTML = '<option value="">-- Mijozni tanlang --</option>';
+    
+    // Mijozlarni qo'shish
+    customers.forEach(customer => {
+        const option = document.createElement('option');
+        option.value = customer.customerId;
+        const debtText = customer.totalDebt > 0 ? ` (Qarz: $${customer.totalDebt.toFixed(2)})` : '';
+        option.textContent = `${customer.name} - ${customer.phone || 'Tel yo\'q'}${debtText}`;
+        option.dataset.customer = JSON.stringify(customer);
+        select.appendChild(option);
+    });
+    
+    console.log(`✅ Dropdown ga ${customers.length} ta mijoz qo'shildi`);
+}
+
+// Dropdown dan mijoz tanlash
+function selectCustomerFromDropdown() {
+    const select = document.getElementById('customerSelect');
+    const selectedOption = select.options[select.selectedIndex];
+    
+    if (!selectedOption.value) {
+        // Bo'sh tanlov
+        currentCustomer = null;
+        document.getElementById('customerNameDisplay').textContent = '-';
+        document.getElementById('customerPhone').textContent = '-';
+        document.getElementById('customerDebt').textContent = '$0';
+        document.getElementById('customerId').value = '';
+        return;
+    }
+    
+    try {
+        const customer = JSON.parse(selectedOption.dataset.customer);
+        currentCustomer = customer;
+        
+        // Ma'lumotlarni ko'rsatish
+        document.getElementById('customerId').value = customer.customerId;
+        document.getElementById('customerNameDisplay').textContent = customer.name;
+        document.getElementById('customerPhone').textContent = customer.phone || '-';
+        document.getElementById('customerDebt').textContent = '$' + (customer.totalDebt || 0).toFixed(2);
+        
+        console.log('✅ Mijoz tanlandi:', customer.name);
+    } catch (error) {
+        console.error('Mijoz ma\'lumotlarini o\'qishda xato:', error);
     }
 }
 
 // Load Products (filtered by branch)
 async function loadProducts() {
     try {
+        console.log('🔄 loadProducts() boshlandi');
+        console.log('📍 currentCashier:', currentCashier);
+        
+        if (!currentCashier) {
+            console.error('❌ currentCashier mavjud emas!');
+            return;
+        }
+        
         const branchId = currentCashier.branchId || 0;
-        console.log('Mahsulotlar yuklanmoqda, branchId:', branchId);
+        console.log('🏢 branchId:', branchId);
         
-        const response = await fetch(`/api/products?branchId=${branchId}`);
+        const url = `/api/products?branchId=${branchId}`;
+        console.log('🌐 API URL:', url);
+        
+        const response = await fetch(url);
+        console.log('📡 Response status:', response.status);
+        
         const data = await response.json();
-        
-        console.log('Mahsulotlar yuklandi:', data);
+        console.log('📦 Response data:', data);
+        console.log('📦 Data type:', typeof data, Array.isArray(data));
         
         if (Array.isArray(data)) {
             products = data;
+            console.log(`✅ ${products.length} ta mahsulot yuklandi`);
             displayProducts(products);
             
             if (products.length === 0) {
-                console.warn('Mahsulotlar topilmadi!');
+                console.warn('⚠️  Mahsulotlar topilmadi!');
             }
         } else {
-            console.error('Noto\'g\'ri javob formati:', data);
+            console.error('❌ Noto\'g\'ri javob formati:', data);
             document.getElementById('productsList').innerHTML = 
                 '<div class="empty-state"><p>Mahsulotlar yuklanmadi</p></div>';
         }
     } catch (error) {
-        console.error('Mahsulotlar yuklashda xato:', error);
+        console.error('❌ Mahsulotlar yuklashda xato:', error);
         document.getElementById('productsList').innerHTML = 
             '<div class="empty-state"><p>Xatolik: ' + error.message + '</p></div>';
     }
@@ -98,7 +179,7 @@ async function loadProducts() {
 // Display Products
 function displayProducts(productsToShow) {
     const container = document.getElementById('productsList');
-    
+
     if (productsToShow.length === 0) {
         container.innerHTML = '<div class="empty-state"><p>Mahsulot topilmadi</p></div>';
         return;
@@ -106,7 +187,7 @@ function displayProducts(productsToShow) {
 
     container.innerHTML = productsToShow.map(product => `
         <div class="product-item" onclick="addToCart(${product.productId})">
-            <div class="product-name">${product.name}</div>
+            <div class="product-name">${product.name} <span style="color: #999; font-size: 12px;">(ID: ${product.productId})</span></div>
             <div class="product-details">
                 <span>Omborda: ${product.stock} ${product.unit || 'dona'}</span>
                 <span class="product-price">$${product.sellPrice.toFixed(2)}</span>
@@ -114,6 +195,7 @@ function displayProducts(productsToShow) {
         </div>
     `).join('');
 }
+
 
 // Search Products
 function searchProducts() {
@@ -163,7 +245,7 @@ async function searchCustomer() {
             // Display customer info
             document.getElementById('customerNameDisplay').textContent = currentCustomer.name;
             document.getElementById('customerPhone').textContent = currentCustomer.phone || 'Yo\'q';
-            document.getElementById('customerDebt').textContent = '$' + (currentCustomer.totalDebt || 0).toFixed(2);
+            document.getElementById('customerDebt').textContent = '$' + (Number(currentCustomer.totalDebt) || 0).toFixed(2);
             document.getElementById('customerInfo').classList.add('show');
         } else {
             alert('Mijoz topilmadi!');
@@ -177,37 +259,184 @@ async function searchCustomer() {
 }
 
 // Add to Cart
-function addToCart(productId) {
+function addToCart(productId, quantity = 1) {
     const product = products.find(p => p.productId === productId);
     
-    if (!product) return;
+    if (!product) {
+        alert('Mahsulot topilmadi!');
+        return false;
+    }
     
     if (product.stock <= 0) {
         alert('Bu mahsulot omborda yo\'q!');
-        return;
+        return false;
     }
 
     // Check if already in cart
     const existingItem = cart.find(item => item.productId === productId);
     
     if (existingItem) {
-        if (existingItem.quantity < product.stock) {
-            existingItem.quantity++;
+        const newQuantity = existingItem.quantity + quantity;
+        if (newQuantity <= product.stock) {
+            existingItem.quantity = newQuantity;
         } else {
-            alert('Omborda yetarli mahsulot yo\'q!');
-            return;
+            alert(`Omborda faqat ${product.stock} ta mavjud! Savatda ${existingItem.quantity} ta bor.`);
+            return false;
         }
     } else {
-        cart.push({
-            productId: product.productId,
-            name: product.name,
-            price: product.sellPrice,
-            quantity: 1,
-            maxStock: product.stock
-        });
+        if (quantity <= product.stock) {
+            cart.push({
+                productId: product.productId,
+                name: product.name,
+                price: product.sellPrice,
+                quantity: quantity,
+                maxStock: product.stock
+            });
+        } else {
+            alert(`Omborda faqat ${product.stock} ta mavjud!`);
+            return false;
+        }
     }
 
     updateCart();
+    return true;
+}
+
+// Quick Add to Cart
+function quickAddToCart() {
+    const productId = parseInt(document.getElementById('quickProductId').value);
+    const quantity = parseInt(document.getElementById('quickQuantity').value) || 1;
+    
+    if (!productId) {
+        alert('Mahsulot ID ni kiriting!');
+        return;
+    }
+    
+    if (quantity <= 0) {
+        alert('Soni 1 dan kam bo\'lmasligi kerak!');
+        return;
+    }
+    
+    if (addToCart(productId, quantity)) {
+        // Clear inputs after successful add
+        document.getElementById('quickProductId').value = '';
+        document.getElementById('quickQuantity').value = '1';
+        
+        // Show success message
+        const product = products.find(p => p.productId === productId);
+        if (product) {
+            showSuccessMessage(`✅ ${product.name} (${quantity} ta) savatga qo'shildi!`);
+        }
+    }
+}
+
+// Bulk Add to Cart
+function bulkAddToCart() {
+    const bulkText = document.getElementById('bulkProducts').value.trim();
+    
+    if (!bulkText) {
+        alert('Mahsulotlar ro\'yxatini kiriting!');
+        return;
+    }
+    
+    const lines = bulkText.split('\n');
+    let successCount = 0;
+    let errorMessages = [];
+    
+    lines.forEach((line, index) => {
+        const trimmedLine = line.trim();
+        if (!trimmedLine) return;
+        
+        const parts = trimmedLine.split(',').map(part => part.trim());
+        
+        if (parts.length !== 2) {
+            errorMessages.push(`${index + 1}-qator: Noto'g'ri format (ID, Soni)`);
+            return;
+        }
+        
+        const productId = parseInt(parts[0]) || 0;
+        const quantity = parseInt(parts[1]) || 0;
+        
+        if (isNaN(productId) || isNaN(quantity)) {
+            errorMessages.push(`${index + 1}-qator: ID va Soni raqam bo'lishi kerak`);
+            return;
+        }
+        
+        if (quantity <= 0) {
+            errorMessages.push(`${index + 1}-qator: Soni 0 dan katta bo'lishi kerak`);
+            return;
+        }
+        
+        if (addToCart(productId, quantity)) {
+            successCount++;
+        } else {
+            const product = products.find(p => p.productId === productId);
+            const productName = product ? product.name : `ID: ${productId}`;
+            errorMessages.push(`${index + 1}-qator: ${productName} qo'shilmadi`);
+        }
+    });
+    
+    // Show results
+    let message = `✅ ${successCount} ta mahsulot muvaffaqiyatli qo'shildi!`;
+    
+    if (errorMessages.length > 0) {
+        message += '\n\n❌ Xatolar:\n' + errorMessages.join('\n');
+    }
+    
+    alert(message);
+    
+    if (successCount > 0) {
+        document.getElementById('bulkProducts').value = '';
+    }
+}
+
+// Show success message (temporary notification)
+function showSuccessMessage(message) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 1000;
+        font-weight: 600;
+        animation: slideIn 0.3s ease-out;
+    `;
+    notification.textContent = message;
+    
+    // Add animation keyframes
+    if (!document.getElementById('notificationStyles')) {
+        const style = document.createElement('style');
+        style.id = 'notificationStyles';
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
 }
 
 // Update Cart Display
@@ -234,7 +463,7 @@ function updateCart() {
     container.innerHTML = cart.map((item, index) => `
         <div class="cart-item">
             <div class="cart-item-header">
-                <span class="cart-item-name">${item.name}</span>
+                <span class="cart-item-name">${item.name} <span style="color: #999; font-size: 11px;">(ID: ${item.productId})</span></span>
                 <button class="cart-item-remove" onclick="removeFromCart(${index})">✕</button>
             </div>
             <div class="cart-item-details">

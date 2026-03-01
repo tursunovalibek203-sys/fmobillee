@@ -1,0 +1,468 @@
+/* 🌐 UNIVERSAL MOBILE CSS - BARCHA SAHIFALAR UCHUN */
+
+/* Bu fayl barcha HTML sahifalarga avtomatik qo'llanadi */
+
+@media (max-width: 768px) {
+    
+    /* ===== GLOBAL RESETS ===== */
+    * {
+        box-sizing: border-box !important;
+    }
+    
+    html {
+        font-size: 16px !important;
+        -webkit-text-size-adjust: 100% !important;
+    }
+    
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important;
+        min-height: 100vh !important;
+    }
+    
+    /* ===== CONTAINERS ===== */
+    .container,
+    .main-container,
+    .page-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 10px !important;
+        margin: 0 auto !important;
+    }
+    
+    /* ===== HEADERS ===== */
+    header,
+    .header,
+    .page-header {
+        padding: 15px !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1000 !important;
+        background: inherit !important;
+    }
+    
+    h1, .h1 {
+        font-size: 1.3rem !important;
+        margin-bottom: 8px !important;
+    }
+    
+    h2, .h2 {
+        font-size: 1.1rem !important;
+        margin-bottom: 8px !important;
+    }
+    
+    h3, .h3 {
+        font-size: 1rem !important;
+        margin-bottom: 6px !important;
+    }
+    
+    h4, .h4 {
+        font-size: 0.95rem !important;
+    }
+    
+    h5, .h5, h6, .h6 {
+        font-size: 0.9rem !important;
+    }
+    
+    /* ===== BUTTONS ===== */
+    button,
+    .btn,
+    input[type="button"],
+    input[type="submit"],
+    a.button {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        padding: 12px 16px !important;
+        font-size: 0.9rem !important;
+        border-radius: 10px !important;
+        cursor: pointer !important;
+        transition: all 0.2s !important;
+        -webkit-tap-highlight-color: transparent !important;
+        touch-action: manipulation !important;
+    }
+    
+    button:active,
+    .btn:active {
+        transform: scale(0.95) !important;
+        opacity: 0.8 !important;
+    }
+    
+    /* ===== FORMS ===== */
+    input,
+    select,
+    textarea {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important; /* iOS zoom prevention */
+        border: 2px solid #e5e7eb !important;
+        border-radius: 10px !important;
+        margin: 5px 0 !important;
+        transition: all 0.2s !important;
+    }
+    
+    input:focus,
+    select:focus,
+    textarea:focus {
+        outline: none !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    }
+    
+    label {
+        display: block !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 6px !important;
+        color: #374151 !important;
+    }
+    
+    textarea {
+        min-height: 80px !important;
+        resize: vertical !important;
+    }
+    
+    /* ===== TABLES ===== */
+    table {
+        width: 100% !important;
+        display: block !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    thead {
+        display: none !important;
+    }
+    
+    tbody {
+        display: block !important;
+    }
+    
+    tr {
+        display: block !important;
+        margin-bottom: 12px !important;
+        padding: 12px !important;
+        background: white !important;
+        border-radius: 10px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    }
+    
+    td {
+        display: flex !important;
+        justify-content: space-between !important;
+        padding: 8px 0 !important;
+        border-bottom: 1px solid #f3f4f6 !important;
+        font-size: 0.85rem !important;
+    }
+    
+    td:last-child {
+        border-bottom: none !important;
+    }
+    
+    td::before {
+        content: attr(data-label) !important;
+        font-weight: 600 !important;
+        color: #666 !important;
+        margin-right: 10px !important;
+    }
+    
+    /* ===== CARDS ===== */
+    .card,
+    .box,
+    .panel {
+        width: 100% !important;
+        padding: 15px !important;
+        margin-bottom: 12px !important;
+        border-radius: 12px !important;
+        background: white !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    }
+    
+    /* ===== GRIDS ===== */
+    .grid,
+    .row {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    
+    /* ===== MODALS ===== */
+    .modal {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100vh !important;
+        z-index: 10000 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    .modal-content,
+    .modal-dialog {
+        width: 100% !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        overflow-y: auto !important;
+    }
+    
+    .modal-header {
+        position: sticky !important;
+        top: 0 !important;
+        background: white !important;
+        padding: 15px !important;
+        border-bottom: 2px solid #e5e7eb !important;
+        z-index: 10 !important;
+    }
+    
+    .modal-body {
+        padding: 15px !important;
+    }
+    
+    .modal-footer {
+        position: sticky !important;
+        bottom: 0 !important;
+        background: white !important;
+        padding: 15px !important;
+        border-top: 2px solid #e5e7eb !important;
+    }
+    
+    .modal-close,
+    .close {
+        position: absolute !important;
+        top: 15px !important;
+        right: 15px !important;
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 50% !important;
+        background: #f3f4f6 !important;
+        border: none !important;
+        font-size: 1.2rem !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    /* ===== NAVIGATION ===== */
+    nav,
+    .nav,
+    .navbar {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 10px !important;
+    }
+    
+    .nav-item,
+    .nav-link {
+        flex: 1 1 auto !important;
+        min-width: 80px !important;
+        padding: 10px !important;
+        text-align: center !important;
+        font-size: 0.85rem !important;
+    }
+    
+    /* ===== SIDEBAR ===== */
+    .sidebar,
+    aside {
+        position: fixed !important;
+        left: -100% !important;
+        top: 0 !important;
+        width: 80% !important;
+        max-width: 300px !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        transition: left 0.3s ease !important;
+        overflow-y: auto !important;
+    }
+    
+    .sidebar.active,
+    aside.active {
+        left: 0 !important;
+    }
+    
+    .sidebar-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0,0,0,0.5) !important;
+        z-index: 9998 !important;
+        display: none !important;
+    }
+    
+    .sidebar-overlay.active {
+        display: block !important;
+    }
+    
+    /* ===== LISTS ===== */
+    ul, ol {
+        padding-left: 20px !important;
+    }
+    
+    li {
+        margin-bottom: 8px !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* ===== IMAGES ===== */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: 8px !important;
+    }
+    
+    /* ===== ALERTS ===== */
+    .alert,
+    .notification,
+    .message {
+        padding: 12px 15px !important;
+        margin: 10px 0 !important;
+        border-radius: 10px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* ===== BADGES ===== */
+    .badge,
+    .tag,
+    .label {
+        padding: 4px 10px !important;
+        border-radius: 12px !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        display: inline-block !important;
+    }
+    
+    /* ===== LOADING ===== */
+    .loading,
+    .spinner {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 40px !important;
+    }
+    
+    .spinner::after {
+        content: '' !important;
+        width: 40px !important;
+        height: 40px !important;
+        border: 4px solid #f3f4f6 !important;
+        border-top-color: #3b82f6 !important;
+        border-radius: 50% !important;
+        animation: spin 0.8s linear infinite !important;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    /* ===== EMPTY STATES ===== */
+    .empty-state {
+        text-align: center !important;
+        padding: 40px 20px !important;
+    }
+    
+    .empty-icon {
+        font-size: 3rem !important;
+        margin-bottom: 12px !important;
+        opacity: 0.5 !important;
+    }
+    
+    .empty-text {
+        font-size: 0.9rem !important;
+        color: #666 !important;
+    }
+    
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+        width: 6px !important;
+        height: 6px !important;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1 !important;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #888 !important;
+        border-radius: 3px !important;
+    }
+    
+    /* ===== TOUCH OPTIMIZATIONS ===== */
+    * {
+        -webkit-tap-highlight-color: rgba(0,0,0,0.1) !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    button,
+    .btn,
+    a {
+        -webkit-user-select: none !important;
+        user-select: none !important;
+    }
+    
+    /* ===== FOCUS STATES ===== */
+    *:focus {
+        outline: 2px solid #3b82f6 !important;
+        outline-offset: 2px !important;
+    }
+    
+    button:focus,
+    .btn:focus {
+        outline: 3px solid #3b82f6 !important;
+    }
+    
+    /* ===== SAFE AREAS (iPhone notch) ===== */
+    @supports (padding: max(0px)) {
+        body {
+            padding-left: max(0px, env(safe-area-inset-left)) !important;
+            padding-right: max(0px, env(safe-area-inset-right)) !important;
+            padding-bottom: max(0px, env(safe-area-inset-bottom)) !important;
+        }
+    }
+    
+    /* ===== PRINT ===== */
+    @media print {
+        .no-print,
+        button,
+        .btn,
+        nav,
+        .sidebar {
+            display: none !important;
+        }
+    }
+}
+
+/* ===== KICHIK TELEFONLAR (max-width: 480px) ===== */
+@media (max-width: 480px) {
+    html {
+        font-size: 14px !important;
+    }
+    
+    .container {
+        padding: 8px !important;
+    }
+    
+    button,
+    .btn {
+        padding: 10px 12px !important;
+        font-size: 0.85rem !important;
+    }
+}
+
+/* ===== LANDSCAPE MODE ===== */
+@media (max-width: 768px) and (orientation: landscape) {
+    .modal-content {
+        height: auto !important;
+        max-height: 95vh !important;
+    }
+    
+    .grid,
+    .row {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}

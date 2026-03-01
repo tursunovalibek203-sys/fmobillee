@@ -1,216 +1,438 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kassir Kirish</title>
-    <link rel="stylesheet" href="mobile-responsive.css">
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 20%, #1d4ed8 40%, #1e40af 60%, #1e3a8a 80%, #1e3a8a 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-    }
-    
-    .login-container {
-      background: white;
-      padding: 48px;
-      border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      width: 100%;
-      max-width: 420px;
-    }
-    
-    .login-header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-    
-    .login-header h1 {
-      font-size: 32px;
-      font-weight: 800;
-      color: #111827;
-      margin: 0 0 8px 0;
-    }
-    
-    .login-header p {
-      color: #6b7280;
-      font-size: 15px;
-      margin: 0;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #374151;
-      font-size: 14px;
-    }
-    
-    .form-group input {
-      width: 100%;
-      padding: 14px 16px;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      font-size: 15px;
-      transition: all 0.3s;
-      box-sizing: border-box;
-    }
-    
-    .form-group input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-    }
-    
-    .login-btn {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 8px;
-    }
-    
-    .login-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
-    }
-    
-    .login-btn:active {
-      transform: translateY(0);
-    }
-    
-    .back-link {
-      text-align: center;
-      margin-top: 24px;
-    }
-    
-    .back-link a {
-      color: #3b82f6;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-    }
-    
-    .back-link a:hover {
-      text-decoration: underline;
-    }
-    
-    .error-message {
-      background: #fee2e2;
-      color: #dc2626;
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      display: none;
-    }
-  </style>
-  <script src="back-button.js"></script>
-</head>
-<body>
-  <div class="login-container">
-    <div class="login-header">
-      <h1>👤 Kassir Kirish</h1>
-      <p>Login va parolingizni kiriting</p>
-    </div>
-    
-    <div id="errorMessage" class="error-message"></div>
-    
-    <form id="loginForm" onsubmit="handleLogin(event)">
-      <div class="form-group">
-        <label for="username">Login</label>
-        <input type="text" id="username" placeholder="Login" required autocomplete="username">
-      </div>
-      
-      <div class="form-group">
-        <label for="password">Parol</label>
-        <input type="password" id="password" placeholder="Parol" required autocomplete="current-password">
-      </div>
-      
-      <button type="submit" class="login-btn">
-        Kirish
-      </button>
-    </form>
-    
-    <div class="back-link">
-      <a href="/login.html">← Admin kirish</a>
-    </div>
-  </div>
-
-  <script>
-    const API_URL = window.location.origin + '/api';
-    
-    async function handleLogin(event) {
-      event.preventDefault();
-      
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
-      const errorDiv = document.getElementById('errorMessage');
-      
-      if (!username || !password) {
-        showError('Login va parolni kiriting!');
-        return;
-      }
-      
-      try {
-        const response = await fetch(`${API_URL}/cashier-login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-        
-        const data = await response.json();
-        
-        if (!data.success) {
-          showError(data.error || 'Login yoki parol noto\'g\'ri');
-          return;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💼 Kassir Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        // Kassir ma'lumotlarini saqlash
-        localStorage.setItem('cashierLoggedIn', 'true');
-        localStorage.setItem('cashierData', JSON.stringify(data.cashier));
-        localStorage.setItem('cashierLoginTime', Date.now().toString());
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
         
-        // Kassir dashboard'ga o'tish
-        window.location.href = '/cashier-simple.html';
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 100%;
+            animation: slideIn 0.5s ease;
+        }
         
-      } catch (error) {
-        console.error('Login xatosi:', error);
-        showError('Server bilan aloqa yo\'q!');
-      }
-    }
-    
-    function showError(message) {
-      const errorDiv = document.getElementById('errorMessage');
-      errorDiv.textContent = message;
-      errorDiv.style.display = 'block';
-      
-      setTimeout(() => {
-        errorDiv.style.display = 'none';
-      }, 5000);
-    }
-    
-    // Agar kassir allaqachon login qilgan bo'lsa
-    if (localStorage.getItem('cashierLoggedIn') === 'true') {
-      window.location.href = '/cashier-simple.html';
-    }
-  </script>
-    <script src="mobile-enhancements.js"></script>
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-text {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: #9ca3af;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 4px rgba(245, 87, 108, 0.1);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 20px;
+            color: #9ca3af;
+            user-select: none;
+        }
+        
+        .password-toggle:hover {
+            color: #f5576c;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .remember-me input[type="checkbox"] {
+            width: auto;
+            padding: 0;
+            cursor: pointer;
+        }
+        
+        .remember-me label {
+            margin: 0;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .footer-text {
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 30px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #f5576c;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+            
+            .logo-icon {
+                font-size: 60px;
+            }
+            
+            .logo-text {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <div class="logo-icon">💼</div>
+            <div class="logo-text">KASSIR PANEL</div>
+            <div class="logo-subtitle">Xavfsiz kirish tizimi</div>
+        </div>
+        
+        <div class="error-message" id="errorMessage">
+            ❌ Login yoki parol noto'g'ri!
+        </div>
+        
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="branchId">🏢 Filial</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🏢</span>
+                    <select id="branchId" required>
+                        <option value="">Filialni tanlang</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="username">👤 Foydalanuvchi nomi</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        placeholder="kassir1" 
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">🔒 Parol</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="••••••••" 
+                        required
+                        autocomplete="current-password"
+                    >
+                    <span class="password-toggle" onclick="togglePassword()">👁️</span>
+                </div>
+            </div>
+            
+            <div class="remember-me">
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe">Meni eslab qol</label>
+            </div>
+            
+            <button type="submit" class="login-btn">
+                🚀 Kirish
+            </button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #6b7280;">Tekshirilmoqda...</p>
+        </div>
+        
+        <div class="footer-text">
+            © 2026 Kassir Panel. Barcha huquqlar himoyalangan.
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        
+        // Load branches
+        async function loadBranches() {
+            try {
+                const response = await fetch(`${API_URL}/branches`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const select = document.getElementById('branchId');
+                    data.branches.forEach(branch => {
+                        if (branch.isActive) {
+                            const option = document.createElement('option');
+                            option.value = branch.branchId;
+                            option.textContent = branch.name;
+                            select.appendChild(option);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Filiallarni yuklashda xato:', error);
+            }
+        }
+        
+        // Password toggle
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggle = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggle.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggle.textContent = '👁️';
+            }
+        }
+        
+        // Check if already logged in
+        if (localStorage.getItem('cashierLoggedIn') === 'true') {
+            const loginTime = localStorage.getItem('cashierLoginTime');
+            const now = Date.now();
+            
+            // Session 12 soat davom etadi
+            if (loginTime && (now - loginTime) < 12 * 60 * 60 * 1000) {
+                window.location.href = 'cashier-new.html';
+            } else {
+                // Session expired
+                localStorage.removeItem('cashierLoggedIn');
+                localStorage.removeItem('cashierLoginTime');
+            }
+        }
+        
+        // Handle login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const branchId = document.getElementById('branchId').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const errorMessage = document.getElementById('errorMessage');
+            const loading = document.getElementById('loading');
+            
+            // Hide error
+            errorMessage.classList.remove('show');
+            
+            // Show loading
+            loading.classList.add('show');
+            
+            try {
+                // API orqali tekshirish
+                const response = await fetch(`${API_URL}/cashiers`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Kassirni topish
+                    const cashier = data.cashiers.find(c => 
+                        c.username === username && 
+                        c.password === password &&
+                        c.branchId === parseInt(branchId) &&
+                        c.isActive
+                    );
+                    
+                    loading.classList.remove('show');
+                    
+                    if (cashier) {
+                        // Success
+                        localStorage.setItem('cashierLoggedIn', 'true');
+                        localStorage.setItem('cashierId', cashier.cashierId);
+                        localStorage.setItem('cashierName', cashier.name);
+                        localStorage.setItem('cashierUsername', username);
+                        localStorage.setItem('cashierBranchId', branchId);
+                        localStorage.setItem('cashierLoginTime', Date.now().toString());
+                        
+                        if (rememberMe) {
+                            localStorage.setItem('cashierRememberMe', 'true');
+                        }
+                        
+                        // Redirect
+                        window.location.href = 'cashier-new.html';
+                    } else {
+                        // Error
+                        errorMessage.textContent = '❌ Login, parol yoki filial noto\'g\'ri!';
+                        errorMessage.classList.add('show');
+                        
+                        // Shake animation
+                        document.querySelector('.login-container').style.animation = 'shake 0.5s';
+                        setTimeout(() => {
+                            document.querySelector('.login-container').style.animation = '';
+                        }, 500);
+                    }
+                } else {
+                    loading.classList.remove('show');
+                    errorMessage.textContent = '❌ Serverda xato yuz berdi!';
+                    errorMessage.classList.add('show');
+                }
+            } catch (error) {
+                loading.classList.remove('show');
+                console.error('Login xato:', error);
+                errorMessage.textContent = '❌ Ulanishda xato!';
+                errorMessage.classList.add('show');
+            }
+        }
+        
+        // Load branches on page load
+        loadBranches();
+    </script>
 </body>
 </html>

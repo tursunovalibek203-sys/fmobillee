@@ -1,6 +1,9 @@
 // Backend server URL
 const API_URL = window.location.origin + '/api';
 
+// Valyuta kursi (So'm -> Dollar)
+let exchangeRate = 12500; // 1 USD = 12500 UZS
+
 let customers = [];
 let sales = [];
 let selectedCustomer = null;
@@ -260,7 +263,23 @@ let currency = {
 };
 
 function formatMoney(num) {
-  const formatted = num.toLocaleString('en-US', {
+  // Xavfsiz konvertatsiya
+  let value = parseFloat(num);
+  
+  // NaN, null, undefined tekshiruvi
+  if (isNaN(value) || value === null || value === undefined || num === null || num === undefined) {
+    value = 0;
+  }
+  
+  // Number ga aylantirish
+  const numValue = Number(value);
+  
+  // Yana bir marta NaN tekshiruvi
+  if (isNaN(numValue)) {
+    return currency.position === 'before' ? `${currency.symbol}0.00` : `0.00 ${currency.symbol}`;
+  }
+  
+  const formatted = numValue.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
@@ -287,8 +306,17 @@ function getCurrentMonth() {
 
 function getCustomerDebt(customerId) {
   const customerSales = sales.filter(s => s.customerId === customerId);
-  const total = customerSales.reduce((sum, s) => s.type === 'sale' ? sum + s.price : sum, 0);
-  const paid = customerSales.reduce((sum, s) => sum + s.paid, 0);
+  const total = customerSales.reduce((sum, s) => {
+    if (s.type === 'sale') {
+      const price = Number(s.price) || 0;
+      return sum + price;
+    }
+    return sum;
+  }, 0);
+  const paid = customerSales.reduce((sum, s) => {
+    const paidAmount = Number(s.paid) || 0;
+    return sum + paidAmount;
+  }, 0);
   return total - paid;
 }
 
@@ -310,7 +338,19 @@ function isCustomerBlocked(customerId) {
 }
 
 function getDebtorsCount() {
-  return customers.filter(c => getCustomerDebt(c.id) > 0).length;
+  try {
+    if (!customers || customers.length === 0) {
+      return 0;
+    }
+    return customers.filter(c => {
+      // MongoDB dan kelgan totalDebt ni ishlatish
+      const debt = Number(c.totalDebt) || 0;
+      return debt > 0;
+    }).length;
+  } catch (error) {
+    console.error('getDebtorsCount error:', error);
+    return 0;
+  }
 }
 
 function getMonthlyTotal() {
@@ -320,27 +360,62 @@ function getMonthlyTotal() {
     const saleMonth = `${saleDate.getFullYear()}-${String(saleDate.getMonth() + 1).padStart(2, '0')}`;
     return saleMonth === currentMonth && s.type === 'sale';
   });
-  return monthlySales.reduce((sum, s) => sum + s.price, 0);
+  return monthlySales.reduce((sum, s) => {
+    const price = Number(s.price) || 0;
+    return sum + price;
+  }, 0);
 }
 
 function getTotalDebt() {
-  return customers.reduce((sum, c) => sum + Math.max(0, getCustomerDebt(c.id)), 0);
+  try {
+    if (!customers || customers.length === 0) {
+      return 0;
+    }
+    const total = customers.reduce((sum, c) => {
+      // MongoDB dan kelgan totalDebt ni ishlatish
+      const debt = Number(c.totalDebt) || 0;
+      return sum + Math.max(0, debt);
+    }, 0);
+    return Number(total) || 0;
+  } catch (error) {
+    console.error('getTotalDebt error:', error);
+    return 0;
+  }
 }
 
 // ==================== STATISTICS ====================
 
 function updateStatistics() {
   const todaySales = sales.filter(s => s.date === getTodayShort() && s.type === 'sale');
-  const todayTotal = todaySales.reduce((sum, s) => sum + s.price, 0);
+  const todayTotal = todaySales.reduce((sum, s) => {
+    const price = Number(s.price) || 0;
+    return sum + price;
+  }, 0);
   
   // Bugungi to'lovlar
   const todayPayments = sales.filter(s => s.date === getTodayShort());
-  const todayPaid = todayPayments.reduce((sum, s) => sum + s.paid, 0);
+  const todayPaid = todayPayments.reduce((sum, s) => {
+    const paid = Number(s.paid) || 0;
+    return sum + paid;
+  }, 0);
+  
+  // Xavfsiz qarz hisoblash
+  const totalDebt = getTotalDebt();
+  const debtorsCount = getDebtorsCount();
+  
+  // Debug
+  console.log('📊 Statistics:', {
+    todayTotal,
+    todayPaid,
+    totalDebt,
+    debtorsCount,
+    customersCount: customers.length
+  });
   
   document.getElementById('todayTotal').textContent = formatMoney(todayTotal);
   document.getElementById('todayPaid').textContent = formatMoney(todayPaid);
-  document.getElementById('totalDebt').textContent = formatMoney(getTotalDebt());
-  document.getElementById('debtorsCount').textContent = getDebtorsCount();
+  document.getElementById('totalDebt').textContent = formatMoney(totalDebt);
+  document.getElementById('debtorsCount').textContent = debtorsCount;
   document.getElementById('totalCustomers').textContent = customers.length;
   document.getElementById('activeCustomers').textContent = customers.filter(c => 
     sales.some(s => s.customerId === c.id)
@@ -369,7 +444,8 @@ function renderCustomers() {
   let filtered = customers.filter(c => c.name.toLowerCase().includes(search));
   
   if (currentFilter === 'debt') {
-    filtered = filtered.filter(c => getCustomerDebt(c.id) > 0);
+    // MongoDB dan kelgan totalDebt ni ishlatish
+    filtered = filtered.filter(c => (Number(c.totalDebt) || 0) > 0);
   } else if (currentFilter === 'blocked') {
     filtered = filtered.filter(c => isCustomerBlocked(c.id));
   }
@@ -381,7 +457,8 @@ function renderCustomers() {
   }
   
   grid.innerHTML = filtered.map(customer => {
-    const debt = getCustomerDebt(customer.id);
+    // MongoDB dan kelgan totalDebt ni ishlatish
+    const debt = Number(customer.totalDebt) || 0;
     const days = getDebtDays(customer.id);
     const blocked = isCustomerBlocked(customer.id);
     
@@ -500,8 +577,17 @@ function goBack() {
 
 function renderCustomerSales() {
   const customerSales = sales.filter(s => s.customerId === selectedCustomer.id);
-  const total = customerSales.reduce((sum, s) => s.type === 'sale' ? sum + s.price : sum, 0);
-  const paid = customerSales.reduce((sum, s) => sum + s.paid, 0);
+  const total = customerSales.reduce((sum, s) => {
+    if (s.type === 'sale') {
+      const price = Number(s.price) || 0;
+      return sum + price;
+    }
+    return sum;
+  }, 0);
+  const paid = customerSales.reduce((sum, s) => {
+    const paidAmount = Number(s.paid) || 0;
+    return sum + paidAmount;
+  }, 0);
   const debt = total - paid;
   const days = getDebtDays(selectedCustomer.id);
   const blocked = isCustomerBlocked(selectedCustomer.id);
@@ -542,6 +628,9 @@ function renderCustomerSales() {
       const balClass = bal < 0 ? 'negative' : 'positive';
       const isPayment = sale.type === 'payment';
       
+      // Dual currency ma'lumotlarini ko'rsatish
+      const hasDualCurrency = sale.paidUZS || sale.paidUSD || sale.priceUZS;
+      
       return `
         <div class="record-item ${isPayment ? 'payment' : ''}">
           <div class="record-header">
@@ -557,7 +646,15 @@ function renderCustomerSales() {
           <div class="record-body">
             <div class="record-prices">
               <p>Narxi: <span>${formatMoney(sale.price)}</span></p>
+              ${hasDualCurrency && sale.priceUZS ? `<p style="font-size: 11px; opacity: 0.8;">💸 ${Math.round(sale.priceUZS).toLocaleString()} so'm</p>` : ''}
               <p>Berildi: <span>${formatMoney(sale.paid)}</span></p>
+              ${hasDualCurrency && (sale.paidUZS || sale.paidUSD) ? `
+                <p style="font-size: 11px; opacity: 0.8;">
+                  ${sale.paidUZS ? `💸 ${Math.round(sale.paidUZS).toLocaleString()} so'm` : ''}
+                  ${sale.paidUZS && sale.paidUSD ? ' + ' : ''}
+                  ${sale.paidUSD ? `💵 $${sale.paidUSD.toFixed(2)}` : ''}
+                </p>
+              ` : ''}
             </div>
             <div class="balance-box ${balClass}">
               <p class="label">Balans</p>
@@ -568,6 +665,13 @@ function renderCustomerSales() {
           <div class="record-body">
             <div class="record-prices">
               <p>To'lov: <span>${formatMoney(sale.paid)}</span></p>
+              ${hasDualCurrency && (sale.paidUZS || sale.paidUSD) ? `
+                <p style="font-size: 11px; opacity: 0.8;">
+                  ${sale.paidUZS ? `💸 ${Math.round(sale.paidUZS).toLocaleString()} so'm` : ''}
+                  ${sale.paidUZS && sale.paidUSD ? ' + ' : ''}
+                  ${sale.paidUSD ? `💵 $${sale.paidUSD.toFixed(2)}` : ''}
+                </p>
+              ` : ''}
             </div>
             <div class="balance-box positive">
               <p class="label">To'lov</p>
@@ -607,12 +711,14 @@ function updateCashBalance() {
 }
 
 async function addPayment() {
-  const paymentInput = document.getElementById('paymentAmount');
-  const amount = Number(paymentInput.value);
+  const uzsInput = parseFloat(document.getElementById('paymentAmountUZS').value) || 0;
+  const usdInput = parseFloat(document.getElementById('paymentAmountUSD').value) || 0;
   
-  if (!amount || amount <= 0) {
+  // Jami to'lovni dollarda hisoblash
+  const totalUSD = uzsToUsd(uzsInput) + usdInput;
+  
+  if (totalUSD <= 0) {
     alert('⚠️ To\'lov miqdorini kiriting!');
-    paymentInput.focus();
     return;
   }
   
@@ -630,7 +736,10 @@ async function addPayment() {
     customerName: selectedCustomer.name,
     product: 'To\'lov',
     price: 0,
-    paid: amount,
+    paid: totalUSD, // Dollarda
+    paidUZS: uzsInput, // So'mda
+    paidUSD: usdInput, // Dollarda
+    exchangeRate: exchangeRate,
     type: 'payment',
     time: new Date().toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' }),
     date: getTodayShort(),
@@ -643,8 +752,12 @@ async function addPayment() {
   // Serverga saqlash (background)
   saveSale(newPayment).catch(err => console.error('To\'lov saqlash xatosi:', err));
   
-  // Input tozalash
-  paymentInput.value = '';
+  // Inputlarni tozalash
+  document.getElementById('paymentAmountUZS').value = '';
+  document.getElementById('paymentAmountUSD').value = '';
+  document.getElementById('uzsToUsdDisplay').textContent = '= $0.00';
+  document.getElementById('usdToUzsDisplay').textContent = '= 0 so\'m';
+  document.getElementById('totalPaymentUSD').textContent = '$0.00';
   
   // UI ni yangilash (tez)
   renderCustomerSales();
@@ -657,22 +770,27 @@ async function addPayment() {
   // Kassadagi balansni yangilash
   updateCashBalance();
   
-  alert(`✅ To'lov qabul qilindi!\n\n💵 Miqdor: ${formatMoney(amount, 'USD')}`);
+  // Muvaffaqiyat xabari
+  alert(`✅ To'lov qabul qilindi!\n\n💸 So'm: ${uzsInput.toLocaleString()}\n💵 Dollar: $${usdInput.toFixed(2)}\n📊 Jami: $${totalUSD.toFixed(2)}`);
 }
 
 // ==================== SALES ====================
 
 async function addSale() {
   const productInput = document.getElementById('productInput');
-  const priceInput = document.getElementById('priceInput');
-  const paidInput = document.getElementById('paidInput');
+  const priceInputUSD = document.getElementById('priceInputUSD');
+  const paidInputUSD = document.getElementById('paidInputUSD');
+  const priceInputUZS = document.getElementById('priceInputUZS');
+  const paidInputUZS = document.getElementById('paidInputUZS');
   
   const product = productInput.value.trim();
-  const price = Number(priceInput.value);
-  const paid = Number(paidInput.value);
+  const priceUSD = parseFloat(priceInputUSD.value) || 0;
+  const paidUSD = parseFloat(paidInputUSD.value) || 0;
+  const priceUZS = parseFloat(priceInputUZS.value) || 0;
+  const paidUZS = parseFloat(paidInputUZS.value) || 0;
 
-  if (!product || !price || paid === '') {
-    alert('⚠️ Iltimos, barcha maydonlarni to\'ldiring!');
+  if (!product || (priceUSD === 0 && priceUZS === 0)) {
+    alert('⚠️ Iltimos, mahsulot nomi va narxini kiriting!');
     return;
   }
   
@@ -687,8 +805,11 @@ async function addSale() {
     customerId: selectedCustomer.id,
     customerName: selectedCustomer.name,
     product,
-    price,
-    paid,
+    price: priceUSD, // Asosiy narx dollarda
+    paid: paidUSD, // Asosiy to'lov dollarda
+    priceUZS: priceUZS,
+    paidUZS: paidUZS,
+    exchangeRate: exchangeRate,
     type: 'sale',
     time: new Date().toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' }),
     date: getTodayShort(),
@@ -721,9 +842,15 @@ async function addSale() {
     
     // Inputlarni tozalash
     productInput.value = '';
-    priceInput.value = '';
-    paidInput.value = '';
+    priceInputUSD.value = '';
+    paidInputUSD.value = '';
+    priceInputUZS.value = '';
+    paidInputUZS.value = '';
     document.getElementById('imeiInput').value = '';
+    document.getElementById('priceUzsToUsd').textContent = '= $0.00';
+    document.getElementById('priceUsdToUzs').textContent = '= 0 so\'m';
+    document.getElementById('paidUzsToUsd').textContent = '= $0.00';
+    document.getElementById('paidUsdToUzs').textContent = '= 0 so\'m';
     selectedProduct = null;
     
     // UI ni yangilash (tez)
@@ -1694,3 +1821,285 @@ async function init() {
 }
 
 init();
+
+
+// ==================== KO'P MAHSULOT SAVDO ====================
+
+let currentSaleMode = 'single'; // 'single' yoki 'multiple'
+
+function setSaleMode(mode) {
+  currentSaleMode = mode;
+  
+  // Tab buttonlarni yangilash
+  const singleTab = document.getElementById('singleSaleTab');
+  const multipleTab = document.getElementById('multipleSaleTab');
+  
+  if (mode === 'single') {
+    singleTab.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)';
+    singleTab.style.color = 'white';
+    singleTab.style.borderColor = '#3b82f6';
+    
+    multipleTab.style.background = 'white';
+    multipleTab.style.color = '#666';
+    multipleTab.style.borderColor = '#ddd';
+    
+    document.getElementById('singleSaleForm').style.display = 'block';
+    document.getElementById('multipleSaleForm').style.display = 'none';
+  } else {
+    multipleTab.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)';
+    multipleTab.style.color = 'white';
+    multipleTab.style.borderColor = '#3b82f6';
+    
+    singleTab.style.background = 'white';
+    singleTab.style.color = '#666';
+    singleTab.style.borderColor = '#ddd';
+    
+    document.getElementById('singleSaleForm').style.display = 'none';
+    document.getElementById('multipleSaleForm').style.display = 'block';
+  }
+}
+
+async function addMultipleSales() {
+  const textarea = document.getElementById('multipleProductsInput');
+  const text = textarea.value.trim();
+  
+  if (!text) {
+    alert('⚠️ Mahsulotlar ro\'yxatini kiriting!');
+    return;
+  }
+  
+  if (!selectedCustomer || !selectedCustomer.id) {
+    alert('⚠️ Avval mijozni tanlang!');
+    return;
+  }
+  
+  const lines = text.split('\n').filter(line => line.trim());
+  const results = [];
+  let successCount = 0;
+  let errorCount = 0;
+  
+  // Preview ko'rsatish
+  const preview = document.getElementById('multipleResultsPreview');
+  const resultsList = document.getElementById('multipleResultsList');
+  preview.style.display = 'block';
+  resultsList.innerHTML = '<p style="color: #3b82f6;">⏳ Savdolar qo\'shilmoqda...</p>';
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    const parts = line.split(',').map(p => p.trim());
+    
+    if (parts.length !== 3) {
+      results.push({
+        line: i + 1,
+        status: 'error',
+        message: 'Noto\'g\'ri format (3 ta qiymat kerak)'
+      });
+      errorCount++;
+      continue;
+    }
+    
+    const [product, priceStr, paidStr] = parts;
+    const price = Number(priceStr);
+    const paid = Number(paidStr);
+    
+    if (!product || isNaN(price) || isNaN(paid)) {
+      results.push({
+        line: i + 1,
+        status: 'error',
+        message: 'Noto\'g\'ri qiymatlar'
+      });
+      errorCount++;
+      continue;
+    }
+    
+    // Savdo qo'shish
+    const newSale = {
+      id: Date.now() + i,
+      customerId: selectedCustomer.id,
+      customerName: selectedCustomer.name,
+      product,
+      price,
+      paid,
+      type: 'sale',
+      time: new Date().toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' }),
+      date: getTodayShort(),
+      fullDate: new Date().toISOString()
+    };
+    
+    try {
+      // Local arrayga qo'shish
+      sales.push(newSale);
+      
+      // Serverga saqlash
+      await saveSale(newSale);
+      
+      results.push({
+        line: i + 1,
+        status: 'success',
+        message: `${product} - ${formatMoney(price)}`
+      });
+      successCount++;
+    } catch (error) {
+      results.push({
+        line: i + 1,
+        status: 'error',
+        message: `${product} - Xato: ${error.message}`
+      });
+      errorCount++;
+    }
+  }
+  
+  // Natijalarni ko'rsatish
+  let resultsHTML = `
+    <div style="margin-bottom: 10px;">
+      <span style="color: #10b981; font-weight: 600;">✅ Muvaffaqiyatli: ${successCount}</span>
+      <span style="margin-left: 15px; color: #ef4444; font-weight: 600;">❌ Xato: ${errorCount}</span>
+    </div>
+  `;
+  
+  results.forEach(result => {
+    const icon = result.status === 'success' ? '✅' : '❌';
+    const color = result.status === 'success' ? '#10b981' : '#ef4444';
+    resultsHTML += `
+      <div style="padding: 5px 0; border-bottom: 1px solid #e5e7eb; color: ${color};">
+        ${icon} Qator ${result.line}: ${result.message}
+      </div>
+    `;
+  });
+  
+  resultsList.innerHTML = resultsHTML;
+  
+  // UI ni yangilash
+  if (successCount > 0) {
+    renderCustomerSales();
+    renderTodaySales();
+    updateStatistics();
+    fetchCustomersInBackground();
+    
+    // Textarea ni tozalash
+    if (errorCount === 0) {
+      textarea.value = '';
+      setTimeout(() => {
+        preview.style.display = 'none';
+      }, 3000);
+    }
+  }
+  
+  // Xabar ko'rsatish
+  if (successCount > 0 && errorCount === 0) {
+    alert(`✅ ${successCount} ta savdo muvaffaqiyatli qo'shildi!`);
+  } else if (successCount > 0 && errorCount > 0) {
+    alert(`⚠️ ${successCount} ta savdo qo'shildi, ${errorCount} ta xato!`);
+  } else {
+    alert(`❌ Hech qanday savdo qo'shilmadi! Barcha qatorlarda xato bor.`);
+  }
+}
+
+function clearMultipleForm() {
+  document.getElementById('multipleProductsInput').value = '';
+  document.getElementById('multipleResultsPreview').style.display = 'none';
+}
+
+
+// ==================== VALYUTA KONVERTATSIYA ====================
+
+// Valyuta kursini yuklash
+async function loadExchangeRate() {
+  try {
+    const response = await fetch(`${API_URL}/exchange-rate`);
+    const data = await response.json();
+    if (data.success && data.exchangeRate) {
+      exchangeRate = data.exchangeRate;
+      console.log('✅ Valyuta kursi yuklandi:', exchangeRate);
+    }
+  } catch (error) {
+    console.error('Valyuta kursi yuklash xatosi:', error);
+  }
+}
+
+// So'mdan dollarga
+function uzsToUsd(uzs) {
+  return uzs / exchangeRate;
+}
+
+// Dollardan so'mga
+function usdToUzs(usd) {
+  return usd * exchangeRate;
+}
+
+// To'lov - So'mdan hisoblash
+function calculateFromUZS() {
+  const uzs = parseFloat(document.getElementById('paymentAmountUZS').value) || 0;
+  const usd = uzsToUsd(uzs);
+  
+  document.getElementById('uzsToUsdDisplay').textContent = `= $${usd.toFixed(2)}`;
+  
+  // Jami to'lovni yangilash
+  updateTotalPayment();
+}
+
+// To'lov - Dollardan hisoblash
+function calculateFromUSD() {
+  const usd = parseFloat(document.getElementById('paymentAmountUSD').value) || 0;
+  const uzs = usdToUzs(usd);
+  
+  document.getElementById('usdToUzsDisplay').textContent = `= ${Math.round(uzs).toLocaleString()} so'm`;
+  
+  // Jami to'lovni yangilash
+  updateTotalPayment();
+}
+
+// Jami to'lovni hisoblash
+function updateTotalPayment() {
+  const uzsInput = parseFloat(document.getElementById('paymentAmountUZS').value) || 0;
+  const usdInput = parseFloat(document.getElementById('paymentAmountUSD').value) || 0;
+  
+  const totalUSD = uzsToUsd(uzsInput) + usdInput;
+  
+  document.getElementById('totalPaymentUSD').textContent = `$${totalUSD.toFixed(2)}`;
+}
+
+// Narx - So'mdan hisoblash
+function calculatePriceFromUZS() {
+  const uzs = parseFloat(document.getElementById('priceInputUZS').value) || 0;
+  const usd = uzsToUsd(uzs);
+  
+  document.getElementById('priceUzsToUsd').textContent = `= $${usd.toFixed(2)}`;
+  document.getElementById('priceInputUSD').value = usd.toFixed(2);
+  document.getElementById('priceUsdToUzs').textContent = `= ${Math.round(uzs).toLocaleString()} so'm`;
+}
+
+// Narx - Dollardan hisoblash
+function calculatePriceFromUSD() {
+  const usd = parseFloat(document.getElementById('priceInputUSD').value) || 0;
+  const uzs = usdToUzs(usd);
+  
+  document.getElementById('priceUsdToUzs').textContent = `= ${Math.round(uzs).toLocaleString()} so'm`;
+  document.getElementById('priceInputUZS').value = Math.round(uzs);
+  document.getElementById('priceUzsToUsd').textContent = `= $${usd.toFixed(2)}`;
+}
+
+// To'langan - So'mdan hisoblash
+function calculatePaidFromUZS() {
+  const uzs = parseFloat(document.getElementById('paidInputUZS').value) || 0;
+  const usd = uzsToUsd(uzs);
+  
+  document.getElementById('paidUzsToUsd').textContent = `= $${usd.toFixed(2)}`;
+  document.getElementById('paidInputUSD').value = usd.toFixed(2);
+  document.getElementById('paidUsdToUzs').textContent = `= ${Math.round(uzs).toLocaleString()} so'm`;
+}
+
+// To'langan - Dollardan hisoblash
+function calculatePaidFromUSD() {
+  const usd = parseFloat(document.getElementById('paidInputUSD').value) || 0;
+  const uzs = usdToUzs(usd);
+  
+  document.getElementById('paidUsdToUzs').textContent = `= ${Math.round(uzs).toLocaleString()} so'm`;
+  document.getElementById('paidInputUZS').value = Math.round(uzs);
+  document.getElementById('paidUzsToUsd').textContent = `= $${usd.toFixed(2)}`;
+}
+
+// Sahifa yuklanganda valyuta kursini yuklash
+document.addEventListener('DOMContentLoaded', function() {
+  loadExchangeRate();
+});

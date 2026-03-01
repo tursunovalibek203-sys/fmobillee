@@ -47,7 +47,7 @@ class USDAccounting {
     const paid = this.roundMoney(parseFloat(sale.paid) || 0);
     
     // Qarz
-    const debt = this.roundMoney(price - paid);
+    const debt = this.roundMoney((Number(price) || 0) - (Number(paid) || 0));
     
     // To'lov foizi
     const paymentPercent = price > 0 ? this.roundMoney((paid / price) * 100) : 0;
@@ -182,7 +182,7 @@ class USDAccounting {
     
     const totalSales = daySales.length;
     const totalRevenue = daySales.reduce((sum, s) => sum + (s.paid || 0), 0);
-    const totalDebt = daySales.reduce((sum, s) => sum + (s.debt || 0), 0);
+    const totalDebt = daySales.reduce((sum, s) => sum + (Number(s.debt) || 0), 0);
     
     return {
       date: date,

@@ -25,22 +25,38 @@
                     container.classList.add('cashier-main-content');
                 }
             });
-
-            // Mobile toggle button qo'shish
-            if (window.innerWidth <= 768) {
-                const toggleBtn = document.createElement('button');
-                toggleBtn.className = 'sidebar-toggle';
-                toggleBtn.innerHTML = '☰';
-                toggleBtn.onclick = function() {
-                    const sidebar = document.querySelector('.cashier-sidebar');
-                    if (sidebar) {
-                        sidebar.classList.toggle('show');
-                    }
-                };
-                document.body.appendChild(toggleBtn);
-            }
         })
         .catch(error => {
             console.error('Sidebar yuklashda xato:', error);
         });
 })();
+
+// Toggle sidebar function
+function toggleSidebar() {
+    const sidebar = document.querySelector('.cashier-sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('show');
+    }
+}
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', function(event) {
+    if (window.innerWidth <= 768) {
+        const sidebar = document.querySelector('.cashier-sidebar');
+        const toggleBtn = document.querySelector('.sidebar-toggle');
+        
+        if (sidebar && sidebar.classList.contains('show') && 
+            !sidebar.contains(event.target) && 
+            !toggleBtn.contains(event.target)) {
+            sidebar.classList.remove('show');
+        }
+    }
+});
+
+// Handle window resize
+window.addEventListener('resize', function() {
+    const sidebar = document.querySelector('.cashier-sidebar');
+    if (sidebar && window.innerWidth > 768) {
+        sidebar.classList.remove('show');
+    }
+});

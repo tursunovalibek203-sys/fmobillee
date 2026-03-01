@@ -1,0 +1,532 @@
+/* ============================================
+   ADMIN SAHIFALARI UCHUN MAXSUS MOBILE CSS
+   (admin-branches, admin-cashiers, admin-handovers)
+   Har bir element alohida optimallashtirilgan
+   ============================================ */
+
+/* ========== 1. BODY ========== */
+@media (max-width: 768px) {
+    body {
+        padding: 12px !important;
+    }
+}
+
+/* ========== 2. CONTAINER ========== */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px !important;
+        border-radius: 16px !important;
+        max-width: 100% !important;
+    }
+}
+
+/* ========== 3. HEADING ========== */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 24px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    h2 {
+        font-size: 20px !important;
+        margin-bottom: 16px !important;
+    }
+    
+    h3 {
+        font-size: 18px !important;
+        margin-bottom: 12px !important;
+    }
+}
+
+/* ========== 4. ADD SECTION ========== */
+@media (max-width: 768px) {
+    .add-section {
+        padding: 16px !important;
+        border-radius: 12px !important;
+        margin-bottom: 20px !important;
+    }
+}
+
+/* ========== 5. FORM ROW ========== */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+}
+
+/* ========== 6. FORM GROUP ========== */
+@media (max-width: 768px) {
+    .form-group {
+        margin-bottom: 14px !important;
+    }
+    
+    .form-group label {
+        font-size: 14px !important;
+        margin-bottom: 6px !important;
+        font-weight: 700 !important;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100% !important;
+        min-height: 48px !important;
+        padding: 12px 14px !important;
+        font-size: 16px !important;
+        border-radius: 10px !important;
+        border: 2px solid #ddd !important;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    }
+}
+
+/* ========== 7. BUTTONS ========== */
+@media (max-width: 768px) {
+    .btn {
+        width: 100% !important;
+        min-height: 48px !important;
+        padding: 12px 20px !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        border-radius: 10px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .btn:active {
+        transform: scale(0.98) !important;
+    }
+    
+    .btn-primary {
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+    }
+    
+    .btn-success {
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3) !important;
+    }
+    
+    .btn-danger {
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
+    }
+    
+    .btn-warning {
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3) !important;
+    }
+}
+
+/* ========== 8. BRANCHES/CASHIERS/HANDOVERS LIST ========== */
+@media (max-width: 768px) {
+    .branches-list,
+    .cashiers-list,
+    .handovers-list {
+        margin-top: 20px !important;
+    }
+}
+
+/* ========== 9. LIST ITEMS (CARDS) ========== */
+@media (max-width: 768px) {
+    .branch-item,
+    .cashier-item,
+    .handover-item {
+        padding: 16px !important;
+        border-radius: 12px !important;
+        margin-bottom: 12px !important;
+        border: 2px solid #e5e7eb !important;
+    }
+    
+    .branch-item:active,
+    .cashier-item:active,
+    .handover-item:active {
+        transform: scale(0.98) !important;
+    }
+}
+
+/* ========== 10. ITEM HEADER ========== */
+@media (max-width: 768px) {
+    .item-header {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .item-name,
+    .item-title {
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        color: #111827;
+    }
+    
+    .item-id {
+        font-size: 13px !important;
+        color: #6b7280;
+    }
+}
+
+/* ========== 11. ITEM DETAILS ========== */
+@media (max-width: 768px) {
+    .item-details {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .detail-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        padding: 8px 0 !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        font-size: 14px !important;
+    }
+    
+    .detail-label {
+        color: #6b7280;
+        font-size: 13px !important;
+    }
+    
+    .detail-value {
+        font-weight: 600 !important;
+        color: #111827;
+        font-size: 14px !important;
+    }
+}
+
+/* ========== 12. ITEM ACTIONS ========== */
+@media (max-width: 768px) {
+    .item-actions {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        margin-top: 12px !important;
+    }
+    
+    .item-actions button {
+        width: 100% !important;
+        min-height: 44px !important;
+        font-size: 14px !important;
+        padding: 10px 16px !important;
+        border-radius: 8px !important;
+    }
+}
+
+/* ========== 13. STATS CARDS ========== */
+@media (max-width: 768px) {
+    .stats-container {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .stat-card {
+        padding: 16px !important;
+        border-radius: 12px !important;
+        text-align: center;
+        min-height: 100px;
+    }
+    
+    .stat-card-value {
+        font-size: 24px !important;
+        font-weight: 900 !important;
+        margin-bottom: 6px !important;
+    }
+    
+    .stat-card-label {
+        font-size: 12px !important;
+        color: #6b7280;
+    }
+}
+
+/* ========== 14. FILTERS ========== */
+@media (max-width: 768px) {
+    .filters {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        margin-bottom: 16px !important;
+    }
+    
+    .filter-input,
+    .filter-select {
+        width: 100% !important;
+        min-height: 48px !important;
+        padding: 12px 14px !important;
+        font-size: 16px !important;
+        border-radius: 10px !important;
+        border: 2px solid #ddd !important;
+    }
+}
+
+/* ========== 15. SEARCH BOX ========== */
+@media (max-width: 768px) {
+    .search-box {
+        width: 100% !important;
+        min-height: 48px !important;
+        padding: 12px 16px !important;
+        font-size: 16px !important;
+        border-radius: 10px !important;
+        border: 2px solid #ddd !important;
+        margin-bottom: 16px !important;
+    }
+    
+    .search-box:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    }
+}
+
+/* ========== 16. TABLE ========== */
+@media (max-width: 768px) {
+    .table-container {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        margin: 0 -20px !important;
+        padding: 0 20px !important;
+    }
+    
+    table {
+        min-width: 600px !important;
+        font-size: 13px !important;
+    }
+    
+    th {
+        padding: 12px 8px !important;
+        font-size: 12px !important;
+        white-space: nowrap !important;
+    }
+    
+    td {
+        padding: 12px 8px !important;
+        font-size: 13px !important;
+    }
+    
+    /* Hide table on mobile, show cards instead */
+    .hide-on-mobile {
+        display: none !important;
+    }
+}
+
+/* ========== 17. BADGES ========== */
+@media (max-width: 768px) {
+    .badge {
+        padding: 6px 12px !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        border-radius: 8px !important;
+        display: inline-block !important;
+    }
+    
+    .badge-success {
+        background: #10b981 !important;
+        color: white !important;
+    }
+    
+    .badge-danger {
+        background: #ef4444 !important;
+        color: white !important;
+    }
+    
+    .badge-warning {
+        background: #f59e0b !important;
+        color: white !important;
+    }
+    
+    .badge-info {
+        background: #3b82f6 !important;
+        color: white !important;
+    }
+}
+
+/* ========== 18. MODAL ========== */
+@media (max-width: 768px) {
+    .modal {
+        padding: 0 !important;
+        align-items: flex-end !important;
+    }
+    
+    .modal-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 90vh !important;
+        margin: 0 !important;
+        border-radius: 20px 20px 0 0 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        animation: slideUpModal 0.3s ease !important;
+    }
+    
+    @keyframes slideUpModal {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+}
+
+/* ========== 19. MODAL HEADER ========== */
+@media (max-width: 768px) {
+    .modal-header {
+        position: sticky !important;
+        top: 0 !important;
+        background: white !important;
+        z-index: 10 !important;
+        padding: 16px !important;
+        border-bottom: 2px solid #f0f0f0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+    
+    .modal-header h2 {
+        font-size: 18px !important;
+        margin: 0 !important;
+    }
+    
+    .modal-close {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 28px !important;
+        border-radius: 50% !important;
+        border: none !important;
+        background: #f3f4f6 !important;
+        cursor: pointer;
+    }
+}
+
+/* ========== 20. MODAL BODY ========== */
+@media (max-width: 768px) {
+    .modal-body {
+        padding: 16px !important;
+    }
+}
+
+/* ========== 21. MODAL FOOTER ========== */
+@media (max-width: 768px) {
+    .modal-footer {
+        position: sticky !important;
+        bottom: 0 !important;
+        background: white !important;
+        padding: 16px !important;
+        border-top: 2px solid #f0f0f0 !important;
+        display: flex !important;
+        gap: 10px !important;
+    }
+    
+    .modal-footer button {
+        flex: 1 !important;
+        min-height: 50px !important;
+    }
+}
+
+/* ========== 22. BACK BUTTON ========== */
+@media (max-width: 768px) {
+    .back-button,
+    .btn-back {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        width: 56px !important;
+        height: 56px !important;
+        border-radius: 50% !important;
+        background: white !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+        border: none !important;
+        font-size: 24px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer;
+        z-index: 1000;
+    }
+    
+    .back-button:active,
+    .btn-back:active {
+        transform: scale(0.9) !important;
+    }
+}
+
+/* ========== 23. EMPTY STATE ========== */
+@media (max-width: 768px) {
+    .empty-state {
+        text-align: center !important;
+        padding: 40px 20px !important;
+        color: #6b7280;
+    }
+    
+    .empty-state-icon {
+        font-size: 56px !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .empty-state-text {
+        font-size: 15px !important;
+    }
+}
+
+/* ========== 24. LOADING STATE ========== */
+@media (max-width: 768px) {
+    .loading {
+        text-align: center !important;
+        padding: 30px 20px !important;
+        font-size: 14px !important;
+        color: #6b7280;
+    }
+}
+
+/* ========== 25. ALERT ========== */
+@media (max-width: 768px) {
+    .alert {
+        padding: 14px 16px !important;
+        border-radius: 10px !important;
+        margin-bottom: 12px !important;
+        font-size: 14px !important;
+    }
+}
+
+/* ========== 26. SAFE AREA ========== */
+@supports (padding: max(0px)) {
+    @media (max-width: 768px) {
+        body {
+            padding-left: max(12px, env(safe-area-inset-left)) !important;
+            padding-right: max(12px, env(safe-area-inset-right)) !important;
+            padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
+        }
+        
+        .back-button,
+        .btn-back {
+            bottom: max(20px, env(safe-area-inset-bottom)) !important;
+            right: max(20px, env(safe-area-inset-right)) !important;
+        }
+    }
+}
+
+/* ========== 27. LANDSCAPE MODE ========== */
+@media (max-width: 768px) and (orientation: landscape) {
+    .stats-container {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+    
+    .item-details {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* ========== 28. TOUCH FEEDBACK ========== */
+@media (max-width: 768px) {
+    .btn,
+    .branch-item,
+    .cashier-item,
+    .handover-item,
+    .stat-card {
+        -webkit-tap-highlight-color: transparent !important;
+        user-select: none !important;
+    }
+}

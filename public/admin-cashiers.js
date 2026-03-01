@@ -698,8 +698,8 @@ async function renderKPI() {
       // Asosiy metriklar
       const totalSales = cashierSales.length;
       const todaySalesCount = cashierTodaySales.length;
-      const totalRevenue = cashierSales.reduce((sum, s) => sum + s.paid, 0);
-      const todayRevenue = cashierTodaySales.reduce((sum, s) => sum + s.paid, 0);
+      const totalRevenue = cashierSales.reduce((sum, s) => sum + (Number(s.paid) || 0), 0);
+      const todayRevenue = cashierTodaySales.reduce((sum, s) => sum + (Number(s.paid) || 0), 0);
       
       // O'rtacha chek
       const avgCheck = totalSales > 0 ? totalRevenue / totalSales : 0;

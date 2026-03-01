@@ -61,10 +61,10 @@ async function loadDailyReport() {
         });
         
         // Statistika hisoblash
-        const totalRevenue = todaySales.reduce((sum, sale) => sum + (sale.price || 0), 0);
+        const totalRevenue = todaySales.reduce((sum, sale) => sum + (Number(sale.price) || 0), 0);
         const totalSales = todaySales.length;
         const uniqueCustomers = new Set(todaySales.map(s => s.customerId)).size;
-        const totalProducts = todaySales.reduce((sum, sale) => sum + (sale.quantity || 1), 0);
+        const totalProducts = todaySales.reduce((sum, sale) => sum + (Number(sale.quantity) || 1), 0);
         
         // Ko'rsatish
         document.getElementById('dailyRevenue').textContent = `$${totalRevenue.toFixed(2)}`;
@@ -124,7 +124,7 @@ async function loadWeeklyReport() {
         });
         
         // Statistika
-        const totalRevenue = weekSales.reduce((sum, sale) => sum + (sale.price || 0), 0);
+        const totalRevenue = weekSales.reduce((sum, sale) => sum + (Number(sale.price) || 0), 0);
         const totalSales = weekSales.length;
         const averageDaily = totalRevenue / 7;
         
@@ -137,7 +137,7 @@ async function loadWeeklyReport() {
             return saleDate >= twoWeeksAgo && saleDate < weekAgo;
         });
         
-        const prevRevenue = prevWeekSales.reduce((sum, sale) => sum + (sale.price || 0), 0);
+        const prevRevenue = prevWeekSales.reduce((sum, sale) => sum + (Number(sale.price) || 0), 0);
         const growth = prevRevenue > 0 ? ((totalRevenue - prevRevenue) / prevRevenue * 100) : 0;
         
         // Ko'rsatish

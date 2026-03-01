@@ -165,7 +165,7 @@ function displayCustomerResults(customers) {
       </div>
       <div style="font-size: 13px; color: #64748b;">
         ${customer.phone || 'Telefon yo\'q'} • 
-        Qarz: $${customer.totalDebt.toFixed(2)}
+        Qarz: ${(Number(customer.totalDebt) || 0).toFixed(2)}
       </div>
     </div>
   `).join('');
@@ -316,7 +316,7 @@ async function loadSales() {
     // Today's sales
     const today = new Date().toLocaleDateString('uz-UZ');
     const todaySales = sales.filter(s => s.date === today);
-    const todayAmount = todaySales.reduce((sum, s) => sum + s.paid, 0);
+    const todayAmount = todaySales.reduce((sum, s) => sum + (Number(s.paid) || 0), 0);
 
     document.getElementById('todaySales').textContent = todaySales.length;
     document.getElementById('todayAmount').textContent = `$${todayAmount.toFixed(2)}`;
@@ -467,19 +467,19 @@ async function showReports() {
     // Calculate statistics
     const todayUSD = todaySales.reduce((sum, s) => sum + (s.paidUSD || 0), 0);
     const todayUZS = todaySales.reduce((sum, s) => sum + (s.paidUZS || 0), 0);
-    const todayTotal = todaySales.reduce((sum, s) => sum + s.paid, 0);
+    const todayTotal = todaySales.reduce((sum, s) => sum + (Number(s.paid) || 0), 0);
     
     // Weekly sales
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
     const weeklySales = allSales.filter(s => new Date(s.createdAt) >= weekAgo);
-    const weeklyTotal = weeklySales.reduce((sum, s) => sum + s.paid, 0);
+    const weeklyTotal = weeklySales.reduce((sum, s) => sum + (Number(s.paid) || 0), 0);
     
     // Monthly sales
     const monthAgo = new Date();
     monthAgo.setMonth(monthAgo.getMonth() - 1);
     const monthlySales = allSales.filter(s => new Date(s.createdAt) >= monthAgo);
-    const monthlyTotal = monthlySales.reduce((sum, s) => sum + s.paid, 0);
+    const monthlyTotal = monthlySales.reduce((sum, s) => sum + (Number(s.paid) || 0), 0);
     
     content.innerHTML = `
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
@@ -576,7 +576,7 @@ function displayCustomersBook(customers) {
   }
   
   content.innerHTML = customers.map(customer => {
-    const debtClass = customer.totalDebt > 0 ? 'debt' : 'paid';
+    const debtClass = (Number(customer.totalDebt) || 0) > 0 ? 'debt' : 'paid';
     const debtColor = customer.totalDebt > 0 ? '#ef4444' : '#10b981';
     
     return `
@@ -595,7 +595,7 @@ function displayCustomersBook(customers) {
           </div>
           <div style="text-align: right;">
             <div style="font-weight: 800; font-size: 20px; color: ${debtColor};">
-              $${customer.totalDebt.toFixed(2)}
+              ${(Number(customer.totalDebt) || 0).toFixed(2)}
             </div>
             <div style="font-size: 12px; color: #94a3b8;">
               ${customer.totalDebt > 0 ? 'Qarz' : 'Qarz yo\'q'}
@@ -644,8 +644,8 @@ async function showCustomerDetail(customerId) {
       
       const totalPurchases = sales.filter(s => s.type === 'sale').length;
       const totalPayments = sales.filter(s => s.type === 'payment').length;
-      const totalSpent = sales.filter(s => s.type === 'sale').reduce((sum, s) => sum + s.price, 0);
-      const totalPaid = sales.reduce((sum, s) => sum + s.paid, 0);
+      const totalSpent = sales.filter(s => s.type === 'sale').reduce((sum, s) => sum + (Number(s.price) || 0), 0);
+      const totalPaid = sales.reduce((sum, s) => sum + (Number(s.paid) || 0), 0);
       
       content.innerHTML = `
         <div style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; padding: 24px; border-radius: 12px; margin-bottom: 24px;">
@@ -655,7 +655,7 @@ async function showCustomerDetail(customerId) {
           </div>
           <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2);">
             <div style="font-size: 14px; opacity: 0.9; margin-bottom: 4px;">Jami Qarz</div>
-            <div style="font-size: 36px; font-weight: 900;">$${customer.totalDebt.toFixed(2)}</div>
+            <div style="font-size: 36px; font-weight: 900;">${(Number(customer.totalDebt) || 0).toFixed(2)}</div>
           </div>
         </div>
         

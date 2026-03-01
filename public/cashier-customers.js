@@ -67,7 +67,7 @@ async function loadTodaySales() {
 function updateStatistics() {
   const totalCustomers = allCustomers.length;
   const debtors = allCustomers.filter(c => c.totalDebt > 0);
-  const totalDebt = debtors.reduce((sum, c) => sum + c.totalDebt, 0);
+  const totalDebt = debtors.reduce((sum, c) => sum + (Number(c.totalDebt) || 0), 0);
   
   document.getElementById('totalCustomers').textContent = totalCustomers;
   document.getElementById('debtorsCount').textContent = debtors.length;

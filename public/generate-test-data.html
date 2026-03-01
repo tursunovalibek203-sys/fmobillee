@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Test Ma'lumotlar Generatori</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .info-box p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            animation: slideIn 0.5s;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result h3 {
+            margin-bottom: 10px;
+        }
+        
+        .result p {
+            margin: 5px 0;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.5);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Test Ma'lumotlar</h1>
+        <p class="subtitle">Tizimni test qilish uchun ma'lumotlar yaratish</p>
+        
+        <div class="info-box">
+            <p><strong>📦 Nima yaratiladi:</strong></p>
+            <p>• 10% Mahsulotlar</p>
+            <p>• 50% Savdolar</p>
+            <p>• 20% Kirim berishlar</p>
+            <p>• 20% Faoliyat tarixi</p>
+            <p><strong>📅 Sana:</strong> Oxirgi 90 kun</p>
+        </div>
+        
+        <form id="generateForm" onsubmit="generateData(event)">
+            <div class="form-group">
+                <label for="count">📊 Jami ma'lumotlar soni:</label>
+                <input 
+                    type="number" 
+                    id="count" 
+                    min="10" 
+                    max="1000" 
+                    value="100" 
+                    required
+                >
+            </div>
+            
+            <button type="submit" class="btn" id="generateBtn">
+                🚀 Ma'lumotlar Yaratish
+            </button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Ma'lumotlar yaratilmoqda...</p>
+        </div>
+        
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        
+        async function generateData(event) {
+            event.preventDefault();
+            
+            const count = parseInt(document.getElementById('count').value);
+            const btn = document.getElementById('generateBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            
+            // UI ni yangilash
+            btn.disabled = true;
+            loading.classList.add('show');
+            result.classList.remove('show');
+            
+            try {
+                const response = await fetch(`${API_URL}/generate-test-data`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ count })
+                });
+                
+                const data = await response.json();
+                
+                loading.classList.remove('show');
+                
+                if (data.success) {
+                    // Success
+                    result.className = 'result success show';
+                    result.innerHTML = `
+                        <h3>✅ Muvaffaqiyatli!</h3>
+                        <p>${data.message}</p>
+                        <div class="stats">
+                            <div class="stat-item">
+                                <div class="stat-value">${data.results.products}</div>
+                                <div class="stat-label">Mahsulotlar</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${data.results.sales}</div>
+                                <div class="stat-label">Savdolar</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${data.results.handovers}</div>
+                                <div class="stat-label">Kirim berishlar</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${data.results.logs}</div>
+                                <div class="stat-label">Faoliyat tarixi</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Error
+                    result.className = 'result error show';
+                    result.innerHTML = `
+                        <h3>❌ Xato!</h3>
+                        <p>${data.error || 'Noma\'lum xato'}</p>
+                    `;
+                }
+                
+            } catch (error) {
+                loading.classList.remove('show');
+                result.className = 'result error show';
+                result.innerHTML = `
+                    <h3>❌ Xato!</h3>
+                    <p>Server bilan bog'lanishda xato: ${error.message}</p>
+                    <p>Server ishga tushganligini tekshiring: <code>node server.js</code></p>
+                `;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Barcha Tarixlarni Test Qilish</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results {
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .test-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-item.pass {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .test-item.fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .summary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .summary h2 {
+            margin-bottom: 15px;
+        }
+        
+        .summary-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        
+        .summary-stat {
+            text-align: center;
+        }
+        
+        .summary-stat-value {
+            font-size: 36px;
+            font-weight: 700;
+        }
+        
+        .summary-stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Barcha Tarixlarni Test Qilish</h1>
+        <p class="subtitle">Warehouse, Sales, Handover va Activity Log tarixlarini tekshirish</p>
+        
+        <button class="btn" onclick="runTests()" id="testBtn">
+            🚀 Testlarni Boshlash
+        </button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Testlar bajarilmoqda...</p>
+        </div>
+        
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        
+        async function runTests() {
+            const btn = document.getElementById('testBtn');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            
+            btn.disabled = true;
+            loading.classList.add('show');
+            results.classList.remove('show');
+            results.innerHTML = '';
+            
+            try {
+                let html = '';
+                let totalTests = 0;
+                let passedTests = 0;
+                
+                // 1. Warehouse History
+                html += '<div class="section">';
+                html += '<h2>1. WAREHOUSE HISTORY (Mahsulotlar tarixi)</h2>';
+                
+                const products = await fetch(`${API_URL}/products`).then(r => r.json());
+                if (products.success) {
+                    const total = products.products.length;
+                    totalTests++;
+                    passedTests += total > 0 ? 1 : 0;
+                    
+                    html += `<div class="test-item ${total > 0 ? 'pass' : 'fail'}">`;
+                    html += `<span>${total > 0 ? '✅' : '❌'}</span>`;
+                    html += `<span>Mahsulotlar mavjud: ${total} ta</span>`;
+                    html += '</div>';
+                    
+                    // Filial boyicha
+                    const byBranch = {};
+                    products.products.forEach(p => {
+                        byBranch[p.branchId] = (byBranch[p.branchId] || 0) + 1;
+                    });
+                    
+                    html += '<div class="stat-grid">';
+                    Object.keys(byBranch).forEach(branchId => {
+                        const name = branchId == 0 ? 'Umumiy' : `Filial ${branchId}`;
+                        html += `<div class="stat-card">`;
+                        html += `<div class="stat-value">${byBranch[branchId]}</div>`;
+                        html += `<div class="stat-label">${name}</div>`;
+                        html += `</div>`;
+                    });
+                    html += '</div>';
+                }
+                html += '</div>';
+                
+                // 2. Sales History
+                html += '<div class="section">';
+                html += '<h2>2. SALES HISTORY (Savdolar tarixi)</h2>';
+                
+                const sales = await fetch(`${API_URL}/all-sales`).then(r => r.json());
+                if (sales.success) {
+                    const total = sales.sales.length;
+                    totalTests++;
+                    passedTests += total > 0 ? 1 : 0;
+                    
+                    html += `<div class="test-item ${total > 0 ? 'pass' : 'fail'}">`;
+                    html += `<span>${total > 0 ? '✅' : '❌'}</span>`;
+                    html += `<span>Savdolar mavjud: ${total} ta</span>`;
+                    html += '</div>';
+                    
+                    // Kassir boyicha
+                    const byCashier = {};
+                    let totalAmount = 0;
+                    sales.sales.forEach(s => {
+                        byCashier[s.cashierId] = (byCashier[s.cashierId] || 0) + 1;
+                        totalAmount += s.paid || 0;
+                    });
+                    
+                    html += '<div class="stat-grid">';
+                    Object.keys(byCashier).forEach(cashierId => {
+                        html += `<div class="stat-card">`;
+                        html += `<div class="stat-value">${byCashier[cashierId]}</div>`;
+                        html += `<div class="stat-label">Kassir ${cashierId}</div>`;
+                        html += `</div>`;
+                    });
+                    html += `<div class="stat-card">`;
+                    html += `<div class="stat-value">${totalAmount.toLocaleString()}</div>`;
+                    html += `<div class="stat-label">Jami summa (UZS)</div>`;
+                    html += `</div>`;
+                    html += '</div>';
+                }
+                html += '</div>';
+                
+                // 3. Handover History
+                html += '<div class="section">';
+                html += '<h2>3. HANDOVER HISTORY (Kirim berish tarixi)</h2>';
+                
+                const handovers = await fetch(`${API_URL}/all-handovers`).then(r => r.json());
+                if (handovers.success) {
+                    const total = handovers.handovers.length;
+                    totalTests++;
+                    passedTests += total > 0 ? 1 : 0;
+                    
+                    html += `<div class="test-item ${total > 0 ? 'pass' : 'fail'}">`;
+                    html += `<span>${total > 0 ? '✅' : '❌'}</span>`;
+                    html += `<span>Kirim berishlar mavjud: ${total} ta</span>`;
+                    html += '</div>';
+                    
+                    // Kassir boyicha
+                    const byCashier = {};
+                    let totalAmount = 0;
+                    handovers.handovers.forEach(h => {
+                        byCashier[h.cashierId] = (byCashier[h.cashierId] || 0) + 1;
+                        totalAmount += h.amount || 0;
+                    });
+                    
+                    html += '<div class="stat-grid">';
+                    Object.keys(byCashier).forEach(cashierId => {
+                        html += `<div class="stat-card">`;
+                        html += `<div class="stat-value">${byCashier[cashierId]}</div>`;
+                        html += `<div class="stat-label">Kassir ${cashierId}</div>`;
+                        html += `</div>`;
+                    });
+                    html += `<div class="stat-card">`;
+                    html += `<div class="stat-value">${totalAmount.toLocaleString()}</div>`;
+                    html += `<div class="stat-label">Jami summa (UZS)</div>`;
+                    html += `</div>`;
+                    html += '</div>';
+                }
+                html += '</div>';
+                
+                // 4. Activity Log
+                html += '<div class="section">';
+                html += '<h2>4. ACTIVITY LOG (Faoliyat tarixi)</h2>';
+                
+                const logs = await fetch(`${API_URL}/activity-logs`).then(r => r.json());
+                if (logs.success) {
+                    const total = logs.logs.length;
+                    totalTests++;
+                    passedTests += total > 0 ? 1 : 0;
+                    
+                    html += `<div class="test-item ${total > 0 ? 'pass' : 'fail'}">`;
+                    html += `<span>${total > 0 ? '✅' : '❌'}</span>`;
+                    html += `<span>Faoliyat loglar mavjud: ${total} ta</span>`;
+                    html += '</div>';
+                    
+                    // Harakat boyicha
+                    const byAction = {};
+                    logs.logs.forEach(l => {
+                        byAction[l.action] = (byAction[l.action] || 0) + 1;
+                    });
+                    
+                    html += '<div class="stat-grid">';
+                    Object.keys(byAction).forEach(action => {
+                        html += `<div class="stat-card">`;
+                        html += `<div class="stat-value">${byAction[action]}</div>`;
+                        html += `<div class="stat-label">${action}</div>`;
+                        html += `</div>`;
+                    });
+                    html += '</div>';
+                }
+                html += '</div>';
+                
+                // Summary
+                const successRate = ((passedTests / totalTests) * 100).toFixed(1);
+                html += '<div class="summary">';
+                html += '<h2>📊 TEST NATIJALARI</h2>';
+                html += '<div class="summary-stats">';
+                html += '<div class="summary-stat">';
+                html += `<div class="summary-stat-value">${passedTests}/${totalTests}</div>`;
+                html += '<div class="summary-stat-label">Muvaffaqiyatli</div>';
+                html += '</div>';
+                html += '<div class="summary-stat">';
+                html += `<div class="summary-stat-value">${successRate}%</div>`;
+                html += '<div class="summary-stat-label">Muvaffaqiyat</div>';
+                html += '</div>';
+                html += '</div>';
+                
+                if (passedTests === totalTests) {
+                    html += '<p style="margin-top: 20px; font-size: 18px;">🎉 BARCHA TARIXLAR TO\'G\'RI ISHLAYAPTI!</p>';
+                }
+                html += '</div>';
+                
+                results.innerHTML = html;
+                results.classList.add('show');
+                
+            } catch (error) {
+                results.innerHTML = `
+                    <div class="section" style="background: #f8d7da; border-color: #dc3545;">
+                        <h2 style="color: #721c24;">❌ Xato</h2>
+                        <p style="color: #721c24;">${error.message}</p>
+                        <p style="color: #721c24; margin-top: 10px;">Server ishga tushganligini tekshiring: <code>node server.js</code></p>
+                    </div>
+                `;
+                results.classList.add('show');
+            } finally {
+                loading.classList.remove('show');
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

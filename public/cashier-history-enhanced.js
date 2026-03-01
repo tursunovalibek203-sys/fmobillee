@@ -206,7 +206,7 @@ function displayHistory() {
 
 function updateStats() {
     const totalSales = filteredSales.length;
-    const totalAmount = filteredSales.reduce((sum, sale) => sum + (parseFloat(sale.price) || 0), 0);
+    const totalAmount = filteredSales.reduce((sum, sale) => sum + (Number(sale.price) || 0), 0);
     const avgAmount = totalSales > 0 ? totalAmount / totalSales : 0;
     const maxAmount = totalSales > 0 ? Math.max(...filteredSales.map(sale => parseFloat(sale.price) || 0)) : 0;
     
@@ -383,7 +383,7 @@ function generatePrintContent() {
                     <p>Jami savdolar</p>
                 </div>
                 <div class="stat">
-                    <h3>${formatMoney(filteredSales.reduce((sum, sale) => sum + (parseFloat(sale.price) || 0), 0))}</h3>
+                    <h3>${formatMoney(filteredSales.reduce((sum, sale) => sum + (Number(sale.price) || 0), 0))}</h3>
                     <p>Jami summa</p>
                 </div>
             </div>

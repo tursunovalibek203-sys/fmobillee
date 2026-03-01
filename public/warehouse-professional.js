@@ -151,8 +151,12 @@ function renderProducts(filteredProducts = null) {
 
 function updateStatistics() {
   const totalProducts = products.length;
-  const totalValue = products.reduce((sum, p) => sum + (p.buyPrice * p.stock), 0);
-  const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
+  const totalValue = products.reduce((sum, p) => {
+    const buyPrice = Number(p.buyPrice) || 0;
+    const stock = Number(p.stock) || 0;
+    return sum + (buyPrice * stock);
+  }, 0);
+  const totalStock = products.reduce((sum, p) => sum + (Number(p.stock) || 0), 0);
   const totalIMEI = allIMEIs.length;
   const lowStockCount = products.filter(p => p.stock > 0 && p.stock <= 10).length;
   

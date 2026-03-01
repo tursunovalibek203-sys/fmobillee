@@ -1,0 +1,206 @@
+/* 📊 ADMIN DASHBOARD - TELEFON RESPONSIVE */
+
+@media (max-width: 768px) {
+    
+    /* DASHBOARD CONTAINER */
+    .dashboard-container {
+        padding: 10px !important;
+        margin: 0 !important;
+    }
+    
+    /* DASHBOARD HEADER */
+    .dashboard-header {
+        padding: 15px !important;
+        margin-bottom: 15px !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    
+    .dashboard-title {
+        font-size: 1.3rem !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .dashboard-actions {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+        margin-top: 10px !important;
+    }
+    
+    /* STATS GRID */
+    .dashboard-stats,
+    .stats-container {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    
+    .stat-card,
+    .dashboard-stat {
+        padding: 15px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+    
+    .stat-icon {
+        font-size: 2rem !important;
+        min-width: 50px !important;
+        height: 50px !important;
+    }
+    
+    /* CHARTS */
+    .chart-container {
+        padding: 15px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .chart-title {
+        font-size: 1rem !important;
+        margin-bottom: 12px !important;
+    }
+    
+    canvas {
+        max-height: 250px !important;
+    }
+    
+    /* TABLES */
+    .dashboard-table-wrapper {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    .dashboard-table {
+        min-width: 100% !important;
+    }
+    
+    .dashboard-table thead {
+        display: none !important;
+    }
+    
+    .dashboard-table tbody tr {
+        display: block !important;
+        margin-bottom: 12px !important;
+        padding: 12px !important;
+        border-radius: 10px !important;
+        background: white !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    }
+    
+    .dashboard-table tbody td {
+        display: flex !important;
+        justify-content: space-between !important;
+        padding: 8px 0 !important;
+        border-bottom: 1px solid #f3f4f6 !important;
+    }
+    
+    .dashboard-table tbody td:last-child {
+        border-bottom: none !important;
+    }
+    
+    .dashboard-table tbody td::before {
+        content: attr(data-label) !important;
+        font-weight: 600 !important;
+        color: #666 !important;
+    }
+    
+    /* QUICK ACTIONS */
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+    
+    .quick-action-card {
+        padding: 15px !important;
+        text-align: center !important;
+    }
+    
+    .quick-action-icon {
+        font-size: 2rem !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .quick-action-label {
+        font-size: 0.85rem !important;
+    }
+    
+    /* FILTERS */
+    .dashboard-filters {
+        flex-direction: column !important;
+        gap: 10px !important;
+        padding: 15px !important;
+    }
+    
+    .filter-group {
+        width: 100% !important;
+    }
+    
+    .filter-group label {
+        font-size: 0.85rem !important;
+        margin-bottom: 6px !important;
+    }
+    
+    .filter-group select,
+    .filter-group input {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+    }
+    
+    /* WIDGETS */
+    .dashboard-widgets {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    .widget {
+        padding: 15px !important;
+    }
+    
+    .widget-header {
+        margin-bottom: 12px !important;
+    }
+    
+    .widget-title {
+        font-size: 1rem !important;
+    }
+    
+    /* ACTIVITY FEED */
+    .activity-feed {
+        padding: 15px !important;
+    }
+    
+    .activity-item {
+        padding: 12px !important;
+        margin-bottom: 10px !important;
+        border-radius: 8px !important;
+    }
+    
+    .activity-icon {
+        font-size: 1.5rem !important;
+        min-width: 40px !important;
+    }
+    
+    .activity-content {
+        flex: 1 !important;
+    }
+    
+    .activity-title {
+        font-size: 0.9rem !important;
+    }
+    
+    .activity-time {
+        font-size: 0.75rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-actions {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: 1fr !important;
+    }
+}

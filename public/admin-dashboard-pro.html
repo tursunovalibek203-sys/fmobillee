@@ -339,6 +339,11 @@
     }
   </style>
   <script src="back-button.js"></script>
+
+  <!-- 📱 Mobile Responsive CSS -->
+  <link rel="stylesheet" href="mobile-universal.css">
+  <link rel="stylesheet" href="mobile-admin-dashboard.css">
+  <script src="mobile-enhancements.js"></script>
 </head>
 <body>
   <div class="dashboard-container">
@@ -512,7 +517,8 @@
           const stats = data.data;
           document.getElementById('totalCustomers').textContent = stats.totalCustomers || 0;
           document.getElementById('monthlyRevenue').textContent = `$${(stats.monthlyRevenue || 0).toFixed(2)}`;
-          document.getElementById('totalDebt').textContent = `$${(stats.totalDebt || 0).toFixed(2)}`;
+          const debtValue = Number(stats.totalDebt) || 0;
+          document.getElementById('totalDebt').textContent = `$${debtValue.toFixed(2)}`;
           document.getElementById('totalProducts').textContent = stats.totalProducts || 0;
           document.getElementById('todaySales').textContent = stats.todaySales || 0;
           document.getElementById('lowStock').textContent = stats.lowStockProducts || 0;

@@ -310,7 +310,7 @@ function viewBranchDetails(branchId) {
 
 function formatMoney(amount, short = false) {
   // NaN va undefined tekshiruvi
-  const num = parseFloat(amount);
+  const num = parseFloat(amount) || 0;
   if (isNaN(num) || num === null || num === undefined) {
     return '$0';
   }

@@ -45,7 +45,7 @@ async function loadHandovers() {
     const data = await response.json();
     
     if (data.success) {
-      const totalHandedOver = data.handovers.reduce((sum, h) => sum + h.amount, 0);
+      const totalHandedOver = data.handovers.reduce((sum, h) => sum + (Number(h.amount) || 0), 0);
       document.getElementById('handedOver').textContent = '$' + totalHandedOver.toFixed(2);
     }
   } catch (error) {
